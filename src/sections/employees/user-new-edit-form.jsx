@@ -1,0 +1,326 @@
+import { z as zod } from 'zod';
+import { useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, Controller } from 'react-hook-form';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isValidPhoneNumber } from 'react-phone-number-input/input';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
+import { fData } from 'src/utils/format-number';
+
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
+
+// ----------------------------------------------------------------------
+
+export const NewUserSchema = zod.object({
+  avatarUrl: schemaHelper.file({
+    message: { required_error: 'Avatar is required!' },
+  }),
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  email: zod
+    .string()
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  country: schemaHelper.objectOrNull({
+    message: { required_error: 'Country is required!' },
+  }),
+  address: zod.string().min(1, { message: 'Address is required!' }),
+  company: zod.string().min(1, { message: 'Company is required!' }),
+  state: zod.string().min(1, { message: 'State is required!' }),
+  city: zod.string().min(1, { message: 'City is required!' }),
+  role: zod.string().min(1, { message: 'Role is required!' }),
+  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
+  trancheA: zod.string().min(1, { message: 'Masse salariale Tranche A is required!' }),
+  trancheB: zod.string().min(1, { message: 'Masse salariale Tranche B is required!' }),
+  nombreSalaries: zod.string().min(1, { message: 'Nombre de salariés is required!' }),
+  moyenneAge: zod.string().min(1, { message: "Moyenne d'âge is required!" }),
+  nombreSalariesCadres: zod.string().min(1, { message: 'Nombre de salariés cadres is required!' }),
+  moyenneAgeCadres: zod
+    .string()
+    .min(1, { message: "Moyenne d'âge des salariés cadres is required!" }),
+  nombreSalariesNonCadres: zod
+    .string()
+    .min(1, { message: 'Nombre de salariés non cadres is required!' }),
+  // Not required
+  status: zod.string(),
+  isVerified: zod.boolean(),
+});
+
+// ----------------------------------------------------------------------
+
+export function UserNewEditForm({ currentUser }) {
+  const router = useRouter();
+
+  const defaultValues = useMemo(
+    () => ({
+      status: currentUser?.status || '',
+      avatarUrl: currentUser?.avatarUrl || null,
+      isVerified: currentUser?.isVerified || true,
+      name: currentUser?.name || '',
+      email: currentUser?.email || '',
+      phoneNumber: currentUser?.phoneNumber || '',
+      country: currentUser?.country || '',
+      state: currentUser?.state || '',
+      city: currentUser?.city || '',
+      address: currentUser?.address || '',
+      zipCode: currentUser?.zipCode || '',
+      company: currentUser?.company || '',
+      role: currentUser?.role || '',
+      trancheA: currentUser?.trancheA || '',
+      trancheB: currentUser?.trancheB || '',
+    }),
+    [currentUser]
+  );
+
+  const methods = useForm({
+    mode: 'onSubmit',
+    resolver: zodResolver(NewUserSchema),
+    defaultValues,
+  });
+
+  const {
+    reset,
+    watch,
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const values = watch();
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      toast.success(currentUser ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.user.list);
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  return (
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Grid container spacing={3}>
+        <Grid xs={12} md={4}>
+          <Card sx={{ pt: 12, pb: 5, px: 3 }}>
+            {currentUser && (
+              <Label
+                color={
+                  (values.status === 'active' && 'success') ||
+                  (values.status === 'banned' && 'error') ||
+                  'warning'
+                }
+                sx={{ position: 'absolute', top: 24, right: 24 }}
+              >
+                {values.status}
+              </Label>
+            )}
+
+            <Box sx={{ mb: 5 }}>
+              <Field.UploadAvatar
+                name="avatarUrl"
+                maxSize={3145728}
+                helperText={
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      mt: 3,
+                      mx: 'auto',
+                      display: 'block',
+                      textAlign: 'center',
+                      color: 'text.disabled',
+                    }}
+                  >
+                    Allowed *.jpeg, *.jpg, *.png, *.gif
+                    <br /> max size of {fData(3145728)}
+                  </Typography>
+                }
+              />
+            </Box>
+
+            {currentUser && (
+              <FormControlLabel
+                labelPlacement="start"
+                control={
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <Switch
+                        {...field}
+                        checked={field.value !== 'active'}
+                        onChange={(event) =>
+                          field.onChange(event.target.checked ? 'banned' : 'active')
+                        }
+                      />
+                    )}
+                  />
+                }
+                label={
+                  <>
+                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+                      Banned
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Apply disable account
+                    </Typography>
+                  </>
+                }
+                sx={{
+                  mx: 0,
+                  mb: 3,
+                  width: 1,
+                  justifyContent: 'space-between',
+                }}
+              />
+            )}
+
+            <Field.Switch
+              name="isVerified"
+              labelPlacement="start"
+              label={
+                <>
+                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+                    Email verified
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Disabling this will automatically send the user a verification email
+                  </Typography>
+                </>
+              }
+              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
+            />
+
+            {currentUser && (
+              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
+                <Button variant="soft" color="error">
+                  Delete user
+                </Button>
+              </Stack>
+            )}
+          </Card>
+        </Grid>
+
+        <Grid xs={12} md={8}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Information générale
+            </Typography>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <Field.Select
+                name="formeJuridique"
+                label="Forme juridique"
+                options={[
+                  { label: 'APE', value: 'APE' },
+                  { label: 'NEF', value: 'NEF' },
+                ]}
+                placeholder="Choisir Forme Juridique"
+              />
+              <Field.Text name="raisonSociale" label="Raison sociale" />
+              <Field.Text name="date" label="Date" />
+              <Field.Text name="matriculeFiscale" label="Matricule Fiscale" />
+              <Field.Text name="siren" label="SIREN" />
+              <Field.Text name="refCnss" label="Réf CNSS" />
+              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" />
+              <Field.Text name="codePostale" label="Code postale" />
+              <Field.Text name="ville" label="Ville" />
+              <Field.Select
+                name="activiteEntreprise"
+                label="Activité de l'entreprise / Code APE/NAF"
+                options={[
+                  { label: 'Commerce', value: 'commerce' },
+                  { label: 'Industrie', value: 'industrie' },
+                  { label: 'Agriculture', value: 'agriculture' },
+                  { label: 'Services', value: 'services' },
+                  { label: 'Construction', value: 'construction' },
+                ]}
+                placeholder="Choisir Activité de l'entreprise"
+              />
+              <Field.Text name="conventionCollective" label="Votre Convention collective" />
+              <Field.Text name="chiffreAffaire" label="Chiffre d'affaire" />
+            </Box>
+          </Card>
+        </Grid>
+
+        <Grid xs={12} md={15}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Masse salariale annuelle
+            </Typography>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <Field.Text name="trancheA" label="Masse salariale Tranche A" />
+              <Field.Text name="trancheB" label="Masse salariale Tranche B" />
+            </Box>
+          </Card>
+        </Grid>
+
+        <Grid xs={12} md={15}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Taille de votre entreprise
+            </Typography>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <Field.Text name="nombreSalaries" label="Nombre de salariés" />
+              <Field.Text name="moyenneAge" label="Moyenne d'âge" />
+              <Field.Text name="nombreSalariesCadres" label="Nombre de salariés cadres" />
+              <Field.Text name="moyenneAgeCadres" label="Moyenne d'âge des salariés cadres" />
+              <Field.Text name="nombreSalariesNonCadres" label="Nombre de salariés non cadres" />
+              <Field.Text
+                name="moyenneAgeNonCadres"
+                label="Moyenne d'âge des salariés non cadres"
+              />
+            </Box>
+          </Card>
+        </Grid>
+
+        
+        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+            {!currentUser ? 'Create Company' : 'Save changes'}
+          </LoadingButton>
+        </Stack>
+      </Grid>
+    </Form>
+  );
+}
