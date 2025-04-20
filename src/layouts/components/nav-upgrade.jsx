@@ -1,18 +1,12 @@
-import { m } from 'framer-motion';
-
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { alpha as hexAlpha } from '@mui/material/styles';
 
-import { paths } from 'src/routes/paths';
+// import { paths } from 'src/routes/paths';
 
-import { CONFIG } from 'src/config-global';
-import { varAlpha, bgGradient } from 'src/theme/styles';
-
-import { Label } from 'src/components/label';
+import { bgGradient } from 'src/theme/styles';
 
 import { useMockedUser } from 'src/auth/hooks';
 
@@ -28,21 +22,6 @@ export function NavUpgrade({ sx, ...other }) {
           <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
             {user?.displayName?.charAt(0).toUpperCase()}
           </Avatar>
-
-          <Label
-            color="success"
-            variant="filled"
-            sx={{
-              top: -6,
-              px: 0.5,
-              left: 40,
-              height: 20,
-              position: 'absolute',
-              borderBottomLeftRadius: 2,
-            }}
-          >
-            Free
-          </Label>
         </Box>
 
         <Stack spacing={0.5} sx={{ mb: 2, mt: 1.5, width: 1 }}>
@@ -62,10 +41,6 @@ export function NavUpgrade({ sx, ...other }) {
             {user?.email}
           </Typography>
         </Stack>
-
-        <Button variant="contained" href={paths.minimalStore} target="_blank" rel="noopener">
-          Upgrade to Pro
-        </Button>
       </Stack>
     </Stack>
   );
@@ -75,67 +50,24 @@ export function NavUpgrade({ sx, ...other }) {
 
 export function UpgradeBlock({ sx, ...other }) {
   return (
-    <Stack
+    <Box
       sx={{
         ...bgGradient({
-          color: `135deg, ${hexAlpha('#F7BB95', 0.92)}, ${hexAlpha('#5B2FF3', 0.92)}`,
-          imgUrl: `${CONFIG.assetsDir}/assets/background/background-7.webp`,
+          startColor: (theme) => hexAlpha(theme.palette.warning.main, 0.72),
+          endColor: (theme) => hexAlpha(theme.palette.warning.dark, 0.72),
         }),
-        px: 3,
-        py: 4,
         borderRadius: 2,
         position: 'relative',
+        overflow: 'hidden',
         ...sx,
       }}
       {...other}
     >
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          width: 1,
-          height: 1,
-          borderRadius: 2,
-          position: 'absolute',
-          border: (theme) => `solid 3px ${varAlpha(theme.vars.palette.common.whiteChannel, 0.16)}`,
-        }}
-      />
-
-      <Box
-        component={m.img}
-        animate={{ y: [12, -12, 12] }}
-        transition={{
-          duration: 8,
-          ease: 'linear',
-          repeat: Infinity,
-          repeatDelay: 0,
-        }}
-        alt="Small Rocket"
-        src={`${CONFIG.assetsDir}/assets/illustrations/illustration-rocket-small.webp`}
-        sx={{ right: 0, width: 112, height: 112, position: 'absolute' }}
-      />
+      {/* Removed rocket image */}
 
       <Stack alignItems="flex-start" sx={{ position: 'relative' }}>
-        <Box component="span" sx={{ typography: 'h5', color: 'common.white' }}>
-          35% OFF
-        </Box>
-
-        <Box
-          component="span"
-          sx={{
-            mb: 2,
-            mt: 0.5,
-            color: 'common.white',
-            typography: 'subtitle2',
-          }}
-        >
-          Power up Productivity!
-        </Box>
-
-        <Button variant="contained" size="small" color="warning">
-          Upgrade to Pro
-        </Button>
+        {/* Removed promotional text and button */}
       </Stack>
-    </Stack>
+    </Box>
   );
 }
