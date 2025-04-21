@@ -10,11 +10,10 @@ import { Iconify } from 'src/components/iconify/iconify';
 import { BankingContacts } from '../banking-contacts';
 import { BankingOverview } from '../banking-overview';
 import { BankingQuickTransfer } from '../banking-quick-transfer';
-import { BankingInviteFriends } from '../banking-invite-friends';
+// import { BankingInviteFriends } from '../banking-invite-friends';
 import { BankingCurrentBalance } from '../banking-current-balance';
 import { BankingBalanceStatistics } from '../banking-balance-statistics';
 import { BankingRecentTransitions } from '../banking-recent-transitions';
-import { BankingExpensesCategories } from '../banking-expenses-categories';
 
 // ----------------------------------------------------------------------
 
@@ -62,32 +61,6 @@ export function OverviewBankingView() {
               }}
             />
 
-            <BankingExpensesCategories
-              title="Expenses categories"
-              chart={{
-                series: [
-                  { label: 'Entertainment', value: 22 },
-                  { label: 'Fuel', value: 18 },
-                  { label: 'Fast food', value: 16 },
-                  { label: 'Cafe', value: 17 },
-                  { label: 'Сonnection', value: 14 },
-                  { label: 'Healthcare', value: 22 },
-                  { label: 'Fitness', value: 10 },
-                  { label: 'Supermarket', value: 21 },
-                ],
-                icons: [
-                  <Iconify icon="streamline:dices-entertainment-gaming-dices-solid" />,
-                  <Iconify icon="maki:fuel" />,
-                  <Iconify icon="ion:fast-food" />,
-                  <Iconify icon="maki:cafe" />,
-                  <Iconify icon="basil:mobile-phone-outline" />,
-                  <Iconify icon="solar:medical-kit-bold" />,
-                  <Iconify icon="ic:round-fitness-center" />,
-                  <Iconify icon="solar:cart-3-bold" />,
-                ],
-              }}
-            />
-
             <BankingRecentTransitions
               title="Recent transitions"
               tableData={_bankingRecentTransitions}
@@ -112,13 +85,6 @@ export function OverviewBankingView() {
               title="Contacts"
               subheader="You have 122 contacts"
               list={_bankingContacts.slice(-5)}
-            />
-
-            <BankingInviteFriends
-              price="$50"
-              title={`Invite friends \n and earn`}
-              description="Praesent egestas tristique nibh. Duis lobortis massa imperdiet quam."
-              imgUrl={`${CONFIG.assetsDir}/assets/illustrations/illustration-receipt.webp`}
             />
           </Box>
         </Grid>

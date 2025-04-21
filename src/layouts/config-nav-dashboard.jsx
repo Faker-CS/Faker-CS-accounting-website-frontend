@@ -67,7 +67,7 @@ export const navData = [
           { title: 'Effectifs', path: paths.dashboard.group.five },
         ],
       },
-      { title: 'File manager', path: paths.dashboard.group.root, icon: ICONS.folder },
+      { title: 'File manager', path: paths.dashboard.fileManager, icon: ICONS.folder },
       {
         title: 'Invoice',
         path: paths.dashboard.group.root,
@@ -79,9 +79,9 @@ export const navData = [
           { title: 'Edit', path: paths.dashboard.group.five },
         ],
       },
-      { title: 'Chat', path: paths.dashboard.group.root, icon: ICONS.chat },
+      { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
       { title: 'Calendar', path: paths.dashboard.calendar, icon: ICONS.calendar },
-      { title: 'Kanban', path: paths.dashboard.group.five, icon: ICONS.kanban },
+      { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
     ],
   },
 ];

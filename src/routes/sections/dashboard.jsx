@@ -7,6 +7,10 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 
 import { AuthGuard } from 'src/auth/guard';
+// File manager
+const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
+// Chat
+const ChatPage = lazy(() => import('src/pages/dashboard/chat'));
 
 // ----------------------------------------------------------------------
 
@@ -20,6 +24,7 @@ const EntreprisesList = lazy(() => import('src/pages/dashboard/employees/entrepr
 const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/employees/entreprise/new'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
+const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 // ----------------------------------------------------------------------
 
 const layoutContent = (
@@ -55,6 +60,10 @@ export const dashboardRoutes = [
       },
       { path: 'banking', element: <OverviewBankingPage /> },
       {path: 'calendar', element: <CalendarPage />},
+      { path: 'file-manager', element: <FileManagerPage /> },
+      { path: 'kanban', element: <KanbanPage /> },
+      { path: 'chat', element: <ChatPage /> },
+      
     ],
   },
 ];

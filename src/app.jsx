@@ -14,12 +14,15 @@ import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/component
 
 import { AuthProvider } from 'src/auth/context/jwt';
 
+import { LocalizationProvider } from './locales';
+
 // ----------------------------------------------------------------------
 
 export default function App() {
   useScrollToTop();
 
   return (
+    <LocalizationProvider>
     <AuthProvider>
       <SettingsProvider settings={defaultSettings}>
         <ThemeProvider>
@@ -31,5 +34,6 @@ export default function App() {
         </ThemeProvider>
       </SettingsProvider>
     </AuthProvider>
+    </LocalizationProvider>
   );
 }

@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 import Calendar from '@fullcalendar/react'; // => request placed at the top
 
 import { useEffect } from 'react';

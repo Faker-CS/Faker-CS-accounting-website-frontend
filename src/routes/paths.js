@@ -63,5 +63,8 @@ export const paths = {
       analytics: `${ROOTS.DASHBOARD}/banking/analytics`,
     },
     calendar: `${ROOTS.DASHBOARD}/calendar`,
+    fileManager: `${ROOTS.DASHBOARD}/file-manager`,
+    kanban: `${ROOTS.DASHBOARD}/kanban`,
+    chat: `${ROOTS.DASHBOARD}/chat`,
   },
 };
