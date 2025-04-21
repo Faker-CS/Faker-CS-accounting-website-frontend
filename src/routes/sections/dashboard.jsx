@@ -18,7 +18,8 @@ const PageFive = lazy(() => import('src/pages/dashboard/five'));
 const PageSix = lazy(() => import('src/pages/dashboard/six'));
 const EntreprisesList = lazy(() => import('src/pages/dashboard/employees/entreprise/list'));
 const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/employees/entreprise/new'));
-
+const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
+const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 // ----------------------------------------------------------------------
 
 const layoutContent = (
@@ -52,6 +53,8 @@ export const dashboardRoutes = [
           { path: 'new', element: <EntrepriseCreatePage /> },
         ],
       },
+      { path: 'banking', element: <OverviewBankingPage /> },
+      {path: 'calendar', element: <CalendarPage />},
     ],
   },
 ];
