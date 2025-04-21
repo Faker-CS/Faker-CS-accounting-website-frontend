@@ -70,13 +70,13 @@ export const navData = [
       { title: 'File manager', path: paths.dashboard.fileManager, icon: ICONS.folder },
       {
         title: 'Invoice',
-        path: paths.dashboard.group.root,
+        path: paths.dashboard.invoice.root,
         icon: ICONS.invoice,
         children: [
-          { title: 'List', path: paths.dashboard.group.root },
-          { title: 'Details', path: paths.dashboard.group.five },
-          { title: 'Create', path: paths.dashboard.group.six },
-          { title: 'Edit', path: paths.dashboard.group.five },
+          { title: 'List', path: paths.dashboard.invoice.root },
+          { title: 'Details', path: paths.dashboard.invoice.demo.details },
+          { title: 'Create', path: paths.dashboard.invoice.new },
+          { title: 'Edit', path: paths.dashboard.invoice.demo.edit },
         ],
       },
       { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },

@@ -11,6 +11,11 @@ import { AuthGuard } from 'src/auth/guard';
 const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
 // Chat
 const ChatPage = lazy(() => import('src/pages/dashboard/chat'));
+// Invoice
+const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
+const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
+const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
+const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
 
 // ----------------------------------------------------------------------
 
@@ -63,7 +68,16 @@ export const dashboardRoutes = [
       { path: 'file-manager', element: <FileManagerPage /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'chat', element: <ChatPage /> },
-      
+      {
+        path: 'invoice',
+        children: [
+          { element: <InvoiceListPage />, index: true },
+          { path: 'list', element: <InvoiceListPage /> },
+          { path: ':id', element: <InvoiceDetailsPage /> },
+          { path: ':id/edit', element: <InvoiceEditPage /> },
+          { path: 'new', element: <InvoiceCreatePage /> },
+        ],
+      },
     ],
   },
 ];

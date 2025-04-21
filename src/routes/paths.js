@@ -1,4 +1,9 @@
+import { _id} from 'src/_mock/assets';
+
 // ----------------------------------------------------------------------
+
+const MOCK_ID = _id[1];
+
 
 const ROOTS = {
   AUTH: '/auth',
@@ -66,5 +71,15 @@ export const paths = {
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
     chat: `${ROOTS.DASHBOARD}/chat`,
+    invoice: {
+      root: `${ROOTS.DASHBOARD}/invoice`,
+      new: `${ROOTS.DASHBOARD}/invoice/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/invoice/${id}`,
+      edit: (id) => `${ROOTS.DASHBOARD}/invoice/${id}/edit`,
+      demo: {
+        details: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}`,
+        edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
+      },
+    },
   },
 };
