@@ -41,15 +41,15 @@ export const SignInSchema = zod.object({
 export function JwtSignInView() {
   const router = useRouter();
 
-  const { checkUserSession } = useAuthContext();
+  const { signIn, checkUserSession } = useAuthContext();
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const password = useBoolean();
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: '@demo1',
+    email: 'chifaker@gmail.com',
+    password: 'faker123',
   };
 
   const methods = useForm({
@@ -64,7 +64,10 @@ export function JwtSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      // cookie-based sunctum login
       await signInWithPassword({ email: data.email, password: data.password });
+
+      // refresh my local session
       await checkUserSession?.();
 
       router.refresh();
@@ -138,7 +141,7 @@ export function JwtSignInView() {
 
       <Alert severity="info" sx={{ mb: 3 }}>
         Use <strong>{defaultValues.email}</strong>
-        {' with password '}
+        {' with  '}
         <strong>{defaultValues.password}</strong>
       </Alert>
 

@@ -4,21 +4,23 @@ import { setSession } from './utils';
 import { STORAGE_KEY } from './constant';
 
 /** **************************************
- * Sign in
+ * Log in
  *************************************** */
 export const signInWithPassword = async ({ email, password }) => {
   try {
-    const params = { email, password };
+    // Step 1: Login and receive JWT
+    const { data } = await axios.post(endpoints.auth.login, { email, password });
+    const { accessToken, user } = data;
 
-    const res = await axios.post(endpoints.auth.signIn, params);
+    if (accessToken) {
+      // Step 2: Save JWT to localStorage
+      localStorage.setItem(STORAGE_KEY, accessToken);
 
-    const { accessToken } = res.data;
-
-    if (!accessToken) {
-      throw new Error('Access token not found in response');
+      // Step 3: Set token in axios headers for future requests
+      setSession(accessToken);
     }
 
-    setSession(accessToken);
+    return user;
   } catch (error) {
     console.error('Error during sign in:', error);
     throw error;
@@ -26,40 +28,38 @@ export const signInWithPassword = async ({ email, password }) => {
 };
 
 /** **************************************
- * Sign up
+ * Register
  *************************************** */
-export const signUp = async ({ email, password, firstName, lastName }) => {
-  const params = {
-    email,
-    password,
-    firstName,
-    lastName,
-  };
-
+export async function register(payload) {
   try {
-    const res = await axios.post(endpoints.auth.signUp, params);
+    const { data } = await axios.post(endpoints.auth.register, payload);
+    const { accessToken, user } = data;
 
-    const { accessToken } = res.data;
-
-    if (!accessToken) {
-      throw new Error('Access token not found in response');
+    if (accessToken) {
+      localStorage.setItem(STORAGE_KEY, accessToken);
+      setSession(accessToken);
     }
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    return user;
   } catch (error) {
-    console.error('Error during sign up:', error);
+    console.error('Error during registration:', error);
     throw error;
   }
-};
+}
+
 
 /** **************************************
- * Sign out
+ * Logout
  *************************************** */
-export const signOut = async () => {
+export async function logout() {
   try {
-    await setSession(null);
+    await axios.post(endpoints.auth.logout);
+
+    // Remove JWT from storage and session
+    localStorage.removeItem(STORAGE_KEY);
+    setSession(null);
   } catch (error) {
-    console.error('Error during sign out:', error);
+    console.error('Error during logout:', error);
     throw error;
   }
-};
+}

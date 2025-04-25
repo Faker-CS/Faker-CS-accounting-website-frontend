@@ -72,18 +72,23 @@ export function tokenExpired(exp) {
 export async function setSession(accessToken) {
   try {
     if (accessToken) {
+      // Store the token securely in sessionStorage
       sessionStorage.setItem(STORAGE_KEY, accessToken);
 
+      // Set the default Authorization header for all axios requests
       axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
+      // Decode the token to get the expiration time
       const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
 
+      // Check if the token is valid
       if (decodedToken && 'exp' in decodedToken) {
         tokenExpired(decodedToken.exp);
       } else {
         throw new Error('Invalid access token!');
       }
     } else {
+      // If no access token is provided, remove the token from sessionStorage
       sessionStorage.removeItem(STORAGE_KEY);
       delete axios.defaults.headers.common.Authorization;
     }

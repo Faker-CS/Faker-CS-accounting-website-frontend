@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
+import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -19,7 +20,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
-import { signUp } from '../../context/jwt';
+import { register } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
@@ -27,8 +28,7 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 // ----------------------------------------------------------------------
 
 export const SignUpSchema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last name is required!' }),
+  name: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
@@ -37,6 +37,7 @@ export const SignUpSchema = zod.object({
     .string()
     .min(1, { message: 'Password is required!' })
     .min(6, { message: 'Password must be at least 6 characters!' }),
+  role: zod.string().min(1, { message: 'Role is required!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -51,10 +52,10 @@ export function JwtSignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const defaultValues = {
-    firstName: 'Hello',
-    lastName: 'Friend',
-    email: 'hello@gmail.com',
-    password: '@demo1',
+    name: '',
+    email: '',
+    password: '',
+    role: 'entreprise',
   };
 
   const methods = useForm({
@@ -69,11 +70,11 @@ export function JwtSignUpView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await signUp({
+      await register({
+        name: data.name,
         email: data.email,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        role: data.role,
       });
       await checkUserSession?.();
 
@@ -87,8 +88,17 @@ export function JwtSignUpView() {
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
       <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
-        <Field.Text name="firstName" label="First name" InputLabelProps={{ shrink: true }} />
-        <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
+        <Field.Text name="name" label="Full Name" InputLabelProps={{ shrink: true }} fullWidth />
+        <Field.Select
+          name="role"
+          label="Role"
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+        >
+          <MenuItem value="comptable">Accountant</MenuItem>
+          <MenuItem value="aide-comptable">Accountant Assistant</MenuItem>
+          <MenuItem value="entreprise">Company</MenuItem>
+        </Field.Select>
       </Box>
 
       <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />

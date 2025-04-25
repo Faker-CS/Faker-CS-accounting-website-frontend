@@ -4,13 +4,22 @@ import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
+// Telling axios to send & receive cookies
+export const axiosInstance = axios.create({
+  // baseURL: CONFIG.serverUrl,   // e.g. http://127.0.0.1:8000
+  baseURL: 'http://127.0.0.1:8000',
+  withCredentials: true,
+});
 
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong!')
 );
 
+// Helper to hit Sanctum’s CSRF endpoint
+export async function getCsrfToken() {
+  return axiosInstance.get('/sanctum/csrf-cookie');
+}
 export default axiosInstance;
 
 // ----------------------------------------------------------------------
@@ -35,12 +44,10 @@ export const endpoints = {
   kanban: '/api/kanban',
   calendar: '/api/calendar',
   auth: {
-    me: '/api/auth/me',
-    signIn: '/api/auth/sign-in',
-    signUp: '/api/auth/sign-up',
-    login: '/login',
-    logout: '/logout',
-    register: '/register',
+    login:    '/api/login',
+    register: '/api/register',
+    logout:   '/api/logout',
+    me:       '/api/user',
   },
   mail: {
     list: '/api/mail/list',
@@ -59,3 +66,4 @@ export const endpoints = {
     search: '/api/product/search',
   },
 };
+
