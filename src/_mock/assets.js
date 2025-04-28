@@ -516,7 +516,7 @@ export const _taskNames = [
   `Write Technical Documentation`,
   `Test New Product Features`,
   `Manage Client Inquiries`,
-  `Train New Employees`,
+  `Train New users`,
   `Coordinate Logistics`,
   `Monitor Network Performance`,
   `Develop Training Materials`,

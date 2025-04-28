@@ -25,8 +25,10 @@ const PageThree = lazy(() => import('src/pages/dashboard/three'));
 const PageFour = lazy(() => import('src/pages/dashboard/four'));
 const PageFive = lazy(() => import('src/pages/dashboard/five'));
 const PageSix = lazy(() => import('src/pages/dashboard/six'));
-const EntreprisesList = lazy(() => import('src/pages/dashboard/employees/entreprise/list'));
-const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/employees/entreprise/new'));
+const EntreprisesList = lazy(() => import('src/pages/dashboard/users/entreprise/list'));
+const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/users/entreprise/new'));
+const AideComptableCreatePage = lazy(() => import('src/pages/dashboard/users/aide-comptable/new'));
+const AideComptableListPage = lazy(() => import('src/pages/dashboard/users/aide-comptable/list'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
@@ -57,14 +59,16 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'employees',
+        path: 'users',
         children: [
           { element: <EntreprisesList />, index: true },
           { path: 'new', element: <EntrepriseCreatePage /> },
+          { path: 'aide-comptable', element: <AideComptableListPage /> },
+          { path: 'aide-comptable/new', element: <AideComptableCreatePage /> },
         ],
       },
       { path: 'banking', element: <OverviewBankingPage /> },
-      {path: 'calendar', element: <CalendarPage />},
+      { path: 'calendar', element: <CalendarPage /> },
       { path: 'file-manager', element: <FileManagerPage /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'chat', element: <ChatPage /> },

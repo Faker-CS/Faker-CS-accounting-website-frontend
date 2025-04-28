@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { EntrepriseListView } from 'src/sections/employees/entreprise/view/entreprise-list-view';
+import { AideComptableListView } from 'src/sections/users/aide-comptable/view';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ export default function Page() {
       </Helmet>
 
       {/* <UserListView /> */}
-      <EntrepriseListView />
+      <AideComptableListView />
     </>
   );
 }

@@ -40,10 +40,10 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export const navData = [
-   /**
+  /**
    * Overview
    */
-   {
+  {
     subheader: 'Working Overview',
     items: [
       { title: 'Dashboard', path: paths.dashboard.group.root, icon: ICONS.dashboard },
@@ -59,12 +59,12 @@ export const navData = [
     subheader: 'Management',
     items: [
       {
-        title: 'Employees',
-        path: paths.dashboard.employees.root,
+        title: 'Users',
+        path: paths.dashboard.users.root,
         icon: ICONS.user,
         children: [
-          { title: 'Entreprises', path: paths.dashboard.employees.root },
-          { title: 'Effectifs', path: paths.dashboard.group.five },
+          { title: 'Entreprises', path: paths.dashboard.users.root },
+          { title: 'Aide Comptables', path: paths.dashboard.users.aideComptable },
         ],
       },
       { title: 'File manager', path: paths.dashboard.fileManager, icon: ICONS.folder },

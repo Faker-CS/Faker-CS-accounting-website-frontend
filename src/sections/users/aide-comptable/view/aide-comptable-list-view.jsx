@@ -37,11 +37,9 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { UserTableRow } from '../../user-table-row';
-import { UserTableToolbar } from '../../user-table-toolbar';
-import { UserTableFiltersResult } from '../../user-table-filters-result';
-
-
+import { UserTableRow } from '../user-table-row';
+import { UserTableToolbar } from '../user-table-toolbar';
+import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -58,13 +56,13 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export function EntrepriseListView() {
+export function AideComptableListView() {
   const table = useTable();
 
   const router = useRouter();
 
   const confirm = useBoolean();
-  
+
   const [tableData, setTableData] = useState(_userList);
 
   const filters = useSetState({ name: '', role: [], status: 'all' });
@@ -130,17 +128,17 @@ export function EntrepriseListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Employeés', href: paths.dashboard.employees.root },
-            { name: 'Entreprise' },
+            { name: 'Users', href: paths.dashboard.users.root },
+            { name: 'Aide Comptable' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.employees.newEntreprise}
+              href={paths.dashboard.users.newAideComptable}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Entreprise
+              New Aide Comptable
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}

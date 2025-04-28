@@ -145,9 +145,6 @@ export function DashboardLayout({ sx, children, header, data }) {
                   data={[
                     { value: 'en', label: 'English', countryCode: 'GB' },
                     { value: 'fr', label: 'French', countryCode: 'FR' },
-                    { value: 'vi', label: 'Vietnamese', countryCode: 'VN' },
-                    { value: 'cn', label: 'Chinese', countryCode: 'CN' },
-                    { value: 'ar', label: 'Arabic', countryCode: 'SA' },
                   ]}
                 />
                 {/* -- Notifications popover -- */}
