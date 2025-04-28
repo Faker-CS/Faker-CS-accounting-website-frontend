@@ -261,7 +261,7 @@ export function UserNewEditForm({ currentUser }) {
                 ]}
                 placeholder="Choisir Activité de l'entreprise"
               />
-              <Field.Text name="conventionCollective" label="Votre Convention collective" />
+              <Field.Text name="conventionCollective" label="Industrie" />
               <Field.Text name="chiffreAffaire" label="Chiffre d'affaire" />
             </Box>
           </Card>
@@ -314,12 +314,30 @@ export function UserNewEditForm({ currentUser }) {
           </Card>
         </Grid>
 
-        
-        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            {!currentUser ? 'Create Company' : 'Save changes'}
-          </LoadingButton>
-        </Stack>
+        <Grid xs={12} md={15}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Contact Information
+            </Typography>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <Field.Text name="email" label="Email" />
+              <Field.Text name="phoneNumber" label="Phone Number" />
+            </Box>
+            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                {!currentUser ? 'Create Company' : 'Save changes'}
+              </LoadingButton>
+            </Stack>
+          </Card>
+        </Grid>
       </Grid>
     </Form>
   );

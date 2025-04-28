@@ -48,15 +48,20 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
         <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-          <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
+          <InputLabel
+            htmlFor="user-filter-role-select-label"
+            sx={{ fontSize: '0.875rem', fontWeight: 500 }}
+          >
+            Industry
+          </InputLabel>
           <Select
             multiple
             value={filters.state.role}
             onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
+            input={<OutlinedInput label="Industry" />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             inputProps={{ id: 'user-filter-role-select-label' }}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
+            MenuProps={{ PaperProps: { sx: { maxHeight: 240, fontSize: '0.875rem' } } }}
           >
             {options.roles.map((option) => (
               <MenuItem key={option} value={option}>

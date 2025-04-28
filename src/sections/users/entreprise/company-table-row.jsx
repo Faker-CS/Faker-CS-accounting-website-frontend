@@ -18,7 +18,7 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import { UserQuickEditForm } from './user-quick-edit-form';
+import { UserQuickEditForm } from './company-quick-edit-form';
 
 // ----------------------------------------------------------------------
 

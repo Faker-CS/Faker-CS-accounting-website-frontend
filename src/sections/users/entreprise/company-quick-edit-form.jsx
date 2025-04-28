@@ -128,7 +128,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
 
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-            <Field.Text name="name" label="Full name" />
+            <Field.Text name="name" label="Raison Sociale" />
             <Field.Text name="email" label="Email address" />
             <Field.Phone name="phoneNumber" label="Phone number" />
 
@@ -143,8 +143,8 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             <Field.Text name="city" label="City" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="zipCode" label="Zip/code" />
-            <Field.Text name="company" label="Company" />
-            <Field.Text name="role" label="Role" />
+            <Field.Text name="company" label="Company Name" />
+            <Field.Text name="role" label="Industry" />
           </Box>
         </DialogContent>
 
