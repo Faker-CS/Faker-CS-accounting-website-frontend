@@ -6,8 +6,7 @@ import { CONFIG } from 'src/config-global';
 
 // Telling axios to send & receive cookies
 export const axiosInstance = axios.create({
-  // baseURL: CONFIG.serverUrl,   // e.g. http://127.0.0.1:8000
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: CONFIG.serverUrl,
   withCredentials: true,
 });
 
@@ -44,26 +43,30 @@ export const endpoints = {
   kanban: '/api/kanban',
   calendar: '/api/calendar',
   auth: {
-    login:    '/api/login',
+    login: '/api/login',
     register: '/api/register',
-    logout:   '/api/logout',
-    me:       '/api/user',
+    logout: '/api/logout',
+    me: '/api/user',
   },
-  mail: {
-    list: '/api/mail/list',
-    details: '/api/mail/details',
-    labels: '/api/mail/labels',
-  },
-  post: {
-    list: '/api/post/list',
-    details: '/api/post/details',
-    latest: '/api/post/latest',
-    search: '/api/post/search',
-  },
-  product: {
-    list: '/api/product/list',
-    details: '/api/product/details',
-    search: '/api/product/search',
+  // company management endpoints
+  company: {
+    list: '/api/companies',
+    create: '/api/companies',
+    details: (id) => `/api/companies/${id}`, // Use with ID parameter
+    update: (id) => `/api/companies/${id}`, // Use with ID parameter
+    delete: (id) => `/api/companies/${id}`, // Use with ID parameter
+    industries: {
+      attach: (id) => `/api/companies/${id}/industries`, // POST with industry IDs
+      detach: (id, industryId) => `/api/companies/${id}/industries/${industryId}`, // DELETE
+    },
+    activities: {
+      attach: (id) => `/api/companies/${id}/activities`, // POST with activity IDs
+      detach: (id, activityId) => `/api/companies/${id}/activities/${activityId}`, // DELETE
+    },
+    search: (query) => `/api/companies?search=${query}`, // Search by name/raison sociale
+    filter: {
+      status: (status) => `/api/companies?status=${status}`, // Filter by status
+      industry: (id) => `/api/companies?industry=${id}`, // Filter by industry ID
+    },
   },
 };
-
