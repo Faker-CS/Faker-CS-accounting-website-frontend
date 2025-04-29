@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -17,6 +17,7 @@ import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetEntreprises, useDeleteEntreprise } from 'src/actions/entreprise';
 import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
@@ -40,6 +41,7 @@ import {
 import { UserTableRow } from '../company-table-row';
 import { UserTableToolbar } from '../company-table-toolbar';
 import { UserTableFiltersResult } from '../company-table-filters-result';
+// import en from 'dayjs/locale/en';
 
 // ----------------------------------------------------------------------
 
@@ -47,9 +49,9 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Raison Sociale' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company Name', width: 220 },
+  { id: 'phone_number', label: 'Phone number', width: 180 },
   { id: 'role', label: 'Industry', width: 180 },
+  { id: 'ville', label: 'City', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -59,11 +61,22 @@ const TABLE_HEAD = [
 export function EntrepriseListView() {
   const table = useTable();
 
+  const {entreprisesData} = useGetEntreprises();
+
+  console.log('entreprise :',entreprisesData)
+
   const router = useRouter();
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_userList);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    if (entreprisesData?.data) {
+        setTableData(entreprisesData.data); 
+        // console.log(entreprisesData.data);
+    }
+}, [entreprisesData]);
 
   const filters = useSetState({ name: '', role: [], status: 'all' });
 
@@ -80,18 +93,19 @@ export function EntrepriseListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      toast.success('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
+  const {deleteEntreprise} = useDeleteEntreprise();
+  const handleDeleteRow = async (id) => {
+    toast.promise(
+      async () => {
+        await deleteEntreprise(id);
+      },
+      {
+        loading: 'Suppression en cours...',
+        success: 'Utilisateur supprimé avec succès',
+        error: 'Échec de la suppression',
+      }
+    );
+  };
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
@@ -298,7 +312,7 @@ export function EntrepriseListView() {
 }
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { name, status, role, phoneNumber } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -312,7 +326,13 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.raison_sociale.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    );
+  }
+
+  if (phoneNumber) {
+    inputData = inputData.filter(
+      (user) => user.phone_number.toLowerCase().indexOf(phoneNumber.toLowerCase()) !== -1
     );
   }
 
@@ -321,7 +341,7 @@ function applyFilter({ inputData, comparator, filters }) {
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((user) => role.includes(user.description));
   }
 
   return inputData;

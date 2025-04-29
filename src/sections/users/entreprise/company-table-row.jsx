@@ -42,7 +42,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
-                {row.name}
+                {row.raison_sociale}
               </Link>
               <Box component="span" sx={{ color: 'text.disabled' }}>
                 {row.email}

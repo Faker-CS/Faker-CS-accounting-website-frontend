@@ -23,6 +23,7 @@ import { fData } from 'src/utils/format-number';
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { MenuItem } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -235,12 +236,28 @@ export function UserNewEditForm({ currentUser }) {
               <Field.Select
                 name="formeJuridique"
                 label="Forme juridique"
-                options={[
-                  { label: 'APE', value: 'APE' },
-                  { label: 'NEF', value: 'NEF' },
-                ]}
                 placeholder="Choisir Forme Juridique"
-              />
+              >
+                {[
+                  { label: 'Société à responsabilité limitée', value: 'SARL' },
+                  { label: 'Société par actions simplifiée', value: 'SAS' },
+                  { label: 'Société anonyme', value: 'SA' },
+                  { label: 'Société en nom collectif', value: 'SNC' },
+                  { label: 'Société en commandite simple', value: 'SCS' },
+                  { label: 'Entreprise individuelle', value: 'EI' },
+                  { label: 'Société civile', value: 'SC' },
+                  { label: 'Société coopérative', value: 'SCOP' },
+                  { label: 'Association', value: 'ASSO' },
+                  { label: 'Groupement d’intérêt économique', value: 'GIE' },
+                  { label: 'Société européenne', value: 'SE' },
+                  { label: 'Société à responsabilité limitée à associé unique', value: 'EURL' },
+                  { label: 'Société par actions simplifiée unipersonnelle', value: 'SASU' },
+                ].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Field.Select>
               <Field.Text name="raisonSociale" label="Raison sociale" />
               <Field.Text name="date" label="Date" />
               <Field.Text name="matriculeFiscale" label="Matricule Fiscale" />
@@ -252,16 +269,38 @@ export function UserNewEditForm({ currentUser }) {
               <Field.Select
                 name="activiteEntreprise"
                 label="Activité de l'entreprise / Code APE/NAF"
-                options={[
-                  { label: 'Commerce', value: 'commerce' },
-                  { label: 'Industrie', value: 'industrie' },
-                  { label: 'Agriculture', value: 'agriculture' },
-                  { label: 'Services', value: 'services' },
-                  { label: 'Construction', value: 'construction' },
-                ]}
                 placeholder="Choisir Activité de l'entreprise"
-              />
-              <Field.Text name="conventionCollective" label="Industrie" />
+              >
+                {[
+                  { label: 'APE', value: 'APE' },
+                  { label: 'NEF', value: 'NEF' },
+                ].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Field.Select>
+              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie" >
+                {[
+                  { label: 'Services', value: 'Services' },
+                  { label: 'Commerce', value: 'Commerce' },
+                  { label: 'Artisanat', value: 'Artisanat' },
+                  { label: 'Agriculture', value: 'Agriculture' },
+                  { label: 'BTP', value: 'BTP' },
+                  { label: 'Transports', value: 'Transports' },
+                  { label: 'Hôtellerie', value: 'Hôtellerie' },
+                  { label: 'Restauration', value: 'Restauration' },
+                  { label: 'Santé', value: 'Santé' },
+                  { label: 'Éducation', value: 'Éducation' },
+                  { label: 'Culture', value: 'Culture' },
+                  { label: 'Loisirs', value: 'Loisirs' },
+                  { label: 'Autres', value: 'Autres' },
+                ].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Field.Select>
               <Field.Text name="chiffreAffaire" label="Chiffre d'affaire" />
             </Box>
           </Card>
