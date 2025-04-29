@@ -51,18 +51,18 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           </Stack>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phone_number}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.company}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.industry}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.ville}</TableCell>
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (row.status === 'active' && 'success') ||
-              (row.status === 'pending' && 'warning') ||
+              (row.status === 'Active' && 'success') ||
+              (row.status === 'Pending' && 'warning') ||
               (row.status === 'banned' && 'error') ||
               'default'
             }

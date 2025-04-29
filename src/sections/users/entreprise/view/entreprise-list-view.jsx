@@ -72,8 +72,8 @@ export function EntrepriseListView() {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    if (entreprisesData?.data) {
-        setTableData(entreprisesData.data); 
+    if (entreprisesData) {
+        setTableData(entreprisesData); 
         // console.log(entreprisesData.data);
     }
 }, [entreprisesData]);
@@ -180,13 +180,13 @@ export function EntrepriseListView() {
                       'soft'
                     }
                     color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
+                      (tab.value === 'Active' && 'success') ||
+                      (tab.value === 'Pending' && 'warning') ||
                       (tab.value === 'banned' && 'error') ||
                       'default'
                     }
                   >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
+                    {['Active', 'Pending', 'banned', 'rejected'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>
@@ -330,18 +330,12 @@ function applyFilter({ inputData, comparator, filters }) {
     );
   }
 
-  if (phoneNumber) {
-    inputData = inputData.filter(
-      (user) => user.phone_number.toLowerCase().indexOf(phoneNumber.toLowerCase()) !== -1
-    );
-  }
-
   if (status !== 'all') {
     inputData = inputData.filter((user) => user.status === status);
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.description));
+    inputData = inputData.filter((user) => role.includes(user.industry));
   }
 
   return inputData;
