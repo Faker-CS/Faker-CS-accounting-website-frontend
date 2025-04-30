@@ -16,9 +16,9 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetEntreprises, useDeleteEntreprise } from 'src/actions/entreprise';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -63,7 +63,7 @@ export function EntrepriseListView() {
 
   const {entreprisesData} = useGetEntreprises();
 
-  console.log('entreprise :',entreprisesData)
+  // console.log('entreprise :',entreprisesData)
 
   const router = useRouter();
 
@@ -122,7 +122,7 @@ export function EntrepriseListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.users.editEntreprise(id));
     },
     [router]
   );
@@ -142,8 +142,8 @@ export function EntrepriseListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Employeés', href: paths.dashboard.users.root },
-            { name: 'Entreprise' },
+            { name: 'Users', href: paths.dashboard.users.root },
+            { name: 'Entreprises' },
           ]}
           action={
             <Button
@@ -182,11 +182,11 @@ export function EntrepriseListView() {
                     color={
                       (tab.value === 'Active' && 'success') ||
                       (tab.value === 'Pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
+                      (tab.value === 'Inactive' && 'error') ||
                       'default'
                     }
                   >
-                    {['Active', 'Pending', 'banned', 'rejected'].includes(tab.value)
+                    {['Active', 'Pending', 'Inactive', 'Rejected'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -17,6 +17,7 @@ import { useSetState } from 'src/hooks/use-set-state';
 
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetAideComptables } from 'src/actions/aideComptable';
 import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
@@ -48,8 +49,9 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
   { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
+  { id: 'city', label: 'City', width: 220 },
+  { id: 'state', label: 'State', width: 180 },
+  { id: 'zipcode', label: 'Zip/Code', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -58,12 +60,20 @@ const TABLE_HEAD = [
 
 export function AideComptableListView() {
   const table = useTable();
+  const {aideComptablesData} = useGetAideComptables();
+  console.log('aideComptable :',(aideComptablesData));
 
   const router = useRouter();
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_userList);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    if (aideComptablesData) {
+      setTableData(aideComptablesData);
+    }
+  }, [aideComptablesData]);
 
   const filters = useSetState({ name: '', role: [], status: 'all' });
 
@@ -129,7 +139,7 @@ export function AideComptableListView() {
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Users', href: paths.dashboard.users.root },
-            { name: 'Aide Comptable' },
+            { name: 'Accounter Helpers' },
           ]}
           action={
             <Button

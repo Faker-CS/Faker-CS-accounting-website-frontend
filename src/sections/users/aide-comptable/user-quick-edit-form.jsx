@@ -52,13 +52,10 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
       email: currentUser?.email || '',
       phoneNumber: currentUser?.phoneNumber || '',
       address: currentUser?.address || '',
-      country: currentUser?.country || '',
       state: currentUser?.state || '',
       city: currentUser?.city || '',
       zipCode: currentUser?.zipCode || '',
       status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
     }),
     [currentUser]
   );
@@ -131,20 +128,10 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             <Field.Text name="name" label="Full name" />
             <Field.Text name="email" label="Email address" />
             <Field.Phone name="phoneNumber" label="Phone number" />
-
-            <Field.CountrySelect
-              fullWidth
-              name="country"
-              label="Country"
-              placeholder="Choose a country"
-            />
-
             <Field.Text name="state" label="State/region" />
             <Field.Text name="city" label="City" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="zipCode" label="Zip/code" />
-            <Field.Text name="company" label="Company" />
-            <Field.Text name="role" label="Role" />
           </Box>
         </DialogContent>
 

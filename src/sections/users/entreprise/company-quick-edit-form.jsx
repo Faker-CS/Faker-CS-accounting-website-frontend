@@ -24,21 +24,21 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export const UserQuickEditSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
+  raison_sociale: zod.string().min(1, { message: 'Name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  phone_number: schemaHelper.phoneNumber({ isValidPhoneNumber }),
   country: schemaHelper.objectOrNull({
     message: { required_error: 'Country is required!' },
   }),
   state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
+  ville: zod.string().min(1, { message: 'City is required!' }),
+  adresse_siege_social: zod.string().min(1, { message: 'Address is required!' }),
+  code_postale: zod.string().min(1, { message: 'Zip code is required!' }),
+  company_name: zod.string().min(1, { message: 'Company is required!' }),
+  industry: zod.string().min(1, { message: 'Industry is required!' }),
   // Not required
   status: zod.string(),
 });
@@ -48,17 +48,17 @@ export const UserQuickEditSchema = zod.object({
 export function UserQuickEditForm({ currentUser, open, onClose }) {
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
+      name: currentUser?.raison_sociale || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
+      phone_number: currentUser?.phone_number || '',
+      address: currentUser?.adresse_siege_social || '',
       country: currentUser?.country || '',
       state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
+      ville: currentUser?.ville || '',
+      zipCode: currentUser?.code_postale || '',
       status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      company: currentUser?.company_name || '',
+      role: currentUser?.industry || '',
     }),
     [currentUser]
   );
@@ -130,17 +130,10 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
 
             <Field.Text name="name" label="Raison Sociale" />
             <Field.Text name="email" label="Email address" />
-            <Field.Phone name="phoneNumber" label="Phone number" />
+            <Field.Phone name="phone_number" label="Phone number" />
 
-            <Field.CountrySelect
-              fullWidth
-              name="country"
-              label="Country"
-              placeholder="Choose a country"
-            />
-
-            <Field.Text name="state" label="State/region" />
-            <Field.Text name="city" label="City" />
+           
+            <Field.Text name="ville" label="City" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="zipCode" label="Zip/code" />
             <Field.Text name="company" label="Company Name" />

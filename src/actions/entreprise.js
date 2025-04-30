@@ -33,15 +33,16 @@ export function useGetEntreprises() {
 export function useDeleteEntreprise() {
     const deleteEntreprise = async (id) => {
         // const url = endpoints.company.delete(id);
+        // console.log('url', url);
         try {
-          const url = `https://127.0.0.1/api/companies/${id}`; // adjust endpoint if needed
-    
+          const url = `http://127.0.0.1:8000/api/companies/${id}`; // adjust endpoint if needed
+          
           const res = await axios.delete(url, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
             },
           });
-    
+          
           // Refresh users list after deletion
           mutate(endpoints.company.list);
     

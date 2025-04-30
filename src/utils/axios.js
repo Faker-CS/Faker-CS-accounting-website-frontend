@@ -7,6 +7,10 @@ import { CONFIG } from 'src/config-global';
 // Telling axios to send & receive cookies
 export const axiosInstance = axios.create({
   baseURL: CONFIG.serverUrl,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
   withCredentials: true,
 });
 
@@ -48,6 +52,13 @@ export const endpoints = {
     logout: '/api/logout',
     me: '/api/user',
   },
+  aideComptable: {
+    list: '/api/aideComptables',
+    create: '/api/aideComptables',
+    details: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
+    update: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
+    delete: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
+    },
   // company management endpoints
   company: {
     list: '/api/companies',
@@ -59,6 +70,7 @@ export const endpoints = {
       attach: (id) => `/api/companies/${id}/industries`, // POST with industry IDs
       detach: (id, industryId) => `/api/companies/${id}/industries/${industryId}`, // DELETE
     },
+    
     activities: {
       attach: (id) => `/api/companies/${id}/activities`, // POST with activity IDs
       detach: (id, activityId) => `/api/companies/${id}/activities/${activityId}`, // DELETE

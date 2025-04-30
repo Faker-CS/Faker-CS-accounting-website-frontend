@@ -2,7 +2,6 @@ import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
@@ -36,26 +35,10 @@ export const NewUserSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  country: schemaHelper.objectOrNull({
-    message: { required_error: 'Country is required!' },
-  }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
   state: zod.string().min(1, { message: 'State is required!' }),
   city: zod.string().min(1, { message: 'City is required!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
   zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  trancheA: zod.string().min(1, { message: 'Masse salariale Tranche A is required!' }),
-  trancheB: zod.string().min(1, { message: 'Masse salariale Tranche B is required!' }),
-  nombreSalaries: zod.string().min(1, { message: 'Nombre de salariés is required!' }),
-  moyenneAge: zod.string().min(1, { message: "Moyenne d'âge is required!" }),
-  nombreSalariesCadres: zod.string().min(1, { message: 'Nombre de salariés cadres is required!' }),
-  moyenneAgeCadres: zod
-    .string()
-    .min(1, { message: "Moyenne d'âge des salariés cadres is required!" }),
-  nombreSalariesNonCadres: zod
-    .string()
-    .min(1, { message: 'Nombre de salariés non cadres is required!' }),
   // Not required
   status: zod.string(),
   isVerified: zod.boolean(),
@@ -74,15 +57,10 @@ export function UserNewEditForm({ currentUser }) {
       name: currentUser?.name || '',
       email: currentUser?.email || '',
       phoneNumber: currentUser?.phoneNumber || '',
-      country: currentUser?.country || '',
       state: currentUser?.state || '',
       city: currentUser?.city || '',
       address: currentUser?.address || '',
       zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
-      trancheA: currentUser?.trancheA || '',
-      trancheB: currentUser?.trancheB || '',
     }),
     [currentUser]
   );
@@ -119,7 +97,7 @@ export function UserNewEditForm({ currentUser }) {
     <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
-          <Card sx={{ pt: 12, pb: 5, px: 3 }}>
+          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
                 color={
@@ -220,9 +198,6 @@ export function UserNewEditForm({ currentUser }) {
 
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Information générale
-            </Typography>
             <Box
               rowGap={3}
               columnGap={2}
@@ -232,94 +207,22 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Select
-                name="formeJuridique"
-                label="Forme juridique"
-                options={[
-                  { label: 'APE', value: 'APE' },
-                  { label: 'NEF', value: 'NEF' },
-                ]}
-                placeholder="Choisir Forme Juridique"
-              />
-              <Field.Text name="raisonSociale" label="Raison sociale" />
-              <Field.Text name="date" label="Date" />
-              <Field.Text name="matriculeFiscale" label="Matricule Fiscale" />
-              <Field.Text name="siren" label="SIREN" />
-              <Field.Text name="refCnss" label="Réf CNSS" />
-              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" />
-              <Field.Text name="codePostale" label="Code postale" />
-              <Field.Text name="ville" label="Ville" />
-              <Field.Select
-                name="activiteEntreprise"
-                label="Activité de l'entreprise / Code APE/NAF"
-                options={[
-                  { label: 'Commerce', value: 'commerce' },
-                  { label: 'Industrie', value: 'industrie' },
-                  { label: 'Agriculture', value: 'agriculture' },
-                  { label: 'Services', value: 'services' },
-                  { label: 'Construction', value: 'construction' },
-                ]}
-                placeholder="Choisir Activité de l'entreprise"
-              />
-              <Field.Text name="conventionCollective" label="Votre Convention collective" />
-              <Field.Text name="chiffreAffaire" label="Chiffre d'affaire" />
+              <Field.Text name="name" label="Full name" />
+              <Field.Text name="email" label="Email address" />
+              <Field.Phone name="phoneNumber" label="Phone number" />
+              <Field.Text name="city" label="City" />
+              <Field.Text name="state" label="State/region" />
+              <Field.Text name="address" label="Address" />
+              <Field.Text name="zipCode" label="Zip/code" />
             </Box>
+
+            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                {!currentUser ? 'Create Accounter Helper' : 'Save changes'}
+              </LoadingButton>
+            </Stack>
           </Card>
         </Grid>
-
-        <Grid xs={12} md={15}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Masse salariale annuelle
-            </Typography>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              <Field.Text name="trancheA" label="Masse salariale Tranche A" />
-              <Field.Text name="trancheB" label="Masse salariale Tranche B" />
-            </Box>
-          </Card>
-        </Grid>
-
-        <Grid xs={12} md={15}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Taille de votre entreprise
-            </Typography>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              <Field.Text name="nombreSalaries" label="Nombre de salariés" />
-              <Field.Text name="moyenneAge" label="Moyenne d'âge" />
-              <Field.Text name="nombreSalariesCadres" label="Nombre de salariés cadres" />
-              <Field.Text name="moyenneAgeCadres" label="Moyenne d'âge des salariés cadres" />
-              <Field.Text name="nombreSalariesNonCadres" label="Nombre de salariés non cadres" />
-              <Field.Text
-                name="moyenneAgeNonCadres"
-                label="Moyenne d'âge des salariés non cadres"
-              />
-            </Box>
-          </Card>
-        </Grid>
-
-        
-        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            {!currentUser ? 'Create Company' : 'Save changes'}
-          </LoadingButton>
-        </Stack>
       </Grid>
     </Form>
   );
