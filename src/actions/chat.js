@@ -5,6 +5,8 @@ import useSWR, { mutate } from 'swr';
 import { keyBy } from 'src/utils/helper';
 import axios, { fetcher, endpoints } from 'src/utils/axios';
 
+import { STORAGE_KEY } from 'src/auth/context/jwt';
+
 // ----------------------------------------------------------------------
 
 const enableServer = false;
@@ -19,8 +21,8 @@ const swrOptions = {
 
 // ----------------------------------------------------------------------
 
-export function useGetContacts() {
-  const url = [CHART_ENDPOINT, { params: { endpoint: 'contacts' } }];
+export function useGetContacts(id) {
+  const url = CHART_ENDPOINT.contacts(id);
 
   const { data, isLoading, error, isValidating } = useSWR(url, fetcher, swrOptions);
 
@@ -40,8 +42,8 @@ export function useGetContacts() {
 
 // ----------------------------------------------------------------------
 
-export function useGetConversations() {
-  const url = [CHART_ENDPOINT, { params: { endpoint: 'conversations' } }];
+export function useGetConversations(id) {
+  const url = CHART_ENDPOINT.conversation(id);
 
   const { data, isLoading, error, isValidating } = useSWR(url, fetcher, swrOptions);
 
@@ -86,7 +88,7 @@ export function useGetConversation(conversationId) {
 // ----------------------------------------------------------------------
 
 export async function sendMessage(conversationId, messageData) {
-  const conversationsUrl = [CHART_ENDPOINT, { params: { endpoint: 'conversations' } }];
+  const conversationsUrl = CHART_ENDPOINT.messages(conversationId);
 
   const conversationUrl = [
     CHART_ENDPOINT,
@@ -139,13 +141,18 @@ export async function sendMessage(conversationId, messageData) {
 // ----------------------------------------------------------------------
 
 export async function createConversation(conversationData) {
-  const url = [CHART_ENDPOINT, { params: { endpoint: 'conversations' } }];
+  const url = CHART_ENDPOINT.createConversation;
+  const JWT_TOKEN = localStorage.getItem('jwt_access_token') || null;
 
   /**
    * Work on server
    */
   const data = { conversationData };
-  const res = await axios.post(CHART_ENDPOINT, data);
+  const res = await axios.post(url, data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+          },
+        });
 
   /**
    * Work in local
@@ -153,7 +160,7 @@ export async function createConversation(conversationData) {
   mutate(
     url,
     (currentData) => {
-      const currentConversations = currentData.conversations;
+      const currentConversations = currentData.conversations.id;
 
       const conversations = [...currentConversations, conversationData];
 

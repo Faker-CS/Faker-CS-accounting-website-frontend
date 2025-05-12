@@ -12,6 +12,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
@@ -100,9 +101,9 @@ export function EntrepriseListView() {
         await deleteEntreprise(id);
       },
       {
-        loading: 'Suppression en cours...',
-        success: 'Utilisateur supprimé avec succès',
-        error: 'Échec de la suppression',
+        loading: 'Deleting...',
+        success: 'Entreprise Deleted successfully!',
+        error: 'Delete failed!',
       }
     );
   };
@@ -134,6 +135,8 @@ export function EntrepriseListView() {
     },
     [filters, table]
   );
+  const { userData } = useAuth();
+  const isAideComptable = userData?.roles?.includes('aide-comptable');
 
   return (
     <>
@@ -146,14 +149,14 @@ export function EntrepriseListView() {
             { name: 'Entreprises' },
           ]}
           action={
-            <Button
+            !isAideComptable && (<Button
               component={RouterLink}
               href={paths.dashboard.users.newEntreprise}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
               New Entreprise
-            </Button>
+            </Button>)
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

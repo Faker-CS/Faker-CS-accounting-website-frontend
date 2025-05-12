@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
 
   const checkUserSession = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const accessToken = localStorage.getItem(STORAGE_KEY);
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
 
         const { user } = res.data;
 
-        setState({ user: { ...user, accessToken }, loading: false });
+        setState({ user: { ...user }, loading: false });
       } else {
         setState({ user: null, loading: false });
       }

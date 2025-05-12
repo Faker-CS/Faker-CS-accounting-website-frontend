@@ -39,8 +39,6 @@ export const NewUserSchema = zod.object({
   state: zod.string().min(1, { message: 'State is required!' }),
   city: zod.string().min(1, { message: 'City is required!' }),
   zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  // Not required
-  status: zod.string(),
   isVerified: zod.boolean(),
 });
 
@@ -51,7 +49,6 @@ export function UserNewEditForm({ currentUser }) {
 
   const defaultValues = useMemo(
     () => ({
-      status: currentUser?.status || '',
       avatarUrl: currentUser?.avatarUrl || null,
       isVerified: currentUser?.isVerified || true,
       name: currentUser?.name || '',
@@ -86,7 +83,7 @@ export function UserNewEditForm({ currentUser }) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       toast.success(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      router.push(paths.dashboard.users.aideComptable); 
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -98,18 +95,7 @@ export function UserNewEditForm({ currentUser }) {
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
+            
 
             <Box sx={{ mb: 5 }}>
               <Field.UploadAvatar
@@ -136,21 +122,8 @@ export function UserNewEditForm({ currentUser }) {
             {currentUser && (
               <FormControlLabel
                 labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
+                
+                
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>

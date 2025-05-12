@@ -12,7 +12,7 @@ export function EntrepriseEditView({currentUser}) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit user"
+        heading="Edit Entreprise"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Entreprise', href: paths.dashboard.users.newEntreprise },

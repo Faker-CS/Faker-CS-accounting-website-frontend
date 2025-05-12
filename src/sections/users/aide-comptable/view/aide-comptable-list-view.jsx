@@ -1,7 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -12,19 +10,18 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetAideComptables } from 'src/actions/aideComptable';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { useGetAideComptables, useDeleteAideComptable } from 'src/actions/aideComptable';
 
-import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
   useTable,
@@ -38,13 +35,13 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { RoleBasedGuard } from 'src/auth/guard';
+
 import { UserTableRow } from '../user-table-row';
 import { UserTableToolbar } from '../user-table-toolbar';
 import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
@@ -52,7 +49,6 @@ const TABLE_HEAD = [
   { id: 'city', label: 'City', width: 220 },
   { id: 'state', label: 'State', width: 180 },
   { id: 'zipcode', label: 'Zip/Code', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -60,8 +56,8 @@ const TABLE_HEAD = [
 
 export function AideComptableListView() {
   const table = useTable();
-  const {aideComptablesData} = useGetAideComptables();
-  console.log('aideComptable :',(aideComptablesData));
+  const { aideComptablesData } = useGetAideComptables();
+  const { userData, loading} = useAuth();
 
   const router = useRouter();
 
@@ -75,7 +71,7 @@ export function AideComptableListView() {
     }
   }, [aideComptablesData]);
 
-  const filters = useSetState({ name: '', role: [], status: 'all' });
+  const filters = useSetState({ name: '', role: [] });
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -85,23 +81,23 @@ export function AideComptableListView() {
 
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
-  const canReset =
-    !!filters.state.name || filters.state.role.length > 0 || filters.state.status !== 'all';
+  const canReset = !!filters.state.name || filters.state.role.length > 0;
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      toast.success('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
+  const { deleteAideComptable } = useDeleteAideComptable();
+  const handleDeleteRow = async (id) => {
+    toast.promise(
+      async () => {
+        await deleteAideComptable(id);
+      },
+      {
+        loading: 'Deleting...',
+        success: 'Entreprise Deleted successfully!',
+        error: 'Delete failed!',
+      }
+    );
+  };
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
@@ -123,16 +119,13 @@ export function AideComptableListView() {
     [router]
   );
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      table.onResetPage();
-      filters.setState({ status: newValue });
-    },
-    [filters, table]
-  );
 
+ if (loading) {
+    return <LoadingScreen />; // or a loading spinner
+  }
   return (
     <>
+    <RoleBasedGuard currentRole={userData?.roles} acceptRoles={["comptable"]}  sx={{ py: 10 }}>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
@@ -142,58 +135,23 @@ export function AideComptableListView() {
             { name: 'Accounter Helpers' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.users.newAideComptable}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Aide Comptable
-            </Button>
+            
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.users.newAideComptable}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New Aide Comptable
+              </Button>
+            
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
-          <Tabs
-            value={filters.state.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) =>
-                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
-                      'soft'
-                    }
-                    color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
           <UserTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
-            options={{ roles: _roles }}
           />
 
           {canReset && (
@@ -280,7 +238,7 @@ export function AideComptableListView() {
           />
         </Card>
       </DashboardContent>
-
+      </RoleBasedGuard>
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
@@ -308,7 +266,7 @@ export function AideComptableListView() {
 }
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { name, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -324,10 +282,6 @@ function applyFilter({ inputData, comparator, filters }) {
     inputData = inputData.filter(
       (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
   }
 
   if (role.length) {

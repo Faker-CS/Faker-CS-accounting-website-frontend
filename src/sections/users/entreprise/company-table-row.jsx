@@ -11,6 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Label } from 'src/components/label';
@@ -28,6 +29,9 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
   const popover = usePopover();
 
   const quickEdit = useBoolean();
+
+  const { userData } = useAuth();
+  const isAideComptable = userData?.roles?.includes('aide-comptable');
 
   return (
     <>
@@ -71,7 +75,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           </Label>
         </TableCell>
 
-        <TableCell>
+        {!isAideComptable&&(<TableCell>
           <Stack direction="row" alignItems="center">
             <Tooltip title="Quick Edit" placement="top" arrow>
               <IconButton
@@ -86,7 +90,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
           </Stack>
-        </TableCell>
+        </TableCell>)}
       </TableRow>
 
       <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />

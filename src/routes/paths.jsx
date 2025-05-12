@@ -1,5 +1,6 @@
 import { _id } from 'src/_mock/assets';
 
+
 // ----------------------------------------------------------------------
 
 const MOCK_ID = _id[1];
@@ -43,6 +44,8 @@ export const paths = {
       updatePassword: `${ROOTS.AUTH}/supabase/update-password`,
       resetPassword: `${ROOTS.AUTH}/supabase/reset-password`,
     },
+    newPassword: `${ROOTS.AUTH}/new-password`,
+    profile: `${ROOTS.AUTH}/profile`,
   },
   // DASHBOARD
   dashboard: {
@@ -54,13 +57,10 @@ export const paths = {
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
-    companyMenu: {
-      root: `${ROOTS.DASHBOARD}/menu`,
-    },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,
       newEntreprise: `${ROOTS.DASHBOARD}/users/new`,
-      editEntreprise: (id)=>`${ROOTS.DASHBOARD}/users/${id}/edit`,
+      editEntreprise: (id) => `${ROOTS.DASHBOARD}/users/${id}/edit`,
       effectifs: `${ROOTS.DASHBOARD}/users/effectifs`,
       createEntreprise: `${ROOTS.DASHBOARD}/users/create`,
       aideComptable: `${ROOTS.DASHBOARD}/users/aide-comptable`,

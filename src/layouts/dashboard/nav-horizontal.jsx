@@ -7,7 +7,7 @@ import { NavSectionHorizontal } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
-export function NavHorizontal({ data, layoutQuery, sx, ...other }) {
+export function NavHorizontal({ data, layoutQuery, sx, slotProps, ...other }) {
   return (
     <Box
       sx={{
@@ -33,7 +33,7 @@ export function NavHorizontal({ data, layoutQuery, sx, ...other }) {
           WebkitBackdropFilter: `blur(var(--layout-header-blur))`,
         }}
       >
-        <NavSectionHorizontal data={data} {...other} />
+        <NavSectionHorizontal slotProps={slotProps} data={data} {...other} />
       </Box>
     </Box>
   );

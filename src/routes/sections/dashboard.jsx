@@ -16,6 +16,8 @@ const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
+// Profile
+// const ProfilePage = lazy(() => import('src/pages/auth/ProfilePage'));
 
 // ----------------------------------------------------------------------
 

@@ -6,7 +6,7 @@ import { AideComptableListView } from 'src/sections/users/aide-comptable/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Companies list | Dashboard - ${CONFIG.appName}` };
+const metadata = { title: `Accounter Helpers list | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

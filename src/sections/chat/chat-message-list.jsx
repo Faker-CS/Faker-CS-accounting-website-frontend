@@ -13,8 +13,8 @@ export function ChatMessageList({ messages = [], participants, loading }) {
   const { messagesEndRef } = useMessagesScroll(messages);
 
   const slides = messages
-    .filter((message) => message.contentType === 'image')
-    .map((message) => ({ src: message.body }));
+    .filter((message) => messages.contentType === 'image')
+    .map((message) => ({ src: messages.body }));
 
   const lightbox = useLightBox(slides);
 

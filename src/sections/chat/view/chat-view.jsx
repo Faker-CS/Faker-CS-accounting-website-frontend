@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import { paths } from 'src/routes/paths';
 import { useRouter, useSearchParams } from 'src/routes/hooks';
 
+import { useAuth } from 'src/hooks/useAuth';
+
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetContacts, useGetConversation, useGetConversations } from 'src/actions/chat';
@@ -28,8 +30,10 @@ export function ChatView() {
   const router = useRouter();
 
   const { user } = useMockedUser();
+  
+  const { userData} = useAuth();
 
-  const { contacts } = useGetContacts();
+  const { contacts } = useGetContacts(userData?.id);
 
   const searchParams = useSearchParams();
 
@@ -37,7 +41,7 @@ export function ChatView() {
 
   const [recipients, setRecipients] = useState([]);
 
-  const { conversations, conversationsLoading } = useGetConversations();
+  const { conversations, conversationsLoading } = useGetConversations(userData?.id);
 
   const { conversation, conversationError, conversationLoading } = useGetConversation(
     `${selectedConversationId}`
@@ -102,7 +106,7 @@ export function ChatView() {
             <>
               {selectedConversationId ? (
                 <ChatMessageList
-                  messages={conversation?.messages ?? []}
+                  messages={conversations?.messages ?? []}
                   participants={participants}
                   loading={conversationLoading}
                 />

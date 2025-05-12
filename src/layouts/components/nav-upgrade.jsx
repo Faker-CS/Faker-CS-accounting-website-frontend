@@ -6,6 +6,8 @@ import { alpha as hexAlpha } from '@mui/material/styles';
 
 // import { paths } from 'src/routes/paths';
 
+import { useAuth } from 'src/hooks/useAuth';
+
 import { bgGradient } from 'src/theme/styles';
 
 import { useMockedUser } from 'src/auth/hooks';
@@ -14,6 +16,8 @@ import { useMockedUser } from 'src/auth/hooks';
 
 export function NavUpgrade({ sx, ...other }) {
   const { user } = useMockedUser();
+
+  const { userData } = useAuth();
 
   return (
     <Stack sx={{ px: 2, py: 5, textAlign: 'center', ...sx }} {...other}>
@@ -30,7 +34,7 @@ export function NavUpgrade({ sx, ...other }) {
             noWrap
             sx={{ color: 'var(--layout-nav-text-primary-color)' }}
           >
-            {user?.displayName}
+            {userData?.name}
           </Typography>
 
           <Typography
@@ -38,7 +42,7 @@ export function NavUpgrade({ sx, ...other }) {
             noWrap
             sx={{ color: 'var(--layout-nav-text-disabled-color)' }}
           >
-            {user?.email}
+            {userData?.email}
           </Typography>
         </Stack>
       </Stack>

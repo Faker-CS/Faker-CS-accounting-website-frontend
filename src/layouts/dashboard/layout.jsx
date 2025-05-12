@@ -3,6 +3,7 @@ import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import { iconButtonClasses } from '@mui/material/IconButton';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { _contacts, _notifications } from 'src/_mock';
@@ -34,6 +35,8 @@ import { NotificationsDrawer } from '../components/notifications-drawer';
 
 export function DashboardLayout({ sx, children, header, data }) {
   const theme = useTheme();
+
+  const { userData } = useAuth();
 
   const mobileNavOpen = useBoolean();
 
@@ -88,6 +91,9 @@ export function DashboardLayout({ sx, children, header, data }) {
             ),
             bottomArea: isNavHorizontal ? (
               <NavHorizontal
+              slotProps={{
+                currentRole: userData?.roles,
+              }}
                 data={navData}
                 layoutQuery={layoutQuery}
                 cssVars={navColorVars.section}
@@ -176,6 +182,9 @@ export function DashboardLayout({ sx, children, header, data }) {
                 settings.navLayout === 'vertical' ? 'mini' : 'vertical'
               )
             }
+            slotProps={{
+              currentRole: userData?.roles,
+            }}
           />
         )
       }

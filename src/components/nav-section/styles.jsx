@@ -172,7 +172,7 @@ export function NavLi({ sx, children, disabled, ...other }) {
 
 // ----------------------------------------------------------------------
 
-export function NavUl({ children, sx, ...other }) {
+export function NavUl({ children, sx, slotProps, ...other }) {
   return (
     <Box
       component="ul"
@@ -182,6 +182,7 @@ export function NavUl({ children, sx, ...other }) {
         flexDirection: 'column',
         ...sx,
       }}
+      slotProps={slotProps}
       {...other}
     >
       {children}

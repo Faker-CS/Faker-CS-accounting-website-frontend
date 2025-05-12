@@ -16,6 +16,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { useGetEntreprise } from 'src/actions/entreprise';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -37,7 +38,7 @@ export const UserQuickEditSchema = zod.object({
   ville: zod.string().min(1, { message: 'City is required!' }),
   adresse_siege_social: zod.string().min(1, { message: 'Address is required!' }),
   code_postale: zod.string().min(1, { message: 'Zip code is required!' }),
-  company_name: zod.string().min(1, { message: 'Company is required!' }),
+  name: zod.string().min(1, { message: 'Company is required!' }),
   industry: zod.string().min(1, { message: 'Industry is required!' }),
   // Not required
   status: zod.string(),
@@ -57,11 +58,13 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
       ville: currentUser?.ville || '',
       zipCode: currentUser?.code_postale || '',
       status: currentUser?.status,
-      company: currentUser?.company_name || '',
+      company: currentUser?.name || '',
       role: currentUser?.industry || '',
     }),
     [currentUser]
   );
+
+  const { updateEntreprise } = useGetEntreprise(currentUser?.id);
 
   const methods = useForm({
     mode: 'all',
@@ -76,23 +79,15 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
-
     try {
+      console.log('Submitting ..');
+      await updateEntreprise(currentUser?.id, data);
+
+      toast.success('Update success!');
       reset();
-      onClose();
-
-      toast.promise(promise, {
-        loading: 'Loading...',
-        success: 'Update success!',
-        error: 'Update error!',
-      });
-
-      await promise;
-
-      console.info('DATA', data);
     } catch (error) {
-      console.error(error);
+      console.error('Update failed:', error);
+      toast.error('Update failed!');
     }
   });
 
@@ -132,7 +127,6 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             <Field.Text name="email" label="Email address" />
             <Field.Phone name="phone_number" label="Phone number" />
 
-           
             <Field.Text name="ville" label="City" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="zipCode" label="Zip/code" />

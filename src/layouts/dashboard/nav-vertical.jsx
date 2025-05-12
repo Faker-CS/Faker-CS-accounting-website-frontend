@@ -12,7 +12,7 @@ import { NavToggleButton } from '../components/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
-export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleNav, ...other }) {
+export function NavVertical({ sx, data, slots, slotProps, isNavMini, layoutQuery, onToggleNav, ...other }) {
   const theme = useTheme();
 
   const renderNavVertical = (
@@ -24,7 +24,7 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} {...other} />
+        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} slotProps={slotProps} {...other} />
 
         {slots?.bottomArea ?? <NavUpgrade />}
       </Scrollbar>
@@ -41,6 +41,7 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
 
       <NavSectionMini
         data={data}
+        slotProps={slotProps}
         sx={{ pb: 2, px: 0.5, ...hideScrollY, flex: '1 1 auto', overflowY: 'auto' }}
         {...other}
       />

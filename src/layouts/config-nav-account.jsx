@@ -27,12 +27,6 @@ export const _account = [
       </SvgIcon>
     ),
   },
-  {
-    label: 'Projects',
-    href: '#',
-    icon: <Iconify icon="solar:notes-bold-duotone" />,
-    info: '3',
-  },
   
   {
     label: 'Security',

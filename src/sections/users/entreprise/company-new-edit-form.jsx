@@ -21,6 +21,9 @@ import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
+import { form } from 'src/theme/core/components/form';
+import { useUpdateEntreprise } from 'src/actions/entreprise';
+
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -48,14 +51,14 @@ export const NewUserSchema = zod.object({
   zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
   trancheA: zod.string().min(1, { message: 'Masse salariale Tranche A is required!' }),
   trancheB: zod.string().min(1, { message: 'Masse salariale Tranche B is required!' }),
-  nombreSalaries: zod.string().min(1, { message: 'Nombre de salariés is required!' }),
+  nombreSalaries: zod.number().min(1, { message: 'Nombre de salariés is required!' }),
   moyenneAge: zod.string().min(1, { message: "Moyenne d'âge is required!" }),
-  nombreSalariesCadres: zod.string().min(1, { message: 'Nombre de salariés cadres is required!' }),
+  nombreSalariesCadres: zod.number().min(1, { message: 'Nombre de salariés cadres is required!' }),
   moyenneAgeCadres: zod
     .string()
     .min(1, { message: "Moyenne d'âge des salariés cadres is required!" }),
   nombreSalariesNonCadres: zod
-    .string()
+    .number()
     .min(1, { message: 'Nombre de salariés non cadres is required!' }),
   // Not required
   status: zod.string(),
@@ -66,31 +69,42 @@ export const NewUserSchema = zod.object({
 
 export function UserNewEditForm({ currentUser }) {
   const router = useRouter();
-
+//  console.log(currentUser);
   const defaultValues = useMemo(
     () => ({
       status: currentUser?.status || '',
-      avatarUrl: currentUser?.avatarUrl || null,
+      avatarUrl: currentUser?.logo || null,
       isVerified: currentUser?.isVerified || true,
-      name: currentUser?.name || '',
+      formeJuridique: currentUser?.forme_juridique || '',
+      raisonSociale: currentUser?.raison_sociale || '',
+      date: currentUser?.founded || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      address: currentUser?.address || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
-      trancheA: currentUser?.trancheA || '',
-      trancheB: currentUser?.trancheB || '',
+      activiteEntreprise: currentUser?.code_company_type || '',
+      phoneNumber: currentUser?.phone_number || '',
+      matriculeFiscale: currentUser?.numero_tva || '',
+      siren: currentUser?.numero_siren || '',
+      city: currentUser?.ville || '',
+      adresseSiegeSocial: currentUser?.adresse_siege_social || '',
+      zipCode: currentUser?.code_postale || '',
+      chiffreAffaire: currentUser?.chiffre_affaire || '',
+      Industrie: currentUser?.industry || '',
+      trancheA: currentUser?.tranche_a || '',
+      trancheB: currentUser?.tranche_b || '',
+      refCnss: currentUser?.code_company_value || '',
+      nombreSalaries: currentUser?.nombre_salaries || 0,
+      moyenneAge: currentUser?.moyenne_age || '',
+      nombreSalariesCadres: currentUser?.nombre_salaries_cadres || 0,
+      moyenneAgeCadres: currentUser?.moyenne_age_cadres || '',
+      nombreSalariesNonCadres: currentUser?.nombre_salaries_non_cadres || 0,
+      moyenneAgeNonCadres: currentUser?.moyenne_age_non_cadres || '',
     }),
     [currentUser]
   );
+  const { updateEntreprise } = useUpdateEntreprise();
 
   const methods = useForm({
-    mode: 'onSubmit',
-    resolver: zodResolver(NewUserSchema),
+    mode: 'all',
+    // resolver: zodResolver(NewUserSchema),
     defaultValues,
   });
 
@@ -106,13 +120,15 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // console.log("Submitting ..")
+      await updateEntreprise(currentUser?.id, data );
+
+      toast.success('Update success!');
       reset();
-      toast.success(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
+      
+    }catch (error) {
+      console.error('Update failed:', error);
+      toast.error('Update failed!');
     }
   });
 
@@ -166,7 +182,7 @@ export function UserNewEditForm({ currentUser }) {
                     render={({ field }) => (
                       <Switch
                         {...field}
-                        checked={field.value !== 'active'}
+                        checked={field.value !== 'Active'}
                         onChange={(event) =>
                           field.onChange(event.target.checked ? 'Inactive' : 'Active')
                         }
@@ -264,8 +280,8 @@ export function UserNewEditForm({ currentUser }) {
               <Field.Text name="siren" label="SIREN" />
               <Field.Text name="refCnss" label="Réf CNSS" />
               <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" />
-              <Field.Text name="codePostale" label="Code postale" />
-              <Field.Text name="ville" label="Ville" />
+              <Field.Text name="zipCode" label="Code postale" />
+              <Field.Text name="city" label="Ville" />
               <Field.Select
                 name="activiteEntreprise"
                 label="Activité de l'entreprise / Code APE/NAF"
@@ -340,11 +356,11 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="nombreSalaries" label="Nombre de salariés" />
+              <Field.Text name="nombreSalaries" type="number" label="Nombre de salariés" />
               <Field.Text name="moyenneAge" label="Moyenne d'âge" />
-              <Field.Text name="nombreSalariesCadres" label="Nombre de salariés cadres" />
+              <Field.Text name="nombreSalariesCadres" type="number" label="Nombre de salariés cadres" />
               <Field.Text name="moyenneAgeCadres" label="Moyenne d'âge des salariés cadres" />
-              <Field.Text name="nombreSalariesNonCadres" label="Nombre de salariés non cadres" />
+              <Field.Text name="nombreSalariesNonCadres" type="number" label="Nombre de salariés non cadres" />
               <Field.Text
                 name="moyenneAgeNonCadres"
                 label="Moyenne d'âge des salariés non cadres"

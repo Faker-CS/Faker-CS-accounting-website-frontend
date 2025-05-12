@@ -34,7 +34,7 @@ export function ChatNavSearchResults({ query, results, onClickResult }) {
               sx={{ gap: 2, py: 1.5, px: 2.5, typography: 'subtitle2' }}
             >
               <Avatar alt={result.name} src={result.avatarUrl} />
-              {result.name}
+              {result?.name}
             </ListItemButton>
           </Box>
         ))}

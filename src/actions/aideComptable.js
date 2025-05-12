@@ -7,14 +7,14 @@ import { fetcher, endpoints } from 'src/utils/axios';
 import { STORAGE_KEY } from 'src/auth/context/jwt';
 
 const swrOptions = {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  };
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+};
 
 // Fetch all aideComptables
 export const useGetAideComptables = () => {
-    const url = endpoints.aideComptable.list;
+  const url = endpoints.aideComptable.list;
   const { data, isLoading, error } = useSWR(url, fetcher, swrOptions);
   const memoizedValue = useMemo(
     () => ({
@@ -26,4 +26,45 @@ export const useGetAideComptables = () => {
     [data, error, isLoading]
   );
   return memoizedValue;
+};
+
+// delete aideComptable
+export const useDeleteAideComptable = () => {
+  const deleteAideComptable = async (id) => {
+    try {
+      const url = `http://127.0.0.1:8000/api/aideComptable/${id}`;
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+        },
+      });
+
+      mutate(endpoints.aideComptable.list);
+      return res.data;
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      throw error;
+    }
+  };
+  return { deleteAideComptable };
+};
+
+// ADD aideComptable
+export const useAddAideComptable = () => {
+  const addAideComptable = async (data) => {
+    try {
+      const url = endpoints.aideComptable.create;
+      const res = await axios.post(url, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+        },
+      });
+      mutate(endpoints.aideComptable.list);
+      return res.data;
+    } catch (error) {
+      console.error("Error...:", error);
+      throw error;
+    }
+  };
+  return { addAideComptable };
 };

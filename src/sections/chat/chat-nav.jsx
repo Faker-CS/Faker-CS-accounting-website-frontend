@@ -11,6 +11,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { today } from 'src/utils/format-time';
@@ -40,7 +41,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
   const mdUp = useResponsive('up', 'md');
 
-  const { user } = useMockedUser();
+  const { userData } = useAuth();
 
   const {
     openMobile,
@@ -58,17 +59,17 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
   const myContact = useMemo(
     () => ({
-      id: `${user?.id}`,
-      role: `${user?.role}`,
-      email: `${user?.email}`,
-      address: `${user?.address}`,
-      name: `${user?.displayName}`,
+      id: `${userData?.id}`,
+      role: `${userData?.role}`,
+      email: `${userData?.email}`,
+      address: `${userData?.address}`,
+      name: `${userData?.name}`,
       lastActivity: today(),
-      avatarUrl: `${user?.photoURL}`,
-      phoneNumber: `${user?.phoneNumber}`,
+      avatarUrl: `${userData?.photoURL}`,
+      phoneNumber: `${userData?.phoneNumber}`,
       status: 'online',
     }),
-    [user]
+    [userData]
   );
 
   useEffect(() => {
@@ -96,17 +97,19 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
     (inputValue) => {
       setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
 
+      
       if (inputValue) {
         const results = contacts.filter((contact) =>
-          contact.name.toLowerCase().includes(inputValue)
-        );
+          contact?.name?.toLowerCase().includes(inputValue)
+      );
+
+
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
       }
     },
     [contacts]
   );
-
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
   }, []);
@@ -136,7 +139,6 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
           recipients: [recipient],
           me: myContact,
         });
-
         // Create a new conversation
         const res = await createConversation(conversationData);
 
@@ -227,7 +229,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query && !!conversations.allIds.length ? renderListResults : renderList}
+          {searchContacts.query ? renderListResults : renderList}
         </Scrollbar>
       )}
     </>

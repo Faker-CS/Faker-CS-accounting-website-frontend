@@ -7,6 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { useAuth } from 'src/hooks/useAuth';
+
 import { today } from 'src/utils/format-time';
 
 import { sendMessage, createConversation } from 'src/actions/chat';
@@ -28,6 +30,7 @@ export function ChatMessageInput({
   const router = useRouter();
 
   const { user } = useMockedUser();
+  const { userData } = useAuth();
 
   const fileRef = useRef(null);
 
@@ -35,17 +38,17 @@ export function ChatMessageInput({
 
   const myContact = useMemo(
     () => ({
-      id: `${user?.id}`,
-      role: `${user?.role}`,
-      email: `${user?.email}`,
-      address: `${user?.address}`,
-      name: `${user?.displayName}`,
+      id: `${userData?.id}`,
+      role: `${userData?.roles}`,
+      email: `${userData?.email}`,
+      address: `${userData?.address}`,
+      name: `${userData?.name}`,
       lastActivity: today(),
-      avatarUrl: `${user?.photoURL}`,
-      phoneNumber: `${user?.phoneNumber}`,
+      avatarUrl: `${userData?.photoURL}`,
+      phoneNumber: `${userData?.phoneNumber}`,
       status: 'online',
     }),
-    [user]
+    [userData]
   );
 
   const { messageData, conversationData } = initialConversation({
@@ -72,10 +75,12 @@ export function ChatMessageInput({
         if (selectedConversationId) {
           // If the conversation already exists
           await sendMessage(selectedConversationId, messageData);
+          console.log("messageData", messageData);
+          
         } else {
           // If the conversation does not exist
           const res = await createConversation(conversationData);
-          router.push(`${paths.dashboard.chat}?id=${res.conversation.id}`);
+          router.push(`${paths.dashboard.chat}?id=${res?.conversationData?.id}`);
 
           onAddRecipients([]);
         }
