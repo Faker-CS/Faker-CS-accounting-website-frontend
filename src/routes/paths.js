@@ -55,11 +55,12 @@ export const paths = {
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
     companyMenu: {
-      root: `${ROOTS.DASHBOARD}/menu`,
+      root: `${ROOTS.DASHBOARD}/document demands`,
+      deposit: `${ROOTS.DASHBOARD}/document demands/deposit`,
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,
-      newEntreprise: `${ROOTS.DASHBOARD}/users/new`,
+      newEntreprise: `${ROOTS.DASHBOARD}/users/new entreprise`,
       editEntreprise: (id)=>`${ROOTS.DASHBOARD}/users/${id}/edit`,
       effectifs: `${ROOTS.DASHBOARD}/users/effectifs`,
       createEntreprise: `${ROOTS.DASHBOARD}/users/create`,

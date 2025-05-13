@@ -15,8 +15,8 @@ export function AideComptableCreateView() {
         heading="Create a new user"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Aide Comptable', href: paths.dashboard.users.newAideComptable },
-          { name: 'New Aide Comptable' },
+          { name: 'Accounter Helper', href: paths.dashboard.users.newAideComptable },
+          { name: 'New Accounter Helper' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

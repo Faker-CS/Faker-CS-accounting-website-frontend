@@ -24,13 +24,12 @@ import { UserQuickEditForm } from './user-quick-edit-form';
 
 export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const confirm = useBoolean();
-
+  
   const popover = usePopover();
 
   const quickEdit = useBoolean();
 
-  // const { userData } = useAuth();
-  // const isAideComptable = userData?.roles?.includes('aide-comptable');
+ const avatarUrl = `http://127.0.0.1:8000/storage/${row.photo}`;  
 
   return (
     <>
@@ -41,7 +40,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.name} src={row.avatarUrl} />
+            <Avatar alt={row.name} src={avatarUrl} />
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>

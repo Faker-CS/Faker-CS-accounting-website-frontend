@@ -12,7 +12,7 @@ export const _account = [
   },
   {
     label: 'Profile',
-    href: '#',
+    href: '',
     icon: (
       <SvgIcon>
         <path

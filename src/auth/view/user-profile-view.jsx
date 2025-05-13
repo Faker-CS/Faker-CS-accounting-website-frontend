@@ -2,22 +2,20 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import HomePageView from 'src/sections/client/home/home-page-view';
-
+import { UserProfileView } from 'src/sections/profile/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Menu - ${CONFIG.appName}` };
+const metadata = { title: `User profile | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
-  
   return (
     <>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
 
-      <HomePageView />
+      <UserProfileView />
     </>
   );
 }

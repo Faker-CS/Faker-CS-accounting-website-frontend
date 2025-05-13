@@ -14,7 +14,7 @@ import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
 import { useGetServices } from 'src/actions/services';
-import { DashboardContent } from 'src/layouts/admin/main';
+import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetForms, useDeleteForm } from 'src/actions/forms';
 
 import { Label } from 'src/components/label';

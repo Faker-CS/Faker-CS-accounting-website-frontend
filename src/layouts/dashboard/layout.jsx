@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
@@ -36,7 +38,16 @@ import { NotificationsDrawer } from '../components/notifications-drawer';
 export function DashboardLayout({ sx, children, header, data }) {
   const theme = useTheme();
 
+  const [loading, setLoading] = useState(true)
+
   const { userData } = useAuth();
+
+  useEffect(() => {
+    setLoading(true)
+    if (userData) {
+      setLoading(false)
+    }
+  }, [userData]);
 
   const mobileNavOpen = useBoolean();
 
@@ -51,7 +62,10 @@ export function DashboardLayout({ sx, children, header, data }) {
   const isNavMini = settings.navLayout === 'mini';
   const isNavHorizontal = settings.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.navLayout === 'vertical';
-
+  // loading && return null;
+  if(loading) {
+    return null;
+  }
   return (
     <LayoutSection
       /** **************************************

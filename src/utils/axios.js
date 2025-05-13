@@ -49,6 +49,7 @@ export const endpoints = {
     register: '/api/register',
     logout: '/api/logout',
     me: '/api/user',
+    profile: '/api/profile',
   },
   aideComptable: {
     list: '/api/aideComptables',

@@ -53,18 +53,59 @@ export const useDeleteAideComptable = () => {
 export const useAddAideComptable = () => {
   const addAideComptable = async (data) => {
     try {
-      const url = endpoints.aideComptable.create;
-      const res = await axios.post(url, data, {
+      const formData = new FormData();
+
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      formData.append('phoneNumber', data.phoneNumber || '');
+      formData.append('address', data.address || '');
+      formData.append('state', data.state || '');
+      formData.append('city', data.city || '');
+      formData.append('zipCode', data.zipCode || '');
+
+      if (data.avatarUrl && data.avatarUrl instanceof File) {
+        formData.append('avatarUrl', data.avatarUrl); // Must be a real File object
+      }
+
+      const url = "http://127.0.0.1:8000/api/aideComptable";
+
+      const res = await axios.post(url, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+          // DON'T set Content-Type manually here!
+        },
+      });
+
+      mutate(endpoints.aideComptable.list);
+      return res.data;
+
+    } catch (error) {
+      console.error("Error...:", error.response?.data || error.message);
+      throw error;
+    }
+  };
+
+  return { addAideComptable };
+};
+
+
+// UPDATE aideComptable
+export const useUpdateAideComptable = () => {
+  const updateAideComptable = async (id, data) => {
+    try {
+      const url = `http://127.0.0.1:8000/api/aideComptable/${id}`;
+      const res = await axios.put(url, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       });
       mutate(endpoints.aideComptable.list);
       return res.data;
-    } catch (error) {
-      console.error("Error...:", error);
-      throw error;
     }
-  };
-  return { addAideComptable };
-};
+    catch (error) {
+      console.error('Error updating aide-comptable:', error.response?.data || error);
+      throw error.response?.data || error;
+    }
+  }
+  return { updateAideComptable };
+}

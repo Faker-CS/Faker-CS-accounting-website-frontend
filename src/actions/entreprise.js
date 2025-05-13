@@ -96,3 +96,25 @@ export function useUpdateEntreprise() {
   };
   return { updateEntreprise };
 }
+
+export function useAddEntreprise() {
+  const addEntreprise = async (data) => {
+    try {
+      const url = `http://127.0.1:8000/api/companies`;
+      const res = await axios.post(url, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      // Refresh users list after deletion
+      mutate(endpoints.company.list);
+      return res.data;
+    }
+    catch (error) {
+      console.error('add error:', error);
+      throw error;
+    }
+  }
+  return { addEntreprise };
+}

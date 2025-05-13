@@ -15,6 +15,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
+import { useAddAideComptable, useUpdateAideComptable } from 'src/actions/aideComptable';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 // Adjust the path based on the actual location of schemaHelper
@@ -28,15 +30,10 @@ export const UserQuickEditSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  country: schemaHelper.objectOrNull({
-    message: { required_error: 'Country is required!' },
-  }),
   state: zod.string().min(1, { message: 'State is required!' }),
   city: zod.string().min(1, { message: 'City is required!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
+  // zipCode: zod.bigint().min(1, { message: 'Zip code is required!' }),
 
 });
 
@@ -67,23 +64,17 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+  const { updateAideComptable } = useUpdateAideComptable();
 
   const onSubmit = handleSubmit(async (data) => {
-    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
-
+    console.log(data)
     try {
-      reset();
-      onClose();
-
-      toast.promise(promise, {
+      const result =  updateAideComptable(currentUser.id, data);
+    toast.promise(result, {
         loading: 'Loading...',
         success: 'Update success!',
         error: 'Update error!',
       });
-
-      await promise;
-
-      console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }
@@ -129,7 +120,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             Cancel
           </Button>
 
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+          <LoadingButton type="submit" variant="contained" loading={isSubmitting} >
             Update
           </LoadingButton>
         </DialogActions>

@@ -17,7 +17,7 @@ const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/detail
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
 // Profile
-// const ProfilePage = lazy(() => import('src/pages/auth/ProfilePage'));
+const UserProfileView = lazy(() => import('src/sections/profile/view'));
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +38,10 @@ const AideComptableListPage = lazy(() => import('src/pages/dashboard/users/aide-
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
+// --------------------------------------------------------------------------------
+// company menu
+const CompanyMenuPage = lazy(() => import('src/pages/dashboard/CompanyMenu'));
+const DepositPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot'));
 // ----------------------------------------------------------------------
 
 const layoutContent = (
@@ -68,8 +72,8 @@ export const dashboardRoutes = [
         path: 'users',
         children: [
           { element: <EntreprisesList />, index: true },
-          { path: 'new', element: <EntrepriseCreatePage /> },
-          { path: ':id/edit', element: <EntrepriseEditPage /> },
+          { path: 'new entreprise', element: <EntrepriseCreatePage /> },
+          { path: ':id/edit/entreprise', element: <EntrepriseEditPage /> },
           { path: 'aide-comptable', element: <AideComptableListPage /> },
           { path: 'aide-comptable/new', element: <AideComptableCreatePage /> },
         ],
@@ -89,6 +93,13 @@ export const dashboardRoutes = [
           { path: 'new', element: <InvoiceCreatePage /> },
         ],
       },
+      {
+        path: 'document demands',
+        children: [
+          { element: <CompanyMenuPage />, index: true },
+          { path: 'deposit', element: <DepositPage /> },
+        ]
+      }
     ],
   },
 ];

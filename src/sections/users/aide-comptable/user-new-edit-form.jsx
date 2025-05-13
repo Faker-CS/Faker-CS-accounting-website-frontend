@@ -22,6 +22,8 @@ import { fData } from 'src/utils/format-number';
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { useAddAideComptable } from 'src/actions/aideComptable';
+import { add } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
@@ -77,14 +79,16 @@ export function UserNewEditForm({ currentUser }) {
   } = methods;
 
   const values = watch();
-
+  const { addAideComptable } = useAddAideComptable();
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      await addAideComptable(data);
+
       reset();
       toast.success(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.users.aideComptable); 
-      console.info('DATA', data);
+      router.push(paths.dashboard.users.aideComptable);
+
     } catch (error) {
       console.error(error);
     }
@@ -95,8 +99,6 @@ export function UserNewEditForm({ currentUser }) {
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            
-
             <Box sx={{ mb: 5 }}>
               <Field.UploadAvatar
                 name="avatarUrl"
@@ -122,8 +124,6 @@ export function UserNewEditForm({ currentUser }) {
             {currentUser && (
               <FormControlLabel
                 labelPlacement="start"
-                
-                
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
