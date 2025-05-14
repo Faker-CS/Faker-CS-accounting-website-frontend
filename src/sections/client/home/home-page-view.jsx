@@ -30,10 +30,10 @@ export default function HomePageView() {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Accueil"
+          heading="Home"
           links={[
             {
-              name: 'Accueil',
+              name: 'Home',
               href: '#',
               icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
             },
@@ -51,7 +51,7 @@ export default function HomePageView() {
                   variant="contained"
                   color="primary"
                   LinkComponent={RouterLink}
-                  href={paths.dashboard.demande}
+                  href={paths.dashboard.companyMenu.newDemande}
                 >
                   Authorization request
                   <Iconify icon="solar:arrow-right-broken" />

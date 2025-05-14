@@ -57,6 +57,7 @@ export const paths = {
     companyMenu: {
       root: `${ROOTS.DASHBOARD}/document demands`,
       deposit: `${ROOTS.DASHBOARD}/document demands/deposit`,
+      newDemande: `${ROOTS.DASHBOARD}/document demands/newDemande`,
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,
@@ -86,6 +87,7 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
       },
+      profile: `${ROOTS.DASHBOARD}/profile`,
     },
   },
 };

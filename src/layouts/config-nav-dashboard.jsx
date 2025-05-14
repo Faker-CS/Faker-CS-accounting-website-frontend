@@ -46,14 +46,14 @@ export const navData = [
   {
     subheader: 'Working Overview',
     items: [
-      { title: 'Dashboard', path: paths.dashboard.group.root, icon: ICONS.dashboard },
+      { title: 'Dashboard', path: paths.dashboard.group.root, roles:['comptable','aide-comptable'], icon: ICONS.dashboard },
       {
         title: 'Menu',
         path: paths.dashboard.companyMenu.root,
         icon: ICONS.dashboard,
-        roles: ['comptable'],
+        roles: ['entreprise'],
       },
-      { title: 'Analytics', path: paths.dashboard.group.five, icon: ICONS.analytics },
+      { title: 'Analytics', path: paths.dashboard.group.five, roles:['comptable','aide-comptable'], icon: ICONS.analytics },
       {
         title: 'Banking',
         path: paths.dashboard.banking.root,
@@ -79,10 +79,11 @@ export const navData = [
           { title: 'Accounter Helpers', path: paths.dashboard.users.aideComptable },
         ],
       },
-      { title: 'File manager', path: paths.dashboard.fileManager, icon: ICONS.folder },
+      { title: 'File manager', path: paths.dashboard.fileManager, roles:['comptable','aide-comptable'], icon: ICONS.folder },
       {
         title: 'Invoice',
         path: paths.dashboard.invoice.root,
+        roles:['comptable','aide-comptable'],
         icon: ICONS.invoice,
         children: [
           { title: 'List', path: paths.dashboard.invoice.root },
@@ -92,8 +93,8 @@ export const navData = [
         ],
       },
       { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
-      { title: 'Calendar', path: paths.dashboard.calendar, icon: ICONS.calendar },
-      { title: 'Tasks', path: paths.dashboard.kanban, icon: ICONS.kanban },
+      { title: 'Calendar', path: paths.dashboard.calendar, roles:['comptable','aide-comptable'], icon: ICONS.calendar },
+      { title: 'Tasks', path: paths.dashboard.kanban, roles:['comptable','aide-comptable'], icon: ICONS.kanban },
     ],
   },
 ];

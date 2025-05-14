@@ -16,8 +16,6 @@ const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
-// Profile
-const UserProfileView = lazy(() => import('src/sections/profile/view'));
 
 // ----------------------------------------------------------------------
 
@@ -42,7 +40,10 @@ const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 // company menu
 const CompanyMenuPage = lazy(() => import('src/pages/dashboard/CompanyMenu'));
 const DepositPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot'));
+const DocumentDemandsPage = lazy(() => import('src/pages/dashboard/CompanyMenu/demande'));
 // ----------------------------------------------------------------------
+
+const UserProfilePage = lazy(() => import('src/auth/view/user-profile-view'));
 
 const layoutContent = (
   <DashboardLayout>
@@ -98,8 +99,10 @@ export const dashboardRoutes = [
         children: [
           { element: <CompanyMenuPage />, index: true },
           { path: 'deposit', element: <DepositPage /> },
-        ]
-      }
+          { path: 'newDemande', element: <DocumentDemandsPage /> },
+        ],
+      },
+      { path: 'profile', element: <UserProfilePage /> },
     ],
   },
 ];

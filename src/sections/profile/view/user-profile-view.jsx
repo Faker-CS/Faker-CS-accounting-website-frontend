@@ -7,6 +7,7 @@ import Tabs from '@mui/material/Tabs';
 
 import { paths } from 'src/routes/paths';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -21,22 +22,20 @@ import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
 import { ProfileFriends } from '../profile-friends';
 import { ProfileGallery } from '../profile-gallery';
-import { ProfileFollowers } from '../profile-followers';
 
 // ----------------------------------------------------------------------
 
 const TABS = [
   { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  { value: 'followers', label: 'Followers', icon: <Iconify icon="solar:heart-bold" width={24} /> },
   {
-    value: 'friends',
-    label: 'Friends',
-    icon: <Iconify icon="solar:users-group-rounded-bold" width={24} />,
+    value: 'companies',
+    label: 'Companies',
+    icon: <Iconify width={24} icon="ic:round-business" />,
   },
   {
-    value: 'gallery',
-    label: 'Gallery',
-    icon: <Iconify icon="solar:gallery-wide-bold" width={24} />,
+    value: 'tasks',
+    label: 'Tasks',
+    icon: <Iconify width={24} icon="ic:round-task"/>,
   },
 ];
 
@@ -44,6 +43,8 @@ const TABS = [
 
 export function UserProfileView() {
   const { user } = useMockedUser();
+  const { userData } = useAuth();
+  console.log("first", userData);
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -59,16 +60,16 @@ export function UserProfileView() {
         heading="Profile"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: user?.displayName },
+          { name: 'Profile', href: paths.dashboard.profile },
+          { name: userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : '' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
+          role={ userData?.roles && userData.roles.comptable === true ? 'Comptable' : 'Accounter' }
+          name={userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : '' }
           avatarUrl={user?.photoURL}
           coverUrl={_userAbout.coverUrl}
         />
@@ -95,7 +96,6 @@ export function UserProfileView() {
 
       {tabs.value === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
 
-      {tabs.value === 'followers' && <ProfileFollowers followers={_userFollowers} />}
 
       {tabs.value === 'friends' && (
         <ProfileFriends
@@ -105,7 +105,7 @@ export function UserProfileView() {
         />
       )}
 
-      {tabs.value === 'gallery' && <ProfileGallery gallery={_userGallery} />}
+      {/* {tabs.value === 'gallery' && <ProfileGallery gallery={_userGallery} />} */}
     </DashboardContent>
   );
 }

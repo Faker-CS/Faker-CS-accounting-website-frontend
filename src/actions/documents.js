@@ -44,7 +44,7 @@ export async function dropFiles(files, serviceId, documentId) {
   try {
     const response = await axios.post(url, formData, {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+        Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         'Content-Type': 'multipart/form-data',
       },
     });
@@ -66,7 +66,7 @@ export const fetchDocuments = async (serviceId, id) => {
       `http://127.0.1:8000/api/user/documents/${serviceId}/${id}`,
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       }
     );
@@ -83,7 +83,7 @@ export async function downloadDocumentFile(documentId) {
       `http://127.0.1:8000/api/documents/download/${documentId}`,
       {
         responseType: 'blob', // Important for binary files
-        headers: { Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}` },
       }
     );
 

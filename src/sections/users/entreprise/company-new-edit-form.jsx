@@ -22,7 +22,7 @@ import { useRouter } from 'src/routes/hooks';
 import { fData } from 'src/utils/format-number';
 
 import { form } from 'src/theme/core/components/form';
-import { useUpdateEntreprise } from 'src/actions/entreprise';
+import { useAddEntreprise, useUpdateEntreprise } from 'src/actions/entreprise';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -72,9 +72,9 @@ export function UserNewEditForm({ currentUser }) {
 //  console.log(currentUser);
   const defaultValues = useMemo(
     () => ({
-      status: currentUser?.status || '',
+      status: currentUser?.status || 'Pending',
       avatarUrl: currentUser?.logo || null,
-      isVerified: currentUser?.isVerified || true,
+      // isVerified: currentUser?.isVerified || true,
       formeJuridique: currentUser?.forme_juridique || '',
       raisonSociale: currentUser?.raison_sociale || '',
       date: currentUser?.founded || '',
@@ -117,11 +117,15 @@ export function UserNewEditForm({ currentUser }) {
   } = methods;
 
   const values = watch();
+  const { addEntreprise } = useAddEntreprise();
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // console.log("Submitting ..")
-      await updateEntreprise(currentUser?.id, data );
+console.log('data', data);
+      // await updateEntreprise(currentUser?.id, data );
+      const res = await addEntreprise(data);
+      console.log('res', res);
+      
 
       toast.success('Update success!');
       reset();
