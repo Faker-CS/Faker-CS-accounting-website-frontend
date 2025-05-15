@@ -47,7 +47,7 @@ export function useDeleteUser() {
 
       const res = await axios.delete(url, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       });
 
@@ -71,7 +71,7 @@ export function useUpdateUser() {
 
       const res = await axios.put(url, data, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
           'Content-Type': 'application/json',
         },
       });
@@ -96,7 +96,7 @@ export function usePutRecords() {
 
       const res = await axios.put(url, params, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
           'Content-Type': 'application/json',
         },
       });
@@ -116,7 +116,7 @@ export function usePutRecords() {
 
       const res = await axios.put(url, params, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
           'Content-Type': 'application/json',
         },
       });

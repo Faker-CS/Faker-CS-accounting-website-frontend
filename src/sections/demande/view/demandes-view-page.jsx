@@ -86,7 +86,7 @@
 //   const handleDeleteItem = (id) => {
 //     const token = localStorage.getItem(STORAGE_KEY);
 
-//     const deletePromise = fetch(`https://as-compta.ckcom.fr/api/documents/${id}`, {
+//     const deletePromise = fetch(`http://127.0.0.1:8000/api/documents/${id}`, {
 //       method: 'DELETE',
 //       headers: {
 //         Authorization: `Bearer ${token}`,

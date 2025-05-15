@@ -26,9 +26,9 @@ export default function DemandePageView({ data, loading }) {
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`https://as-compta.ckcom.fr/api/status/1`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/status/1`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
             'Content-Type': 'application/json',
           },
         });
@@ -51,7 +51,7 @@ export default function DemandePageView({ data, loading }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Demande d'autorisation"
+        heading="Authorization request"
         links={[
           {
             name: 'Dashboard',
@@ -59,7 +59,7 @@ export default function DemandePageView({ data, loading }) {
             icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
           },
           {
-            name: "Demande d'autorisation",
+            name: 'Authorization request',
             href: '#',
           },
         ]}

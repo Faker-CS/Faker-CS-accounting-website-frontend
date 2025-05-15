@@ -62,7 +62,7 @@ export function FileManagerFolderItem({ sx, folder, selected, onSelect, canEdit,
   );
 
   return (
-    <Link component={RouterLink} href={canEdit && paths.dashboard.declarationImpotDrop(folder.id)}>
+    <Link component={RouterLink} href={canEdit && paths.dashboard.companyMenu.declarationImpotDrop(folder.id)} >
         <Paper
           variant="outlined"
           sx={{

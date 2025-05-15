@@ -38,9 +38,9 @@ export function FileManagerTableRow({ row, selected }) {
 
   const fetchDocumentDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`https://as-compta.ckcom.fr/api/documents/${row.id}`, {
+      const response = await axios.get(`http://127.0.0.1:8000/api/documents/${row.id}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       });
       setFile(response.data);
@@ -73,10 +73,10 @@ export function FileManagerTableRow({ row, selected }) {
 
   const deleteFile = async () => {
     confirm.onFalse();
-    const deletePromise = fetch(`https://as-compta.ckcom.fr/api/documents/${file.id}`, {
+    const deletePromise = fetch(`http://127.0.0.1:8000/api/documents/${file.id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+        Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         'Content-Type': 'application/json',
       },
     }).then(async (response) => {

@@ -33,11 +33,11 @@ export function useGetForms() {
 export function useDeleteForm() {
   const deleteForm = async (id) => {
     try {
-      const url = `https://as-compta.ckcom.fr/api/forms/${id}`; // API endpoint
+      const url = `http://127.0.0.1:8000/api/forms/${id}`; // API endpoint
 
       await axios.delete(url, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       }); // Send DELETE request
 
@@ -56,14 +56,14 @@ export function useDeleteForm() {
 export function useUpdateForm() {
   const updateForm = async (id, status) => {
     try {
-      const url = `https://as-compta.ckcom.fr/api/forms/${id}`;
+      const url = `http://127.0.0.1:8000/api/forms/${id}`;
 
       const response = await axios.patch(
         url,
         { status },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
           },
         }
       );

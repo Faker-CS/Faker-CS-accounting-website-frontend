@@ -104,11 +104,11 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
     if (matricule) {
       try {
         const response = await axios.post(
-          `https://as-compta.ckcom.fr/api/form/${serviceId}`,
+          `http://127.0.0.1:8000/api/form/${serviceId}`,
           {},
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+              Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
               'Content-Type': 'application/json',
             },
           }
@@ -144,11 +144,11 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
   return (
     <>
       <Typography mb={2} variant="h6">
-        Information générale
+        General informations
       </Typography>
       <Grid container spacing={2}>
         <Grid xs={12} md={4}>
-          <InputLabel mb={1}>Numéro de matricule luxembourgeois</InputLabel>
+          <InputLabel mb={1}>Tax Identification Number (Matricule Fiscal)</InputLabel>
           <TextField fullWidth value={matricule} onChange={(e) => setMatricule(e.target.value)} />
         </Grid>
       </Grid>

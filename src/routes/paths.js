@@ -58,6 +58,13 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/document demands`,
       deposit: `${ROOTS.DASHBOARD}/document demands/deposit`,
       newDemande: `${ROOTS.DASHBOARD}/document demands/newDemande`,
+      declarationImpotDrop: (id)=>`${ROOTS.DASHBOARD}/document demands/depot/${id}`,
+      sarl: `${ROOTS.DASHBOARD}/document demands/sarl`,
+      suarl: `${ROOTS.DASHBOARD}/document demands/suarl`,
+      sarls: `${ROOTS.DASHBOARD}/document demands/sarl-s`,
+      snc: `${ROOTS.DASHBOARD}/document demands/snc`,
+      sa: `${ROOTS.DASHBOARD}/document demands/sa`,
+
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,

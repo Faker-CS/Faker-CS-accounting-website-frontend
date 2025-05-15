@@ -3,20 +3,20 @@ import { Helmet } from 'react-helmet-async';
 import { CONFIG } from 'src/config-global';
 import { useGetDocuments } from 'src/actions/documents';
 
-import DemandePageView from 'src/sections/client/demande/views/demande-page-view';
+import SarlPageView from 'src/sections/client/sarl/sarl-page-view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Authorization request de constitution - ${CONFIG.appName}` };
+const metadata = { title: `SARL - ${CONFIG.appName}` };
 
 export default function Page() {
-  const { documents, documentsLoading } = useGetDocuments(1);
+  const { documents, documentsLoading } = useGetDocuments(2);
   return (
     <>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
-      <DemandePageView data={documents} loading={documentsLoading} />
+      <SarlPageView data={documents} loading={documentsLoading}/>
     </>
   );
 }

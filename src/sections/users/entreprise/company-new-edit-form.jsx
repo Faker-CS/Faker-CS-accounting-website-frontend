@@ -69,7 +69,7 @@ export const NewUserSchema = zod.object({
 
 export function UserNewEditForm({ currentUser }) {
   const router = useRouter();
-//  console.log(currentUser);
+  //  console.log(currentUser);
   const defaultValues = useMemo(
     () => ({
       status: currentUser?.status || 'Pending',
@@ -121,16 +121,14 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-console.log('data', data);
+      console.log('data', data);
       // await updateEntreprise(currentUser?.id, data );
       const res = await addEntreprise(data);
       console.log('res', res);
-      
 
       toast.success('Update success!');
       reset();
-      
-    }catch (error) {
+    } catch (error) {
       console.error('Update failed:', error);
       toast.error('Update failed!');
     }
@@ -242,7 +240,7 @@ console.log('data', data);
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Information générale
+              General informations
             </Typography>
             <Box
               rowGap={3}
@@ -300,7 +298,7 @@ console.log('data', data);
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie" >
+              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie">
                 {[
                   { label: 'Services', value: 'Services' },
                   { label: 'Commerce', value: 'Commerce' },
@@ -362,9 +360,17 @@ console.log('data', data);
             >
               <Field.Text name="nombreSalaries" type="number" label="Nombre de salariés" />
               <Field.Text name="moyenneAge" label="Moyenne d'âge" />
-              <Field.Text name="nombreSalariesCadres" type="number" label="Nombre de salariés cadres" />
+              <Field.Text
+                name="nombreSalariesCadres"
+                type="number"
+                label="Nombre de salariés cadres"
+              />
               <Field.Text name="moyenneAgeCadres" label="Moyenne d'âge des salariés cadres" />
-              <Field.Text name="nombreSalariesNonCadres" type="number" label="Nombre de salariés non cadres" />
+              <Field.Text
+                name="nombreSalariesNonCadres"
+                type="number"
+                label="Nombre de salariés non cadres"
+              />
               <Field.Text
                 name="moyenneAgeNonCadres"
                 label="Moyenne d'âge des salariés non cadres"

@@ -13,9 +13,9 @@ import { ProductItemSkeleton } from 'src/components/skeleton/product-skeleton';
 
 import { STORAGE_KEY } from 'src/auth/context/jwt';
 
-import { FileManagerView } from '../../file-manager/view';
+import { FileManagerView } from '../single-files/view';
 
-export default function DepotView({ data, loading }) {
+export default function SarlssViewPage({ data, loading }) {
   const renderLoading = <ProductItemSkeleton />;
 
   const [serviceStatus, setServiceStatus] = useState({
@@ -27,9 +27,9 @@ export default function DepotView({ data, loading }) {
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/status/4`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/status/3`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+            Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
             'Content-Type': 'application/json',
           },
         });
@@ -41,7 +41,6 @@ export default function DepotView({ data, loading }) {
 
         setServiceStatus(selectedStatus);
       } catch (error) {
-        console.error('Erreur lors de la récupération du statut:', error);
         setServiceStatus(statusData[0]);
       }
     };
@@ -52,7 +51,7 @@ export default function DepotView({ data, loading }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Déclaration d'impôt"
+        heading="Constitution d'entreprise SARL-S"
         links={[
           {
             name: 'Accueil',
@@ -60,21 +59,17 @@ export default function DepotView({ data, loading }) {
             icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
           },
           {
-            name: 'Déclaration d’impôt',
+            name: "Constitution d'entreprise SARL",
             href: '#',
           },
         ]}
-        action={<Label color={serviceStatus.color}>{serviceStatus.label}</Label>} // ✅ Dynamic status
         sx={{ mb: { xs: 3, md: 5 } }}
+        action={<Label color={serviceStatus.color}>{serviceStatus.label}</Label>}
       />
       {loading ? (
         renderLoading
       ) : (
-        <FileManagerView
-          folders={data}
-          setServiceStatus={setServiceStatus}
-          status={serviceStatus.value}
-        />
+        <FileManagerView files={data} setServiceStatus={setServiceStatus} serviceId={3} />
       )}
     </DashboardContent>
   );

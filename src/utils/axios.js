@@ -80,4 +80,19 @@ export const endpoints = {
     contacts: (id) => `/api/contacts/${id}`,
     createConversation: '/api/new-conversation',
   },
+  // documents endpoints
+  documents: {
+    getByService: (i)=> `api/services/${i}/documents`,
+    upload: "/api/documents/upload"
+  },
+  // services endpoints
+  services: {
+    all: '/api/services',
+  },
+  // forms endpoints
+  forms: {
+    all: '/api/forms',
+    deleteForm: (id)=> `/api/forms/${id}`,
+    get: (id) => `/api/forms/${id}`
+  },
 };

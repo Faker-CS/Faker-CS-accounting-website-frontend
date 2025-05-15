@@ -16,12 +16,9 @@ import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import { useMockedUser } from 'src/auth/hooks';
-
 import { AppWelcome } from '../app-welcome';
 
 export default function HomePageView() {
-  const { user } = useMockedUser();
   const { userData } = useAuth();
   const popover = usePopover();
   const router = useRouter();
@@ -66,7 +63,7 @@ export default function HomePageView() {
                   <Iconify icon="solar:arrow-right-broken" />
                 </Button>
                 <Button onClick={popover.onOpen} variant="contained" color="info">
-                  Company incorporation ...
+                  Company incorporation...
                   <Iconify icon="solar:arrow-right-broken" />
                 </Button>
               </Stack>
@@ -85,7 +82,7 @@ export default function HomePageView() {
           <MenuItem
             onClick={() => {
               popover.onClose();
-              router.push(paths.dashboard.sarl);
+              router.push(paths.dashboard.companyMenu.sarl);
             }}
           >
             SARL
@@ -94,10 +91,34 @@ export default function HomePageView() {
           <MenuItem
             onClick={() => {
               popover.onClose();
-              router.push(paths.dashboard.sarls);
+              router.push(paths.dashboard.companyMenu.sarls);
             }}
           >
             SARL-S
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              router.push(paths.dashboard.companyMenu.suarl);
+            }}
+          >
+            SUARL
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              router.push(paths.dashboard.companyMenu.snc);
+            }}
+          >
+            SNC
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              router.push(paths.dashboard.companyMenu.sa);
+            }}
+          >
+            SA
           </MenuItem>
         </MenuList>
       </CustomPopover>

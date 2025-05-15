@@ -41,6 +41,10 @@ const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 const CompanyMenuPage = lazy(() => import('src/pages/dashboard/CompanyMenu'));
 const DepositPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot'));
 const DocumentDemandsPage = lazy(() => import('src/pages/dashboard/CompanyMenu/demande'));
+const DepotDropPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot-drop'));
+// _________________________company incorporation___________________________
+const Sarl = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl'));
+const SarlS = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl-s'));
 // ----------------------------------------------------------------------
 
 const UserProfilePage = lazy(() => import('src/auth/view/user-profile-view'));
@@ -100,6 +104,9 @@ export const dashboardRoutes = [
           { element: <CompanyMenuPage />, index: true },
           { path: 'deposit', element: <DepositPage /> },
           { path: 'newDemande', element: <DocumentDemandsPage /> },
+          { path: 'depot/:id', element: <DepotDropPage /> },
+          { path: 'sarl', element: <Sarl /> },
+          { path: 'sarl-s', element: <SarlS /> },
         ],
       },
       { path: 'profile', element: <UserProfilePage /> },

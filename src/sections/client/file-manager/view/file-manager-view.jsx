@@ -60,11 +60,11 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
     if (demenagement && adresse && situation) {
       try {
         const response = await axios.post(
-          `https://as-compta.ckcom.fr/api/form/4`,
+          `http://127.0.0.1:8000/api/form/4`,
           {},
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+              Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
               'Content-Type': 'application/json',
             },
           }
@@ -102,7 +102,7 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
   return (
     <>
       <Typography mb={2} variant="h6">
-        Information générale
+        General informations
       </Typography>
       <Grid container spacing={2}>
         <Grid xs={12} md={4}>
