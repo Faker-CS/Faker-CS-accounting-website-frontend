@@ -126,6 +126,9 @@ export function DashboardLayout({ sx, children, header, data }) {
                 />
                 <NavMobile
                   data={navData}
+                  slotProps={{
+                currentRole: userData?.roles,
+              }}
                   open={mobileNavOpen.value}
                   onClose={mobileNavOpen.onFalse}
                   cssVars={navColorVars.section}

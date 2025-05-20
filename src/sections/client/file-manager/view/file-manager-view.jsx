@@ -65,7 +65,6 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
-              'Content-Type': 'application/json',
             },
           }
         );

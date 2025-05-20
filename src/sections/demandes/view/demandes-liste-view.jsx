@@ -169,7 +169,7 @@ export default function DemandesListeView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.admin.viewForm(id));
+      router.push(paths.dashboard.viewForm(id));
     },
     [router]
   );
@@ -187,9 +187,9 @@ export default function DemandesListeView() {
       <CustomBreadcrumbs
         heading="Liste des demandes"
         links={[
-          { name: 'Accueil', href: paths.admin.root },
-          { name: 'Demandes', href: paths.admin.demandes },
-          { name: 'Liste' },
+          { name: 'Home', href: paths.dashboard.root },
+          { name: 'Demands', href: paths.dashboard.demandes },
+          { name: 'List' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

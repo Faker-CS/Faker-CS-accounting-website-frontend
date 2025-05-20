@@ -70,6 +70,7 @@ export function useUpdateForm() {
 
       // Revalidate the form list after successful update
       mutate(endpoints.forms.all);
+      mutate(endpoints.forms.get(id));
 
       return { success: true, data: response.data };
     } catch (error) {

@@ -16,9 +16,6 @@ import { maxLine } from 'src/theme/styles';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { FileThumbnail } from 'src/components/file-thumbnail';
-
-// import { FileManagerFileDetails } from './file-manager-file-details';
-
 // ----------------------------------------------------------------------
 
 export function DemandesFileItem({ file, selected, onSelect, onDelete, onDownload, sx, ...other }) {

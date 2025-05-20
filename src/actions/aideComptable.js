@@ -2,9 +2,10 @@ import axios from 'axios';
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
-import { fetcher, endpoints } from 'src/utils/axios';
+import { fetcher, endpoints, poster } from 'src/utils/axios';
 
 import { STORAGE_KEY } from 'src/auth/context/jwt';
+import { toast } from 'sonner';
 
 const swrOptions = {
   revalidateIfStale: false,
@@ -67,7 +68,7 @@ export const useAddAideComptable = () => {
         formData.append('avatarUrl', data.avatarUrl); // Must be a real File object
       }
 
-      const url = "http://127.0.0.1:8000/api/aideComptable";
+      const url = 'http://127.0.0.1:8000/api/aideComptable';
 
       const res = await axios.post(url, formData, {
         headers: {
@@ -78,16 +79,14 @@ export const useAddAideComptable = () => {
 
       mutate(endpoints.aideComptable.list);
       return res.data;
-
     } catch (error) {
-      console.error("Error...:", error.response?.data || error.message);
+      console.error('Error...:', error.response?.data || error.message);
       throw error;
     }
   };
 
   return { addAideComptable };
 };
-
 
 // UPDATE aideComptable
 export const useUpdateAideComptable = () => {
@@ -101,11 +100,29 @@ export const useUpdateAideComptable = () => {
       });
       mutate(endpoints.aideComptable.list);
       return res.data;
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error updating aide-comptable:', error.response?.data || error);
       throw error.response?.data || error;
     }
-  }
+  };
   return { updateAideComptable };
-}
+};
+
+export const assignToDemande = async (demandeId, userId) => {
+  const data = {
+    userId,
+  };
+  try {
+    const url = endpoints.aideComptable.assignToDemande(demandeId);
+
+    const res = await poster(url, data);
+
+    mutate(endpoints.forms.all);
+
+    return res;
+  } catch (error) {
+    console.error('Error assigning aide-comptable to demande:', error.response?.data || error);
+    
+    throw error.response?.data || error;
+  }
+};

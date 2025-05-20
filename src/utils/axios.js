@@ -39,10 +39,53 @@ export const fetcher = async (args) => {
   }
 };
 
+export const poster = async (url, data = {}, config = {}) => {
+  try {
+    const res = await axiosInstance.post(url, data, config);
+    return res.data;
+  } catch (error) {
+    console.error('❌ Failed to post:', error);
+    throw error;
+  }
+};
+ 
+// PUT
+export const putter = async (url, data = {}, config = {}) => {
+  try {
+    const res = await axiosInstance.put(url, data, config);
+    return res.data;
+  } catch (error) {
+    console.error('❌ Failed to put:', error);
+    throw error;
+  }
+};
+ 
+// DELETE
+export const deleter = async (url, config = {}) => {
+  try {
+    const res = await axiosInstance.delete(url, config);
+    return res.data;
+  } catch (error) {
+    console.error('❌ Failed to delete:', error);
+    throw error;
+  }
+};
+ 
+// PATCH (optional)
+export const patcher = async (url, data = {}, config = {}) => {
+  try {
+    const res = await axiosInstance.patch(url, data, config);
+    return res.data;
+  } catch (error) {
+    console.error('❌ Failed to patch:', error);
+    throw error;
+  }
+};
+
 // ----------------------------------------------------------------------
 
 export const endpoints = {
-  kanban: '/api/kanban',
+  Tasks: '/api/tasks',
   calendar: '/api/calendar',
   auth: {
     login: '/api/login',
@@ -57,6 +100,7 @@ export const endpoints = {
     details: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
     update: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
     delete: (id) => `/api/aideComptable/${id}`, // Use with ID parameter
+    assignToDemande: (demandeId) => `/api/demandes/assign/${demandeId}`,
   },
   // company management endpoints
   company: {
@@ -94,5 +138,9 @@ export const endpoints = {
     all: '/api/forms',
     deleteForm: (id)=> `/api/forms/${id}`,
     get: (id) => `/api/forms/${id}`
+  },
+  // notifications endpoints
+  notification: {
+    user: '/api/notifications',
   },
 };

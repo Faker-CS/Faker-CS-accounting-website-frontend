@@ -13,7 +13,7 @@ import { NavUpgrade } from '../components/nav-upgrade';
 
 // ----------------------------------------------------------------------
 
-export function NavMobile({ data, open,slotProps, onClose, slots, sx, ...other }) {
+export function NavMobile({ data, open, slotProps, onClose, slots, sx, ...other }) {
   const pathname = usePathname();
 
   useEffect(() => {

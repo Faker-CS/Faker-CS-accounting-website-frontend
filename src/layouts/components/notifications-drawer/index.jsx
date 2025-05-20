@@ -1,52 +1,91 @@
 import { m } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { Label } from 'src/components/label';
+import { initializeEcho, subscribeToNotifications } from 'src/actions/echo';
+import { handleRead, handleAllRead, useGetNotifications } from 'src/actions/notifications';
+
 import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 import { Scrollbar } from 'src/components/scrollbar';
-import { CustomTabs } from 'src/components/custom-tabs';
 
 import { NotificationItem } from './notification-item';
 
 // ----------------------------------------------------------------------
 
-const TABS = [
-  { value: 'all', label: 'All', count: 22 },
-  { value: 'unread', label: 'Unread', count: 12 },
-  { value: 'archived', label: 'Archived', count: 10 },
-];
-
-// ----------------------------------------------------------------------
-
-export function NotificationsDrawer({ data = [], sx, ...other }) {
+export function NotificationsDrawer({ sx, ...other }) {
+  const { userData } = useAuth();
   const drawer = useBoolean();
+  const { notificationsData, mutateNotifications } = useGetNotifications();
 
-  const [currentTab, setCurrentTab] = useState('all');
+  const [notifications, setNotifications] = useState([]);
 
-  const handleChangeTab = useCallback((event, newValue) => {
-    setCurrentTab(newValue);
+  // handle real-time notifications
+  const handleNewNotification = useCallback((newNotification) => {
+    setNotifications((prev) => {
+      // Check if notification already exists
+      const exists = prev.some((n) => n.id === newNotification.id);
+      if (exists) return prev;
+
+      return [
+        {
+          ...newNotification,
+          isUnRead: 1,
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ];
+    });
   }, []);
 
-  const [notifications, setNotifications] = useState(data);
+  // initialize Echo and subscribe to notifications
+  useEffect(() => {
+    if (!userData?.id) return;
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+    const echo = initializeEcho();
+    const channel = subscribeToNotifications(echo, userData?.id, handleNewNotification);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      if (channel) {
+        channel.stopListening('.new-notification');
+      }
+      echo.disconnect();
+    };
+  }, [userData?.id, handleNewNotification]);
+
+  // Initialize notifications from API data
+  useEffect(() => {
+    if (notificationsData) {
+      setNotifications(notificationsData);
+    }
+  }, [notificationsData]);
+
+  const totalUnRead = notifications?.filter((item) => item.isUnRead === 1).length;
 
   const handleMarkAllAsRead = () => {
+    handleAllRead(mutateNotifications);
     setNotifications(notifications.map((notification) => ({ ...notification, isUnRead: false })));
+  };
+
+  const handleMark = (id) => {
+    handleRead(id, mutateNotifications);
+    setNotifications(
+      notifications.map((notification) =>
+        notification.id === id ? { ...notification, isUnRead: false } : notification
+      )
+    );
   };
 
   const renderHead = (
@@ -56,7 +95,7 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
       </Typography>
 
       {!!totalUnRead && (
-        <Tooltip title="Mark all as read">
+        <Tooltip title="Marquer tous comme lus">
           <IconButton color="primary" onClick={handleMarkAllAsRead}>
             <Iconify icon="eva:done-all-fill" />
           </IconButton>
@@ -66,36 +105,7 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
       <IconButton onClick={drawer.onFalse} sx={{ display: { xs: 'inline-flex', sm: 'none' } }}>
         <Iconify icon="mingcute:close-line" />
       </IconButton>
-
-      <IconButton>
-        <Iconify icon="solar:settings-bold-duotone" />
-      </IconButton>
     </Stack>
-  );
-
-  const renderTabs = (
-    <CustomTabs variant="fullWidth" value={currentTab} onChange={handleChangeTab}>
-      {TABS.map((tab) => (
-        <Tab
-          key={tab.value}
-          iconPosition="end"
-          value={tab.value}
-          label={tab.label}
-          icon={
-            <Label
-              variant={((tab.value === 'all' || tab.value === currentTab) && 'filled') || 'soft'}
-              color={
-                (tab.value === 'unread' && 'info') ||
-                (tab.value === 'archived' && 'success') ||
-                'default'
-              }
-            >
-              {tab.count}
-            </Label>
-          }
-        />
-      ))}
-    </CustomTabs>
   );
 
   const renderList = (
@@ -103,7 +113,10 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
       <Box component="ul">
         {notifications?.map((notification) => (
           <Box component="li" key={notification.id} sx={{ display: 'flex' }}>
-            <NotificationItem notification={notification} />
+            <NotificationItem
+              notification={notification}
+              handleMark={() => handleMark(notification.id)}
+            />
           </Box>
         ))}
       </Box>
@@ -146,15 +159,7 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
       >
         {renderHead}
 
-        {renderTabs}
-
         {renderList}
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth size="large">
-            View all
-          </Button>
-        </Box>
       </Drawer>
     </>
   );

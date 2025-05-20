@@ -42,6 +42,8 @@ const CompanyMenuPage = lazy(() => import('src/pages/dashboard/CompanyMenu'));
 const DepositPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot'));
 const DocumentDemandsPage = lazy(() => import('src/pages/dashboard/CompanyMenu/demande'));
 const DepotDropPage = lazy(() => import('src/pages/dashboard/CompanyMenu/depot-drop'));
+const DemandsViewPage = lazy(() => import('src/pages/dashboard/demands/index'));
+const ViewPage = lazy(() => import('src/pages/dashboard/demands/viewForm'));
 // _________________________company incorporation___________________________
 const Sarl = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl'));
 const SarlS = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl-s'));
@@ -110,6 +112,13 @@ export const dashboardRoutes = [
         ],
       },
       { path: 'profile', element: <UserProfilePage /> },
+      {
+        path: 'demandes',
+        children: [
+          { element: <DemandsViewPage />, index: true },
+          { element: <ViewPage />, path: ':id/demands' },
+        ],
+      },
     ],
   },
 ];

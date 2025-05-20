@@ -19,6 +19,7 @@ import {
   Alert,
   Dialog,
   Select,
+  TextField,
   InputLabel,
   DialogTitle,
   FormControl,
@@ -33,6 +34,7 @@ import { fDate, fTime } from 'src/utils/format-time';
 
 import { statusData } from 'src/_mock/_status';
 import { useUpdateForm } from 'src/actions/forms';
+import { assignToDemande, useGetAideComptables } from 'src/actions/aideComptable';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -41,13 +43,9 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function DemandesTableRow({
-  row,
-  onViewRow,
-  onDeleteRow,
-}) {
+export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
   const confirm = useBoolean();
-
+  
   const { updateForm } = useUpdateForm();
 
   const [statusValue, setStatusValue] = useState(row.status);
@@ -55,6 +53,12 @@ export function DemandesTableRow({
   const edit = useBoolean();
 
   const popover = usePopover();
+
+  const [assignOpen, setAssignOpen] = useState(false);
+
+  const [search, setSearch] = useState('');
+
+  const { aideComptablesData } = useGetAideComptables();
 
   const handleEditRow = useCallback(
     async (id) => {
@@ -73,6 +77,22 @@ export function DemandesTableRow({
       );
     },
     [updateForm, statusValue, edit]
+  );
+
+  const handleAssign = useCallback(
+    async (id) => {
+      toast.promise(
+        async () => {
+          const result = await assignToDemande(row.id, id);
+        },
+        {
+          loading: 'Mise à jour en cours...',
+          success: 'Formulaire mis à jour avec succès',
+          error: 'Erreur lors de la mise à jour du formulaire',
+        }
+      );
+    },
+    [row.id]
   );
 
   return (
@@ -150,7 +170,7 @@ export function DemandesTableRow({
             }}
           >
             <Iconify icon="solar:eye-bold" />
-            Voir
+            See
           </MenuItem>
 
           <MenuItem
@@ -160,7 +180,16 @@ export function DemandesTableRow({
             }}
           >
             <Iconify icon="solar:pen-bold" />
-            Modifier
+            Modify
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setAssignOpen(true);
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="mingcute:add-line" />
+            Assign to
           </MenuItem>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
@@ -173,10 +202,69 @@ export function DemandesTableRow({
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Supprimer
+            Delete
           </MenuItem>
         </MenuList>
       </CustomPopover>
+
+      {/* Assign to Dialog */}
+      <Dialog
+        open={assignOpen}
+        onClose={() => setAssignOpen(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
+      >
+        <DialogTitle>Helpers List</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Stack spacing={2}>
+            {(aideComptablesData || [])
+              .filter(
+                (ac) =>
+                  ac.name.toLowerCase().includes(search.toLowerCase()) ||
+                  ac.email.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((ac) => {
+                const isAssigned = row?.helper_forms?.some((aide) => aide.user_id === ac.id);
+                return (
+                  <Stack key={ac.id} direction="row" alignItems="center" spacing={2}>
+                    <Avatar src={`http://127.0.0.1:8000/storage/${ac?.photo}`} alt={ac?.name} />
+                    <Box flexGrow={1}>
+                      <Typography variant="subtitle2">{ac?.name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {ac?.email}
+                      </Typography>
+                    </Box>
+                    <Button
+                      onClick={() => handleAssign(ac.id)}
+                      size="small"
+                      color={isAssigned ? 'primary' : 'inherit'}
+                      startIcon={
+                        <Iconify
+                          width={16}
+                          icon={isAssigned ? 'eva:checkmark-fill' : 'mingcute:add-line'}
+                          sx={{ mr: -0.5 }}
+                        />
+                      }
+                    >
+                      {isAssigned ? 'Assigned' : 'Assign'}
+                    </Button>
+                  </Stack>
+                );
+              })}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAssignOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       <ConfirmDialog
         open={confirm.value}

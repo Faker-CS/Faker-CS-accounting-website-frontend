@@ -21,17 +21,12 @@ import { useMockedUser } from 'src/auth/hooks';
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
 import { ProfileFriends } from '../profile-friends';
-import { ProfileGallery } from '../profile-gallery';
 
 // ----------------------------------------------------------------------
 
 const TABS = [
   { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  {
-    value: 'companies',
-    label: 'Companies',
-    icon: <Iconify width={24} icon="ic:round-business" />,
-  },
+  
   {
     value: 'tasks',
     label: 'Tasks',

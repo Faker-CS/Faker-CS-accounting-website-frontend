@@ -94,7 +94,11 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
       },
-      profile: `${ROOTS.DASHBOARD}/profile`,
+      
+      
     },
+    profile: `${ROOTS.DASHBOARD}/profile`,
+    demandes: `${ROOTS.DASHBOARD}/demandes`,
+    viewForm: (id)=>`${ROOTS.DASHBOARD}/demandes/${id}/demands`,
   },
 };

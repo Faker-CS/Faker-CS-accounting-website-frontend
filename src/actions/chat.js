@@ -188,6 +188,7 @@ export async function clickConversation(conversationId) {
   mutate(
     [CHART_ENDPOINT, { params: { endpoint: 'conversations' } }],
     (currentData) => {
+      console.log("chat", currentData);
       const currentConversations = currentData.conversations;
 
       const conversations = currentConversations.map((conversation) =>
