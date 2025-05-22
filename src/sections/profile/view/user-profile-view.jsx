@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -11,7 +12,7 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
+import { _userAbout, _userFeeds, _userFriends } from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -21,16 +22,16 @@ import { useMockedUser } from 'src/auth/hooks';
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
 import { ProfileFriends } from '../profile-friends';
+import { ProfileSettings } from '../profile-settings';
 
 // ----------------------------------------------------------------------
 
 const TABS = [
   { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  
   {
-    value: 'tasks',
-    label: 'Tasks',
-    icon: <Iconify width={24} icon="ic:round-task"/>,
+    value: 'settings',
+    label: 'Settings',
+    icon: <Iconify width={24} icon="solar:settings-bold" />,
   },
 ];
 
@@ -39,11 +40,14 @@ const TABS = [
 export function UserProfileView() {
   const { user } = useMockedUser();
   const { userData } = useAuth();
-  console.log("first", userData);
 
   const [searchFriends, setSearchFriends] = useState('');
 
-  const tabs = useTabs('profile');
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get('tab') || 'profile';
+
+  const tabs = useTabs(initialTab);
 
   const handleSearchFriends = useCallback((event) => {
     setSearchFriends(event.target.value);
@@ -56,16 +60,22 @@ export function UserProfileView() {
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Profile', href: paths.dashboard.profile },
-          { name: userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : '' },
+          {
+            name: userData?.name
+              ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1)
+              : '',
+          },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={ userData?.roles && userData.roles.comptable === true ? 'Comptable' : 'Accounter' }
-          name={userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : '' }
-          avatarUrl={user?.photoURL}
+          role={userData?.roles && userData.roles.comptable === true ? 'Comptable' : 'Accounter'}
+          name={
+            userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : ''
+          }
+          avatarUrl={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`}
           coverUrl={_userAbout.coverUrl}
         />
 
@@ -91,7 +101,6 @@ export function UserProfileView() {
 
       {tabs.value === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
 
-
       {tabs.value === 'friends' && (
         <ProfileFriends
           friends={_userFriends}
@@ -99,6 +108,8 @@ export function UserProfileView() {
           onSearchFriends={handleSearchFriends}
         />
       )}
+
+      {tabs.value === 'settings' && <ProfileSettings />}
 
       {/* {tabs.value === 'gallery' && <ProfileGallery gallery={_userGallery} />} */}
     </DashboardContent>

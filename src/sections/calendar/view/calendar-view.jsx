@@ -17,6 +17,7 @@ import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
@@ -42,6 +43,8 @@ export function CalendarView() {
   const theme = useTheme();
 
   const openFilters = useBoolean();
+
+  const { userData } = useAuth();
 
   const { events, eventsLoading } = useGetEvents();
 
@@ -110,13 +113,15 @@ export function CalendarView() {
           sx={{ mb: { xs: 3, md: 5 } }}
         >
           <Typography variant="h4">Calendar</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={onOpenForm}
-          >
-            New event
-          </Button>
+          {userData?.roles === 'comptable' && (
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={onOpenForm}
+            >
+              New event
+            </Button>
+          )}
         </Stack>
 
         {canReset && renderResults}

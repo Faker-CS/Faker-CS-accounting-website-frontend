@@ -143,4 +143,9 @@ export const endpoints = {
   notification: {
     user: '/api/notifications',
   },
+
+  // statistics endpoints
+  statistics: {
+    get: '/api/statistics'
+  }
 };

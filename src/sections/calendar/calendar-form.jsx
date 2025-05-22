@@ -14,7 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { uuidv4 } from 'src/utils/uuidv4';
 import { fIsAfter } from 'src/utils/format-time';
 
-import { createEvent, updateEvent, deleteEvent } from 'src/actions/calendar';
+import { createEvent, updateEvent, deleteEvent, useGetEvents } from 'src/actions/calendar';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -29,10 +29,7 @@ export const EventSchema = zod.object({
     .string()
     .min(1, { message: 'Title is required!' })
     .max(100, { message: 'Title must be less than 100 characters' }),
-  description: zod
-    .string()
-    .min(1, { message: 'Description is required!' })
-    .min(50, { message: 'Description must be at least 50 characters' }),
+  description: zod.string().min(1, { message: 'Description is required!' }),
   // Not required
   color: zod.string(),
   allDay: zod.boolean(),
@@ -48,6 +45,8 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
     resolver: zodResolver(EventSchema),
     defaultValues: currentEvent,
   });
+
+  const { events } = useGetEvents();
 
   const {
     reset,
@@ -139,7 +138,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
       <DialogActions sx={{ flexShrink: 0 }}>
         {!!currentEvent?.id && (
           <Tooltip title="Delete event">
-            <IconButton onClick={onDelete}>
+            <IconButton onClick={onDelete} color='error' >
               <Iconify icon="solar:trash-bin-trash-bold" />
             </IconButton>
           </Tooltip>

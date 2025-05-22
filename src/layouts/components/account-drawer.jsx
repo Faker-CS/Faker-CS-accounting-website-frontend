@@ -64,7 +64,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <AnimateAvatar
       width={96}
       slotProps={{
-        avatar: { src: user?.photoURL, alt: user?.displayName },
+        avatar: { src: `${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`, alt: userData?.name },
         overlay: {
           border: 2,
           spacing: 3,
@@ -72,7 +72,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         },
       }}
     >
-      {user?.displayName?.charAt(0).toUpperCase()}
+      {userData?.name?.charAt(0).toUpperCase()}
     </AnimateAvatar>
   );
 
@@ -80,8 +80,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <>
       <AccountButton
         onClick={handleOpenDrawer}
-        photoURL={user?.photoURL}
-        displayName={user?.displayName}
+        photoURL={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`}
+        displayName={userData?.name}
         sx={sx}
         {...other}
       />

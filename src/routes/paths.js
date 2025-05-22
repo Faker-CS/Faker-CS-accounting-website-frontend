@@ -50,26 +50,25 @@ export const paths = {
     two: `${ROOTS.DASHBOARD}/two`,
     three: `${ROOTS.DASHBOARD}/three`,
     group: {
-      root: `${ROOTS.DASHBOARD}/group`,
-      five: `${ROOTS.DASHBOARD}/group/five`,
-      six: `${ROOTS.DASHBOARD}/group/six`,
+      root: `${ROOTS.DASHBOARD}/home`,
+      five: `${ROOTS.DASHBOARD}/home/five`,
+      six: `${ROOTS.DASHBOARD}/home/six`,
     },
     companyMenu: {
       root: `${ROOTS.DASHBOARD}/document demands`,
       deposit: `${ROOTS.DASHBOARD}/document demands/deposit`,
       newDemande: `${ROOTS.DASHBOARD}/document demands/newDemande`,
-      declarationImpotDrop: (id)=>`${ROOTS.DASHBOARD}/document demands/depot/${id}`,
+      declarationImpotDrop: (id) => `${ROOTS.DASHBOARD}/document demands/depot/${id}`,
       sarl: `${ROOTS.DASHBOARD}/document demands/sarl`,
       suarl: `${ROOTS.DASHBOARD}/document demands/suarl`,
       sarls: `${ROOTS.DASHBOARD}/document demands/sarl-s`,
       snc: `${ROOTS.DASHBOARD}/document demands/snc`,
       sa: `${ROOTS.DASHBOARD}/document demands/sa`,
-
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,
       newEntreprise: `${ROOTS.DASHBOARD}/users/new entreprise`,
-      editEntreprise: (id)=>`${ROOTS.DASHBOARD}/users/${id}/edit`,
+      editEntreprise: (id) => `${ROOTS.DASHBOARD}/users/${id}/edit`,
       effectifs: `${ROOTS.DASHBOARD}/users/effectifs`,
       createEntreprise: `${ROOTS.DASHBOARD}/users/create`,
       aideComptable: `${ROOTS.DASHBOARD}/users/aide-comptable`,
@@ -94,11 +93,9 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
       },
-      
-      
     },
     profile: `${ROOTS.DASHBOARD}/profile`,
     demandes: `${ROOTS.DASHBOARD}/demandes`,
-    viewForm: (id)=>`${ROOTS.DASHBOARD}/demandes/${id}/demands`,
+    viewForm: (id) => `${ROOTS.DASHBOARD}/demandes/${id}/demands`,
   },
 };

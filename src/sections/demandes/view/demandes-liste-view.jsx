@@ -41,7 +41,6 @@ import { DemandesTableFiltersResult } from '../demandes-table-filters-result';
 const TABLE_HEAD = [
   { id: 'name', label: 'Client' },
   { id: 'created_at', label: 'Créer le' },
-  //   { id: 'dueDate', label: 'Due' },
   { id: 'service', label: 'Service' },
   { id: 'status', label: 'Status' },
   { id: '' },

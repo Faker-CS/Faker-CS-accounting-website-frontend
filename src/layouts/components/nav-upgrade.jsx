@@ -23,7 +23,7 @@ export function NavUpgrade({ sx, ...other }) {
     <Stack sx={{ px: 2, py: 5, textAlign: 'center', ...sx }} {...other}>
       <Stack alignItems="center">
         <Box sx={{ position: 'relative' }}>
-          <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
+          <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
             {user?.displayName?.charAt(0).toUpperCase()}
           </Avatar>
         </Box>

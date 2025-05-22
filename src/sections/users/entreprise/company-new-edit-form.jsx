@@ -1,6 +1,5 @@
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
@@ -16,12 +15,10 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
-import { form } from 'src/theme/core/components/form';
 import { useAddEntreprise, useUpdateEntreprise } from 'src/actions/entreprise';
 
 import { Label } from 'src/components/label';
@@ -121,7 +118,6 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log('data', data);
       // await updateEntreprise(currentUser?.id, data );
       const res = await addEntreprise(data);
       console.log('res', res);

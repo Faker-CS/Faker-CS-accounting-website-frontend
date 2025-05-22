@@ -2,10 +2,9 @@ import axios from 'axios';
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
-import { fetcher, endpoints, poster } from 'src/utils/axios';
+import { poster, fetcher, endpoints } from 'src/utils/axios';
 
 import { STORAGE_KEY } from 'src/auth/context/jwt';
-import { toast } from 'sonner';
 
 const swrOptions = {
   revalidateIfStale: false,
@@ -33,7 +32,7 @@ export const useGetAideComptables = () => {
 export const useDeleteAideComptable = () => {
   const deleteAideComptable = async (id) => {
     try {
-      const url = `http://127.0.0.1:8000/api/aideComptable/${id}`;
+      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable/${id}`;
       const res = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
@@ -68,7 +67,7 @@ export const useAddAideComptable = () => {
         formData.append('avatarUrl', data.avatarUrl); // Must be a real File object
       }
 
-      const url = 'http://127.0.0.1:8000/api/aideComptable';
+      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable`;
 
       const res = await axios.post(url, formData, {
         headers: {
@@ -92,7 +91,7 @@ export const useAddAideComptable = () => {
 export const useUpdateAideComptable = () => {
   const updateAideComptable = async (id, data) => {
     try {
-      const url = `http://127.0.0.1:8000/api/aideComptable/${id}`;
+      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable/${id}`;
       const res = await axios.put(url, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,

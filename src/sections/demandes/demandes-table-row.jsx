@@ -28,6 +28,7 @@ import {
   OutlinedInput,
 } from '@mui/material';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fDate, fTime } from 'src/utils/format-time';
@@ -45,7 +46,10 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
   const confirm = useBoolean();
-  
+
+  const { userData } = useAuth();
+  const isAideComptable = userData?.roles?.includes('aide-comptable');
+
   const { updateForm } = useUpdateForm();
 
   const [statusValue, setStatusValue] = useState(row.status);
@@ -116,7 +120,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
                   onClick={onViewRow}
                   sx={{ color: 'text.disabled', cursor: 'pointer' }}
                 >
-                  #{row.user.id}
+                  {row.user.email}
                 </Link>
               }
             />
@@ -182,28 +186,31 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
             <Iconify icon="solar:pen-bold" />
             Modify
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              setAssignOpen(true);
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="mingcute:add-line" />
-            Assign to
-          </MenuItem>
+          {!isAideComptable && (
+            <MenuItem
+              onClick={() => {
+                setAssignOpen(true);
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="mingcute:add-line" />
+              Assign to
+            </MenuItem>
+          )}
 
           <Divider sx={{ borderStyle: 'dashed' }} />
-
-          <MenuItem
-            onClick={() => {
-              confirm.onTrue();
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
+          {!isAideComptable && (
+            <MenuItem
+              onClick={() => {
+                confirm.onTrue();
+                popover.onClose();
+              }}
+              sx={{ color: 'error.main' }}
+            >
+              <Iconify icon="solar:trash-bin-trash-bold" />
+              Delete
+            </MenuItem>
+          )}
         </MenuList>
       </CustomPopover>
 
@@ -235,7 +242,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
                 const isAssigned = row?.helper_forms?.some((aide) => aide.user_id === ac.id);
                 return (
                   <Stack key={ac.id} direction="row" alignItems="center" spacing={2}>
-                    <Avatar src={`http://127.0.0.1:8000/storage/${ac?.photo}`} alt={ac?.name} />
+                    <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${ac?.photo}`} alt={ac?.name} />
                     <Box flexGrow={1}>
                       <Typography variant="subtitle2">{ac?.name}</Typography>
                       <Typography variant="body2" color="text.secondary">

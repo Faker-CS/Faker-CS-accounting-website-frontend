@@ -6,7 +6,7 @@ import axios, { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
-const enableServer = false;
+const enableServer = true;
 
 const CALENDAR_ENDPOINT = endpoints.calendar;
 
@@ -45,25 +45,34 @@ export async function createEvent(eventData) {
   /**
    * Work on server
    */
+
+  console.log(eventData)
   if (enableServer) {
-    const data = { eventData };
-    await axios.post(CALENDAR_ENDPOINT, data);
+    try {
+      const data = { eventData };
+      const response = await axios.post(CALENDAR_ENDPOINT, data);
+      await mutate(CALENDAR_ENDPOINT);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      throw error;
+    }
   }
 
   /**
    * Work in local
    */
-  mutate(
+  const result = await mutate(
     CALENDAR_ENDPOINT,
     (currentData) => {
-      const currentEvents = currentData?.events;
-
+      const currentEvents = currentData?.events || [];
       const events = [...currentEvents, eventData];
-
       return { ...currentData, events };
     },
-    false
+    { revalidate: true }
   );
+
+  return result;
 }
 
 // ----------------------------------------------------------------------
@@ -73,26 +82,36 @@ export async function updateEvent(eventData) {
    * Work on server
    */
   if (enableServer) {
-    const data = { eventData };
-    await axios.put(CALENDAR_ENDPOINT, data);
+    try {
+      const data = { eventData };
+      const response = await axios.put(
+        `${import.meta.env.VITE_SERVER_URL}/calendar/${eventData.id}`,
+        eventData
+      );
+      await mutate(CALENDAR_ENDPOINT);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to update event:', error);
+      throw error;
+    }
   }
 
   /**
    * Work in local
    */
-  mutate(
+  const result = await mutate(
     CALENDAR_ENDPOINT,
     (currentData) => {
-      const currentEvents = currentData?.events;
-
+      const currentEvents = currentData?.events || [];
       const events = currentEvents.map((event) =>
         event.id === eventData.id ? { ...event, ...eventData } : event
       );
-
       return { ...currentData, events };
     },
     false
   );
+
+  return result;
 }
 
 // ----------------------------------------------------------------------
@@ -102,22 +121,30 @@ export async function deleteEvent(eventId) {
    * Work on server
    */
   if (enableServer) {
-    const data = { eventId };
-    await axios.patch(CALENDAR_ENDPOINT, data);
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_SERVER_URL}/calendar/${eventId}`
+      );
+      await mutate(CALENDAR_ENDPOINT);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      throw error;
+    }
   }
 
   /**
    * Work in local
    */
-  mutate(
+  const result = await mutate(
     CALENDAR_ENDPOINT,
     (currentData) => {
-      const currentEvents = currentData?.events;
-
+      const currentEvents = currentData?.events || [];
       const events = currentEvents.filter((event) => event.id !== eventId);
-
       return { ...currentData, events };
     },
     false
   );
+
+  return result;
 }

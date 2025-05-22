@@ -1,6 +1,5 @@
 import { _id } from 'src/_mock/assets';
 
-
 // ----------------------------------------------------------------------
 
 const MOCK_ID = _id[1];
@@ -53,9 +52,9 @@ export const paths = {
     two: `${ROOTS.DASHBOARD}/two`,
     three: `${ROOTS.DASHBOARD}/three`,
     group: {
-      root: `${ROOTS.DASHBOARD}/group`,
-      five: `${ROOTS.DASHBOARD}/group/five`,
-      six: `${ROOTS.DASHBOARD}/group/six`,
+      root: `${ROOTS.DASHBOARD}/home`,
+      five: `${ROOTS.DASHBOARD}/home/five`,
+      six: `${ROOTS.DASHBOARD}/home/six`,
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,

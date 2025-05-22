@@ -182,7 +182,7 @@ export function NavUl({ children, sx, slotProps, ...other }) {
         flexDirection: 'column',
         ...sx,
       }}
-      slotProps={slotProps}
+      slotprops={slotProps}
       {...other}
     >
       {children}
