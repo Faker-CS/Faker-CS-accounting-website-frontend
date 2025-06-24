@@ -55,7 +55,7 @@ export function CalendarFilters({
     <>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Filters
+          History
         </Typography>
 
         <Tooltip title="Reset">

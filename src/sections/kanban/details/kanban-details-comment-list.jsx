@@ -1,62 +1,63 @@
+/* eslint-disable import/no-unresolved */
+import { formatDistanceToNow } from 'date-fns';
+
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
-import { fToNow } from 'src/utils/format-time';
+import { useAuth } from 'src/hooks/useAuth';
 
-import { Image } from 'src/components/image';
-import { Lightbox, useLightBox } from 'src/components/lightbox';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function KanbanDetailsCommentList({ comments }) {
-  const slides = comments
-    .filter((comment) => comment.messageType === 'image')
-    .map((slide) => ({ src: slide.message }));
-
-  const lightbox = useLightBox(slides);
+export function KanbanDetailsCommentList({ comments = [], onDeleteComment }) {
+  const { userData } = useAuth();
 
   return (
-    <>
-      <Stack component="ul" spacing={3}>
-        {comments.map((comment) => (
-          <Stack component="li" key={comment.id} direction="row" spacing={2}>
-            <Avatar src={comment.avatarUrl} />
+    <Stack spacing={3}>
+      {comments.map((comment) => {
+        const isOwner = comment.user_id === userData?.id;
 
-            <Stack spacing={comment.messageType === 'image' ? 1 : 0.5} flexGrow={1}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="subtitle2"> {comment.name}</Typography>
+        return (
+          <Stack key={comment.id} direction="row" spacing={2}>
+            <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${comment.user?.photo}`} alt={comment.user?.name}>
+              {comment.user?.name?.charAt(0).toUpperCase()}
+            </Avatar>
+
+            <Stack flexGrow={1}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                sx={{ typography: 'caption' }}
+              >
+                <Typography variant="subtitle2">{comment.user?.name}</Typography>
+
                 <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-                  {fToNow(comment.createdAt)}
+                  {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                 </Typography>
               </Stack>
 
-              {comment.messageType === 'image' ? (
-                <Image
-                  alt={comment.message}
-                  src={comment.message}
-                  onClick={() => lightbox.onOpen(comment.message)}
-                  sx={{
-                    borderRadius: 1.5,
-                    cursor: 'pointer',
-                    transition: (theme) => theme.transitions.create(['opacity']),
-                    '&:hover': { opacity: 0.8 },
-                  }}
-                />
-              ) : (
-                <Typography variant="body2">{comment.message}</Typography>
-              )}
+              <Typography variant="body2" sx={{ mt: 0.5 }}>
+                {comment.content}
+              </Typography>
             </Stack>
-          </Stack>
-        ))}
-      </Stack>
 
-      <Lightbox
-        index={lightbox.selected}
-        slides={slides}
-        open={lightbox.open}
-        close={lightbox.onClose}
-      />
-    </>
+            {isOwner && (
+              <IconButton
+                size="small"
+                onClick={() => onDeleteComment(comment.id)}
+                sx={{ color: 'text.disabled' }}
+              >
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            )}
+          </Stack>
+        );
+      })}
+    </Stack>
   );
 }

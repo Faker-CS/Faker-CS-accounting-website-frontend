@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -32,6 +33,7 @@ import { FileManagerGridView } from '../file-manager-grid-view';
 export function FileManagerView({ folders, setServiceStatus, status }) {
   const { user } = useMockedUser();
   const { updateRecords } = usePutRecords();
+  const { t } = useTranslation();
 
   const canEdit = status === 'pending' || status === 'none' || status === 'rejected';
 
@@ -48,9 +50,9 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
   const SubmitData = async (e) => {
     e.preventDefault();
     toast.promise(updateRecords({ demenagement, adresse, situation }), {
-      loading: 'Mise à jour en cours...',
-      success: 'Profil mis à jour avec succès!',
-      error: 'Échec de la mise à jour du profil!',
+      loading: t('profileUpdating'),
+      success: t('profileUpdateSuccess'),
+      error: t('profileUpdateError'),
     });
   };
 
@@ -60,7 +62,7 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
     if (demenagement && adresse && situation) {
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/api/form/4`,
+          `http://35.171.211.165:8000/api/form/4`,
           {},
           {
             headers: {
@@ -72,40 +74,40 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
         // Handle the response status
         switch (response.data.status) {
           case 'form_not_found':
-            toast.info('Remplissez les documents nécessaires.');
+            toast.info(t('fillRequiredDocuments'));
             break;
           case 'submitted_for_review':
-            toast.success('Formulaire soumis pour révision.');
-            setServiceStatus({ value: 'review', label: 'En attente', color: 'warning' }); // Update the status
+            toast.success(t('formSubmittedForReview'));
+            setServiceStatus({ value: 'review', label: t('pending'), color: 'warning' });
             break;
           case 'form_in_review':
-            toast.warning('Le formulaire est déjà en révision.');
+            toast.warning(t('formAlreadyInReview'));
             break;
           case 'form_accepted':
-            toast.success('Formulaire accepté.');
-            setServiceStatus({ value: 'accepted', label: 'Accepté', color: 'success' }); // Update the status
+            toast.success(t('formAccepted'));
+            setServiceStatus({ value: 'accepted', label: t('accepted'), color: 'success' });
             break;
           default:
-            toast.error('Erreur inattendue.');
+            toast.error(t('unexpectedError'));
             break;
         }
       } catch (error) {
-        console.error("Erreur lors de l'envoi du formulaire:", error);
-        toast.error("Échec de l'envoi du formulaire. Veuillez réessayer.");
+        console.error(t('formSendErrorLog'), error);
+        toast.error(t('formSendError'));
       }
     } else {
-      toast.info('Complétez vos informations!');
+      toast.info(t('completeYourInfo'));
     }
   };
 
   return (
     <>
       <Typography mb={2} variant="h6">
-        General informations
+        {t('generalInformations')}
       </Typography>
       <Grid container spacing={2}>
         <Grid xs={12} md={4}>
-          <InputLabel mb={1}>Date de déménagement</InputLabel>
+          <InputLabel mb={1}>{t('movingDate')}</InputLabel>
           <DatePicker
             sx={{ width: '100%' }}
             value={demenagement}
@@ -116,7 +118,7 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
           />
         </Grid>
         <Grid xs={12} md={4}>
-          <InputLabel mb={1}>Résidence actuelle</InputLabel>
+          <InputLabel mb={1}>{t('currentResidence')}</InputLabel>
           <TextField
             fullWidth
             value={adresse}
@@ -125,25 +127,25 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
           />
         </Grid>
         <Grid xs={12} md={4}>
-          <InputLabel mb={1}>Situation familiale</InputLabel>
+          <InputLabel mb={1}>{t('familySituation')}</InputLabel>
           <Select
             fullWidth
             value={situation}
             onChange={(e) => setSituation(e.target.value)}
             disabled={!canEdit}
           >
-            <MenuItem value="Célébataire">Célébataire</MenuItem>
+            <MenuItem value="Célébataire">{t('single')}</MenuItem>
           </Select>
         </Grid>
       </Grid>
-      <Stack py={2} alignItems="flex-end">
+      {/* <Stack py={2} alignItems="flex-end">
         <Button variant="contained" color="primary" onClick={(e) => SubmitData(e)}>
           Valider
         </Button>
-      </Stack>
+      </Stack> */}
       <Divider sx={{ my: 1, borderStyle: 'dashed' }} />
       <Typography mb={2} variant="h6">
-        Documents à fournir
+        {t('documentsToProvide')}
       </Typography>
       {notFound ? (
         <EmptyContent filled sx={{ py: 10 }} />
@@ -158,7 +160,7 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
       )}
       <Stack my={2} alignItems="flex-start">
         <Button variant="contained" color="primary" onClick={(e) => SubmitFiles(e)}>
-          Envoyer ma demande
+          {t('sendMyRequest')}
         </Button>
       </Stack>
     </>

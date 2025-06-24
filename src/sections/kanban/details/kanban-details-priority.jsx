@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Stack from '@mui/material/Stack';
 import ButtonBase from '@mui/material/ButtonBase';
 
@@ -10,7 +11,7 @@ import { Iconify } from 'src/components/iconify';
 export function KanbanDetailsPriority({ priority, onChangePriority }) {
   return (
     <Stack direction="row" flexWrap="wrap" spacing={1}>
-      {['low', 'medium', 'hight'].map((option) => (
+      {['low', 'medium', 'high'].map((option) => (
         <ButtonBase
           key={option}
           onClick={() => onChangePriority(option)}
@@ -22,11 +23,13 @@ export function KanbanDetailsPriority({ priority, onChangePriority }) {
             borderRadius: 1,
             lineHeight: '20px',
             textTransform: 'capitalize',
-            fontWeight: 'fontWeightBold',
+            fontWeight: option === priority ? 'bold' : 'fontWeightBold',
             boxShadow: (theme) =>
               `inset 0 0 0 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
             ...(option === priority && {
               boxShadow: (theme) => `inset 0 0 0 2px ${theme.vars.palette.text.primary}`,
+              backgroundColor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.08),
+              color: (theme) => theme.vars.palette.primary.main,
             }),
           }}
         >
@@ -40,10 +43,9 @@ export function KanbanDetailsPriority({ priority, onChangePriority }) {
               mr: 0.5,
               ...(option === 'low' && { color: 'info.main' }),
               ...(option === 'medium' && { color: 'warning.main' }),
-              ...(option === 'hight' && { color: 'error.main' }),
+              ...(option === 'high' && { color: 'error.main' }),
             }}
           />
-
           {option}
         </ButtonBase>
       ))}

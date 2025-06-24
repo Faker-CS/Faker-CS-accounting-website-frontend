@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
 import { useState, useCallback } from 'react';
 
@@ -104,7 +105,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
       <TableRow hover>
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.user.name}>{row.user.name.charAt(0).toUpperCase()}</Avatar>
+            <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${row.user?.photo}`} alt={row.user.name}>{row.user.name.charAt(0).toUpperCase()}</Avatar>
 
             <ListItemText
               disableTypography

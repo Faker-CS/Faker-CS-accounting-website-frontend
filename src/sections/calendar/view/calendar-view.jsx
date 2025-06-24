@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
 
 import Calendar from '@fullcalendar/react'; // => request placed at the top
@@ -202,6 +203,7 @@ export function CalendarView() {
           currentEvent={currentEvent}
           colorOptions={CALENDAR_COLOR_OPTIONS}
           onClose={onCloseForm}
+          readOnly={userData?.roles === 'aide-comptable'}
         />
       </Dialog>
 

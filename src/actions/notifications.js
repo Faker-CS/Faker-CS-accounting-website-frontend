@@ -40,7 +40,7 @@ export async function handleAllRead(mutate) {
       {},
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       }
     );
@@ -68,5 +68,21 @@ export async function handleRead(id, mutate) {
     await mutate?.();
   } catch (error) {
     console.error('Error marking notification as read:', error);
+  }
+}
+
+export async function handleDelete(id, mutate) {
+  try {
+    await axios.delete(
+      `${import.meta.env.VITE_SERVER_URL}/notifications/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+        },
+      }
+    );
+    await mutate?.();
+  } catch (error) {
+    console.error('Error deleting notification:', error);
   }
 }

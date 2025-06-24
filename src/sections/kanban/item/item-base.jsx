@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { memo, useEffect, forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
@@ -59,7 +60,8 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const ItemBase = forwardRef(({ task, stateProps, sx, ...other }, ref) => {
+const ItemBase = forwardRef(({ task, comments, stateProps, sx, ...other }, ref) => {
+
   useEffect(() => {
     if (!stateProps?.dragOverlay) {
       return;
@@ -87,20 +89,23 @@ const ItemBase = forwardRef(({ task, stateProps, sx, ...other }, ref) => {
       ''
   );
 
+  // Get assignees from helper_forms
+  const assignees = task.form?.helper_forms?.map(helper => helper.user) || [];
+
   const renderPriority = (
     <Iconify
       icon={
-        (task.priority === 'low' && 'solar:double-alt-arrow-down-bold-duotone') ||
-        (task.priority === 'medium' && 'solar:double-alt-arrow-right-bold-duotone') ||
+        (task.priority === 'Low' && 'solar:double-alt-arrow-down-bold-duotone') ||
+        (task.priority === 'Medium' && 'solar:double-alt-arrow-right-bold-duotone') ||
         'solar:double-alt-arrow-up-bold-duotone'
       }
       sx={{
         top: 4,
         right: 4,
         position: 'absolute',
-        ...(task.priority === 'low' && { color: 'info.main' }),
-        ...(task.priority === 'medium' && { color: 'warning.main' }),
-        ...(task.priority === 'hight' && { color: 'error.main' }),
+        ...(task.priority === 'Low' && { color: 'info.main' }),
+        ...(task.priority === 'Medium' && { color: 'warning.main' }),
+        ...(task.priority === 'High' && { color: 'error.main' }),
       }}
     />
   );
@@ -138,16 +143,16 @@ const ItemBase = forwardRef(({ task, stateProps, sx, ...other }, ref) => {
         <Iconify width={16} icon="solar:chat-round-dots-bold" sx={{ mr: 0.25 }} />
 
         <Box component="span" sx={{ mr: 1 }}>
-          {task?.comments?.length}
+          {comments?.length}
         </Box>
 
-        <Iconify width={16} icon="eva:attach-2-fill" sx={{ mr: 0.25 }} />
-        <Box component="span">{task?.attachments?.length}</Box>
+        {/* <Iconify width={16} icon="eva:attach-2-fill" sx={{ mr: 0.25 }} />
+        <Box component="span">{task?.attachments?.length}</Box> */}
       </Stack>
 
       <AvatarGroup sx={{ [`& .${avatarGroupClasses.avatar}`]: { width: 24, height: 24 } }}>
-        {task?.assignee?.map((user) => (
-          <Avatar key={user.id} alt={user.name} src={user.avatarUrl} />
+        {assignees.map((user) => (
+          <Avatar key={user.id} alt={user.name} src={`${import.meta.env.VITE_SERVER}/storage/${user?.photo}`} />
         ))}
       </AvatarGroup>
     </Stack>
@@ -182,7 +187,7 @@ const ItemBase = forwardRef(({ task, stateProps, sx, ...other }, ref) => {
           {renderPriority}
 
           <Typography variant="subtitle2" sx={{ mb: 2 }}>
-            {task.name}
+            {task.title || task.name}
           </Typography>
 
           {renderInfo}

@@ -1,14 +1,14 @@
+/* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -19,11 +19,10 @@ import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
-import { Label } from 'src/components/label';
+import { useAddAideComptable } from 'src/actions/aideComptable';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-import { useAddAideComptable } from 'src/actions/aideComptable';
-import { add } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
@@ -180,13 +179,13 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" />
-              <Field.Text name="email" label="Email address" />
-              <Field.Phone name="phoneNumber" label="Phone number" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="state" label="State/region" />
-              <Field.Text name="address" label="Address" />
-              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="name" label="Full name" color="primary" />
+              <Field.Text name="email" label="Email address" color="primary" />
+              <Field.Phone name="phoneNumber" label="Phone number" color="primary" country="TN" />
+              <Field.Text name="city" label="City" country="TN" color="primary" />
+              <Field.Text name="state" label="State/region" color="primary" />
+              <Field.Text name="address" label="Address" color="primary" />
+              <Field.Text name="zipCode" label="Zip/code" color="primary" />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

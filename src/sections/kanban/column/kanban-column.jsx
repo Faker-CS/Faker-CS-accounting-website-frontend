@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-unresolved */
 import { useCallback } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable, defaultAnimateLayoutChanges } from '@dnd-kit/sortable';
@@ -21,15 +21,15 @@ export function KanbanColumn({ children, column, tasks, disabled, sx }) {
   const { attributes, isDragging, listeners, setNodeRef, transition, active, over, transform } =
     useSortable({
       id: column.id,
-      data: { type: 'container', children: tasks },
+      data: { type: 'container', children: (tasks || []).filter(Boolean) },
       animateLayoutChanges,
     });
 
-  const tasksIds = tasks.map((task) => task.id);
+  const tasksIds = (tasks || []).filter(Boolean).map((task) => task.id);
 
   const isOverContainer = over
     ? (column.id === over.id && active?.data.current?.type !== 'container') ||
-      tasksIds.includes(over.id)
+      tasksIds?.includes(over.id)
     : false;
 
   const handleUpdateColumn = useCallback(
@@ -91,7 +91,7 @@ export function KanbanColumn({ children, column, tasks, disabled, sx }) {
         header: (
           <KanbanColumnToolBar
             handleProps={{ ...attributes, ...listeners }}
-            totalTasks={tasks.length}
+            totalTasks={(tasks || []).filter(Boolean).length}
             columnName={column.name}
             onUpdateColumn={handleUpdateColumn}
             onClearColumn={handleClearColumn}

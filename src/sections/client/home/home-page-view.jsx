@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Grid from '@mui/material/Unstable_Grid2';
 import { Stack, Button, MenuItem, MenuList } from '@mui/material';
@@ -22,15 +23,16 @@ export default function HomePageView() {
   const { userData } = useAuth();
   const popover = usePopover();
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Home"
+          heading={t('home')}
           links={[
             {
-              name: 'Home',
+              name: t('home'),
               href: '#',
               icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
             },
@@ -39,8 +41,8 @@ export default function HomePageView() {
         />
         <Grid spacing={4}>
           <AppWelcome
-            title={`Wish you a nice day 👋 \n ${userData?.name}`}
-            description="Start submitting your applications now, you can choose between "
+            title={t('wishYouNiceDay', { name: userData?.name })}
+            description={t('startSubmittingApplications')}
             img={<SeoIllustration hideBackground />}
             action={
               <Stack spacing={2} flexDirection={{ sx: 'column', md: 'row' }}>
@@ -50,7 +52,7 @@ export default function HomePageView() {
                   LinkComponent={RouterLink}
                   href={paths.dashboard.companyMenu.newDemande}
                 >
-                  Authorization request
+                  {t('authorizationRequest')}
                   <Iconify icon="solar:arrow-right-broken" />
                 </Button>
                 <Button
@@ -59,11 +61,11 @@ export default function HomePageView() {
                   LinkComponent={RouterLink}
                   href={paths.dashboard.companyMenu.deposit}
                 >
-                  Tax return
+                  {t('taxReturn')}
                   <Iconify icon="solar:arrow-right-broken" />
                 </Button>
                 <Button onClick={popover.onOpen} variant="contained" color="info">
-                  Company incorporation...
+                  {t('companyIncorporation')}
                   <Iconify icon="solar:arrow-right-broken" />
                 </Button>
               </Stack>
@@ -85,7 +87,7 @@ export default function HomePageView() {
               router.push(paths.dashboard.companyMenu.sarl);
             }}
           >
-            SARL
+            {t('sarl')}
           </MenuItem>
 
           <MenuItem
@@ -94,7 +96,7 @@ export default function HomePageView() {
               router.push(paths.dashboard.companyMenu.sarls);
             }}
           >
-            SARL-S
+            {t('sarls')}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -102,7 +104,7 @@ export default function HomePageView() {
               router.push(paths.dashboard.companyMenu.suarl);
             }}
           >
-            SUARL
+            {t('suarl')}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -110,7 +112,7 @@ export default function HomePageView() {
               router.push(paths.dashboard.companyMenu.snc);
             }}
           >
-            SNC
+            {t('snc')}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -118,7 +120,7 @@ export default function HomePageView() {
               router.push(paths.dashboard.companyMenu.sa);
             }}
           >
-            SA
+            {t('sa')}
           </MenuItem>
         </MenuList>
       </CustomPopover>

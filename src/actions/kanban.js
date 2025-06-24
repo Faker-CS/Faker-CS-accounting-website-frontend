@@ -2,18 +2,19 @@ import { useMemo } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import useSWR, { mutate } from 'swr';
 
+// eslint-disable-next-line import/no-unresolved
 import axios, { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
 const enableServer = false;
 
-const KANBAN_ENDPOINT = endpoints.kanban;
+const KANBAN_ENDPOINT = endpoints.tasks.all;
 
 const swrOptions = {
-  revalidateIfStale: enableServer,
-  revalidateOnFocus: enableServer,
-  revalidateOnReconnect: enableServer,
+  revalidateIfStale: true,
+  revalidateOnFocus: true,
+  revalidateOnReconnect: true,
 };
 
 // ----------------------------------------------------------------------
@@ -22,8 +23,8 @@ export function useGetBoard() {
   const { data, isLoading, error, isValidating } = useSWR(KANBAN_ENDPOINT, fetcher, swrOptions);
 
   const memoizedValue = useMemo(() => {
-    const tasks = data?.board.tasks ?? {};
-    const columns = data?.board.columns ?? [];
+    const tasks = data?.board?.tasks ?? {};
+    const columns = data?.board?.columns ?? [];
 
     return {
       board: { tasks, columns },
@@ -32,7 +33,7 @@ export function useGetBoard() {
       boardValidating: isValidating,
       boardEmpty: !isLoading && !columns.length,
     };
-  }, [data?.board.columns, data?.board.tasks, error, isLoading, isValidating]);
+  }, [data?.board?.columns, data?.board?.tasks, error, isLoading, isValidating]);
 
   return memoizedValue;
 }
@@ -222,70 +223,63 @@ export async function createTask(columnId, taskData) {
 
 // ----------------------------------------------------------------------
 
-export async function updateTask(columnId, taskData) {
-  /**
-   * Work on server
-   */
-  if (enableServer) {
-    const data = { columnId, taskData };
-    await axios.post(KANBAN_ENDPOINT, data, { params: { endpoint: 'update-task' } });
+export async function updateTask(taskId, taskData) {
+  try {
+    // Update task on the server
+    await axios.put(endpoints.tasks.update(taskId), taskData);
+
+    // Update local state
+    mutate(
+      KANBAN_ENDPOINT,
+      (currentData) => {
+        const { board } = currentData;
+        const tasks = { ...board.tasks };
+        
+        // Find and update the task in its current column
+        Object.keys(tasks).forEach(columnId => {
+          tasks[columnId] = tasks[columnId].map(task => 
+            task.id === taskId ? { ...task, ...taskData } : task
+          );
+          mutate(endpoints.tasks.all);
+        });
+
+        return { ...currentData, board: { ...board, tasks } };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error updating task:', error);
+    mutate(KANBAN_ENDPOINT);
   }
-
-  /**
-   * Work in local
-   */
-  mutate(
-    KANBAN_ENDPOINT,
-    (currentData) => {
-      const { board } = currentData;
-
-      // tasks in column
-      const tasksInColumn = board.tasks[columnId];
-
-      // find and update task
-      const updateTasks = tasksInColumn.map((task) =>
-        task.id === taskData.id
-          ? {
-              // Update data when found
-              ...task,
-              ...taskData,
-            }
-          : task
-      );
-
-      const tasks = { ...board.tasks, [columnId]: updateTasks };
-
-      return { ...currentData, board: { ...board, tasks } };
-    },
-    false
-  );
 }
 
 // ----------------------------------------------------------------------
 
 export async function moveTask(updateTasks) {
-  /**
-   * Work in local
-   */
-  mutate(
-    KANBAN_ENDPOINT,
-    (currentData) => {
-      const { board } = currentData;
+  try {
+    // Update task status on the server
+    const taskId = Object.keys(updateTasks).find(key => 
+      updateTasks[key].some(task => task.status !== task.originalStatus)
+    );
+    
+    if (taskId) {
+      const task = updateTasks[taskId].find(t => t.status !== t.originalStatus);
+      await axios.put(endpoints.tasks.update(task.id), { status: task.status });
+    }
 
-      // update board.tasks
-      const tasks = updateTasks;
-
-      return { ...currentData, board: { ...board, tasks } };
-    },
-    false
-  );
-
-  /**
-   * Work on server
-   */
-  if (enableServer) {
-    const data = { updateTasks };
-    await axios.post(KANBAN_ENDPOINT, data, { params: { endpoint: 'move-task' } });
+    // Update local state
+    mutate(
+      KANBAN_ENDPOINT,
+      (currentData) => {
+        const { board } = currentData;
+        return { ...currentData, board: { ...board, tasks: updateTasks } };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error updating task:', error);
+    // Revert the change if the server update fails
+    mutate(KANBAN_ENDPOINT);
   }
 }
 
@@ -318,4 +312,118 @@ export async function deleteTask(columnId, taskId) {
     },
     false
   );
+}
+
+// ----------------------------------------------------------------------
+
+export async function createSubtask(taskId, subtaskData) {
+  try {
+    // Create subtask on the server
+    const response = await axios.post(endpoints.tasks.subtasks.create(taskId), subtaskData);
+    const newSubtask = response.data;
+
+    // Update local state
+    mutate(
+      KANBAN_ENDPOINT,
+      (currentData) => {
+        const { board } = currentData;
+        const tasks = { ...board.tasks };
+        
+        // Find and update the task in its current column
+        Object.keys(tasks).forEach(columnId => {
+          tasks[columnId] = tasks[columnId].map(task => {
+            if (task.id === taskId) {
+              return {
+                ...task,
+                subtasks: [...(task.subtasks || []), newSubtask]
+              };
+            }
+            return task;
+          });
+        });
+
+        return { ...currentData, board: { ...board, tasks } };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error creating subtask:', error);
+    mutate(KANBAN_ENDPOINT);
+  }
+}
+
+// ----------------------------------------------------------------------
+
+export async function updateSubtask(subtaskId, subtaskData) {
+  try {
+    // Update subtask on the server
+    await axios.put(endpoints.tasks.subtasks.update(subtaskId), subtaskData);
+
+    // Update local state
+    mutate(
+      KANBAN_ENDPOINT,
+      (currentData) => {
+        const { board } = currentData;
+        const tasks = { ...board.tasks };
+        
+        // Find and update the subtask in its parent task
+        Object.keys(tasks).forEach(columnId => {
+          tasks[columnId] = tasks[columnId].map(task => {
+            if (task.subtasks) {
+              return {
+                ...task,
+                subtasks: task.subtasks.map(subtask =>
+                  subtask.id === subtaskId ? { ...subtask, ...subtaskData } : subtask
+                )
+              };
+            }
+            return task;
+          });
+        });
+
+        return { ...currentData, board: { ...board, tasks } };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error updating subtask:', error);
+    mutate(KANBAN_ENDPOINT);
+  }
+}
+
+// ----------------------------------------------------------------------
+
+export async function deleteSubtask(subtaskId) {
+  try {
+    // Delete subtask on the server
+    await axios.delete(endpoints.tasks.subtasks.delete(subtaskId));
+
+    // Update local state
+    mutate(
+      KANBAN_ENDPOINT,
+      (currentData) => {
+        const { board } = currentData;
+        const tasks = { ...board.tasks };
+        
+        // Find and remove the subtask from its parent task
+        Object.keys(tasks).forEach(columnId => {
+          tasks[columnId] = tasks[columnId].map(task => {
+            if (task.subtasks) {
+              return {
+                ...task,
+                subtasks: task.subtasks.filter(subtask => subtask.id !== subtaskId)
+              };
+            }
+            return task;
+          });
+        });
+
+        return { ...currentData, board: { ...board, tasks } };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error deleting subtask:', error);
+    mutate(KANBAN_ENDPOINT);
+  }
 }

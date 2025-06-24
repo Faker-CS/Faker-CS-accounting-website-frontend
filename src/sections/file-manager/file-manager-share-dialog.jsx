@@ -20,13 +20,15 @@ export function FileManagerShareDialog({
   onCopyLink,
   inviteEmail,
   onChangeInvite,
+  onSendEmail,
+  sending,
   ...other
 }) {
   const hasShared = shared && !!shared.length;
 
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose} {...other}>
-      <DialogTitle> Invite </DialogTitle>
+      <DialogTitle> Send to Email </DialogTitle>
 
       <Box sx={{ px: 3 }}>
         {onChangeInvite && (
@@ -41,10 +43,11 @@ export function FileManagerShareDialog({
                   <Button
                     color="inherit"
                     variant="contained"
-                    disabled={!inviteEmail}
+                    disabled={!inviteEmail || sending}
                     sx={{ mr: -0.75 }}
+                    onClick={() => onSendEmail && onSendEmail(inviteEmail)}
                   >
-                    Send Invite
+                    {sending ? 'Sending...' : 'Send Email'}
                   </Button>
                 </InputAdornment>
               ),

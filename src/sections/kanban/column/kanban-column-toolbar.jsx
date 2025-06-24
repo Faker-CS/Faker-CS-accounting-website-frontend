@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -7,6 +8,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 
+import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { varAlpha } from 'src/theme/styles';
@@ -30,12 +32,14 @@ export function KanbanColumnToolBar({
   onUpdateColumn,
 }) {
   const renameRef = useRef(null);
-
   const popover = usePopover();
-
   const confirmDialog = useBoolean();
-
   const [name, setName] = useState(columnName);
+  const { userData } = useAuth();
+
+  const isComptable = Array.isArray(userData?.roles)
+    ? userData.roles.includes("comptable")
+    : userData?.roles === "comptable";
 
   useEffect(() => {
     if (popover.open) {
@@ -83,9 +87,11 @@ export function KanbanColumnToolBar({
           sx={{ mx: 1 }}
         />
 
-        <IconButton size="small" color="inherit" onClick={onToggleAddTask}>
-          <Iconify icon="solar:add-circle-bold" />
-        </IconButton>
+        {isComptable && (
+          <IconButton size="small" color="inherit" onClick={onToggleAddTask}>
+            <Iconify icon="solar:add-circle-bold" />
+          </IconButton>
+        )}
 
         <IconButton
           size="small"
@@ -101,36 +107,22 @@ export function KanbanColumnToolBar({
       </Stack>
 
       <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
-        <MenuList>
-          <MenuItem onClick={popover.onClose}>
-            <Iconify icon="solar:pen-bold" />
-            Rename
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              onClearColumn?.();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:eraser-bold" />
-            Clear
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              confirmDialog.onTrue();
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
-        </MenuList>
+        {isComptable && (
+          <MenuList>
+            <MenuItem
+              onClick={() => {
+                onClearColumn?.();
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="solar:eraser-bold" />
+              Clear
+            </MenuItem>
+          </MenuList>
+        )}
       </CustomPopover>
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={confirmDialog.value}
         onClose={confirmDialog.onFalse}
         title="Delete"
@@ -154,7 +146,7 @@ export function KanbanColumnToolBar({
             Delete
           </Button>
         }
-      />
+      /> */}
     </>
   );
 }

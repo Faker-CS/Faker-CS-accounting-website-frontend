@@ -1,11 +1,15 @@
+/* eslint-disable import/no-unresolved */
+import useSWR, { mutate } from 'swr';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import CircularProgress from '@mui/material/CircularProgress';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import { paths } from 'src/routes/paths';
@@ -16,12 +20,11 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { today } from 'src/utils/format-time';
 
-import { createConversation } from 'src/actions/chat';
+import { createConversation, useGetConversations } from 'src/actions/chat';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { useMockedUser } from 'src/auth/hooks';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
@@ -36,12 +39,14 @@ const NAV_WIDTH = 320;
 
 const NAV_COLLAPSE_WIDTH = 96;
 
-export function ChatNav({ loading, contacts, collapseNav, conversations, selectedConversationId }) {
+export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
 
   const { userData } = useAuth();
+
+  const { conversations, conversationsLoading, conversationsError, loadNextPage, isLastPage } = useGetConversations(userData?.id);
 
   const {
     openMobile,
@@ -97,18 +102,42 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
     (inputValue) => {
       setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
 
-      
       if (inputValue) {
-        const results = contacts.filter((contact) =>
-          contact?.name?.toLowerCase().includes(inputValue)
-      );
-
-
+        // Filter contacts based on user role and permissions
+        const results = contacts.filter((contact) => {
+          const nameMatch = contact?.name?.toLowerCase().includes(inputValue.toLowerCase());
+          
+          // Additional role-based filtering
+          switch (userData?.role) {
+            case 'comptable':
+              // Comptable can chat with all aide-comptables and companies
+              return nameMatch && (contact.role === 'aide-comptable' || contact.role === 'company');
+            
+            case 'aide-comptable':
+              // Aide-comptable can chat with their responsible companies and main comptable
+              if (contact.role === 'comptable') return nameMatch;
+              if (contact.role === 'company') {
+                return nameMatch && contact.aide_comptable_id === userData.id;
+              }
+              return false;
+            
+            case 'company':
+              // Company can only chat with their assigned aide-comptable and main comptable
+              if (contact.role === 'comptable') return nameMatch;
+              if (contact.role === 'aide-comptable') {
+                return nameMatch && userData.aide_comptable_id === contact.id;
+              }
+              return false;
+            
+            default:
+              return false;
+          }
+        });
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
       }
     },
-    [contacts]
+    [contacts, userData]
   );
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
@@ -116,14 +145,12 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
   const handleClickResult = useCallback(
     async (result) => {
-      handleClickAwaySearch();
-
-      const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
-
       try {
+        handleClickAwaySearch();
+
         // Check if the conversation already exists
         if (conversations.allIds.includes(result.id)) {
-          linkTo(result.id);
+          router.push(`${paths.dashboard.chat}?id=${result.id}`);
           return;
         }
 
@@ -139,15 +166,21 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
           recipients: [recipient],
           me: myContact,
         });
+
         // Create a new conversation
         const res = await createConversation(conversationData);
 
-        if (!res || !res.conversation) {
+        if (!res || !res.id) {
           console.error('Failed to create conversation');
+          return;
         }
 
         // Navigate to the new conversation
-        linkTo(res.conversation.id);
+        router.push(`${paths.dashboard.chat}?id=${res.id}`);
+
+        // Revalidate conversations list
+        mutate('/api/conversations');
+
       } catch (error) {
         console.error('Error handling click result:', error);
       }
@@ -160,16 +193,28 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
   const renderList = (
     <nav>
       <Box component="ul">
-        {conversations.allIds.map((conversationId) => (
+        {conversations?.allIds?.map((conversationId) => (
           <ChatNavItem
             key={conversationId}
             collapse={collapseDesktop}
-            conversation={conversations.byId[conversationId]}
+            conversation={conversations?.byId?.[conversationId]}
             selected={conversationId === selectedConversationId}
             onCloseMobile={onCloseMobile}
           />
         ))}
       </Box>
+      {!conversationsLoading && !isLastPage && conversations?.allIds.length > 0 && (
+        <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Button variant="outlined" onClick={loadNextPage}>
+            Load More
+          </Button>
+        </Box>
+      )}
+      {conversationsLoading && conversations?.allIds.length > 0 && (
+         <Box sx={{ p: 2, textAlign: 'center' }}>
+            <CircularProgress size={24} />
+         </Box>
+      )}
     </nav>
   );
 
@@ -225,7 +270,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
-      {loading ? (
+      {conversationsLoading ? (
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React from 'react';
 import { useTheme } from '@emotion/react';
 
@@ -192,22 +193,22 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demandes en attente"
+            title="Demands on hold"
             total={forms.filter((form) => form.status === 'review').length}
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-progress.svg`}
           />
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demandes acceptés"
-            total={forms.filter((form) => form.status === 'accepted').length}
+            title="Demands in work"
+            total={forms.filter((form) => form.status === 'in_work').length}
             color="success"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-completed.svg`}
           />
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demandes refusés"
+            title="Demands missing file"
             total={forms.filter((form) => form.status === 'rejected').length}
             color="error"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-certificates.svg`}
@@ -215,7 +216,7 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demandes en cours"
+            title="Demands done with it"
             total={forms.filter((form) => form.status === 'pending').length}
             color="info"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-certificates.svg`}

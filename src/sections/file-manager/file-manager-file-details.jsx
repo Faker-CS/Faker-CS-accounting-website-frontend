@@ -48,7 +48,10 @@ export function FileManagerFileDetails({
 
   const [inviteEmail, setInviteEmail] = useState('');
 
-  const [tags, setTags] = useState(item.tags.slice(0, 3));
+  // Defensive: ensure tags is always an array
+  const safeTags = Array.isArray(item.tags) ? item.tags : [];
+
+  const [tags, setTags] = useState(safeTags.slice(0, 3));
 
   const handleChangeInvite = useCallback((event) => {
     setInviteEmail(event.target.value);
@@ -78,9 +81,9 @@ export function FileManagerFileDetails({
         <Autocomplete
           multiple
           freeSolo
-          options={item.tags.map((option) => option)}
+          options={safeTags.map((option) => option)}
           getOptionLabel={(option) => option}
-          defaultValue={item.tags.slice(0, 3)}
+          defaultValue={safeTags.slice(0, 3)}
           value={tags}
           onChange={(event, newValue) => {
             handleChangeTags(newValue);
@@ -194,14 +197,6 @@ export function FileManagerFileDetails({
         <Scrollbar>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
             <Typography variant="h6"> Info </Typography>
-
-            <Checkbox
-              color="warning"
-              icon={<Iconify icon="eva:star-outline" />}
-              checkedIcon={<Iconify icon="eva:star-fill" />}
-              checked={favorited}
-              onChange={onFavorite}
-            />
           </Stack>
 
           <Stack

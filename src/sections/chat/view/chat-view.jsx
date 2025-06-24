@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+/* eslint-disable import/no-unresolved */
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Typography from '@mui/material/Typography';
 
@@ -30,40 +31,119 @@ export function ChatView() {
   const router = useRouter();
 
   const { user } = useMockedUser();
-  
-  const { userData} = useAuth();
+  const { userData } = useAuth();
 
-  const { contacts } = useGetContacts(userData?.id);
+  // Add check for userData
+  useEffect(() => {
+    if (!userData?.id) {
+      router.push(paths.auth.login);
+    }
+  }, [userData, router]);
+
+  const { contacts } = useGetContacts(userData?.id || null);
 
   const searchParams = useSearchParams();
-
   const selectedConversationId = searchParams.get('id') || '';
 
   const [recipients, setRecipients] = useState([]);
 
-  const { conversations, conversationsLoading } = useGetConversations(userData?.id);
+  const { conversations, conversationsLoading } = useGetConversations(userData?.id || null);
 
   const { conversation, conversationError, conversationLoading } = useGetConversation(
-    `${selectedConversationId}`
+    selectedConversationId || null
   );
 
   const roomNav = useCollapseNav();
 
   const conversationsNav = useCollapseNav();
 
-  const participants = conversation
-    ? conversation.participants.filter((participant) => participant.id !== `${user?.id}`)
-    : [];
+  const participants = useMemo(
+    () => (conversation?.participants && Array.isArray(conversation.participants))
+      ? conversation.participants
+      : [],
+    [conversation]
+  );
 
+  const otherParticipant = useMemo(
+    () => participants.find((participant) => `${participant?.id}` !== `${userData?.id}`),
+    [participants, userData?.id]
+  );
+
+  // Only redirect if there's an error or no access, and we have a selected conversation
   useEffect(() => {
-    if (conversationError || !selectedConversationId) {
+    if (
+      selectedConversationId &&
+      !conversationLoading &&
+      conversationError
+    ) {
       router.push(paths.dashboard.chat);
     }
-  }, [conversationError, router, selectedConversationId]);
+  }, [conversationError, router, selectedConversationId, conversationLoading]);
 
   const handleAddRecipients = useCallback((selected) => {
-    setRecipients(selected);
-  }, []);
+    
+
+    // Filter recipients based on user role
+    const filteredRecipients = selected.filter((recipient) => {
+      
+      
+      // If no user data or roles, don't allow any recipients
+      if (!userData?.roles) {
+
+        return false;
+      }
+
+      // If no recipient role, don't allow
+      if (!recipient?.role) {
+        return false;
+      }
+
+      let isAllowed = false;
+      let canMessage = false;
+
+      switch (userData.roles) {
+        case 'comptable':
+          isAllowed = recipient.role === 'aide-comptable' || recipient.role === 'entreprise';
+          
+          return isAllowed;
+
+        case 'aide-comptable':
+          if (recipient.role === 'comptable') {
+            
+            return true;
+          }
+          if (recipient.role === 'entreprise') {
+            canMessage = recipient.aide_comptable_id === userData.id;
+            
+            return canMessage;
+          }
+
+          return false;
+
+        case 'entreprise':
+          if (recipient.role === 'comptable') {
+
+            return true;
+          }
+          if (recipient.role === 'aide-comptable') {
+            canMessage = userData.aide_comptable_id === recipient.id;
+
+            return canMessage;
+          }
+
+          return false;
+
+        default:
+
+          return false;
+      }
+    });
+
+
+    setRecipients(filteredRecipients);
+  }, [userData]);
+
+  const isOneToOne = conversation?.type === 'ONE_TO_ONE';
 
   return (
     <DashboardContent
@@ -87,11 +167,14 @@ export function ChatView() {
           header: selectedConversationId ? (
             <ChatHeaderDetail
               collapseNav={roomNav}
-              participants={participants}
+              participants={isOneToOne ? (otherParticipant ? [otherParticipant] : []) : participants}
               loading={conversationLoading}
             />
           ) : (
-            <ChatHeaderCompose contacts={contacts} onAddRecipients={handleAddRecipients} />
+            <ChatHeaderCompose 
+              contacts={contacts} 
+              onAddRecipients={handleAddRecipients}
+            />
           ),
           nav: (
             <ChatNav
@@ -104,9 +187,9 @@ export function ChatView() {
           ),
           main: (
             <>
-              {selectedConversationId ? (
+              {selectedConversationId && !conversationLoading ? (
                 <ChatMessageList
-                  messages={conversations?.messages ?? []}
+                  messages={conversation?.messages ?? []}
                   participants={participants}
                   loading={conversationLoading}
                 />
@@ -122,14 +205,14 @@ export function ChatView() {
                 recipients={recipients}
                 onAddRecipients={handleAddRecipients}
                 selectedConversationId={selectedConversationId}
-                disabled={!recipients.length && !selectedConversationId}
+                disabled={false}
               />
             </>
           ),
-          details: selectedConversationId && (
+          details: selectedConversationId && !conversationLoading && (
             <ChatRoom
               collapseNav={roomNav}
-              participants={participants}
+              participants={isOneToOne ? (otherParticipant ? [otherParticipant] : []) : participants}
               loading={conversationLoading}
               messages={conversation?.messages ?? []}
             />

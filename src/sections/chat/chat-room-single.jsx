@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Collapse from '@mui/material/Collapse';
@@ -7,23 +8,33 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Iconify } from 'src/components/iconify';
 
+import { useMockedUser } from 'src/auth/hooks';
+
 import { CollapseButton } from './styles';
 
 // ----------------------------------------------------------------------
 
 export function ChatRoomSingle({ participant }) {
   const collapse = useBoolean(true);
+  const { user } = useMockedUser();
+
+  // Find the other participant (not the current user)
+  const otherParticipant = participant?.id === user?.id ? null : participant;
+
+  if (!otherParticipant) {
+    return null;
+  }
 
   const renderInfo = (
     <Stack alignItems="center" sx={{ py: 5 }}>
       <Avatar
-        alt={participant?.name}
-        src={participant?.avatarUrl}
+        alt={otherParticipant?.name}
+        src={otherParticipant?.avatarUrl}
         sx={{ width: 96, height: 96, mb: 2 }}
       />
-      <Typography variant="subtitle1">{participant?.name}</Typography>
+      <Typography variant="subtitle1">{otherParticipant?.name}</Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-        {participant?.role}
+        {otherParticipant?.role}
       </Typography>
     </Stack>
   );
@@ -31,9 +42,9 @@ export function ChatRoomSingle({ participant }) {
   const renderContact = (
     <Stack spacing={2} sx={{ px: 2, py: 2.5 }}>
       {[
-        { icon: 'mingcute:location-fill', value: participant?.address },
-        { icon: 'solar:phone-bold', value: participant?.phoneNumber },
-        { icon: 'fluent:mail-24-filled', value: participant?.email },
+        { icon: 'mingcute:location-fill', value: otherParticipant?.address },
+        { icon: 'solar:phone-bold', value: otherParticipant?.phoneNumber },
+        { icon: 'fluent:mail-24-filled', value: otherParticipant?.email },
       ].map((item) => (
         <Stack
           key={item.icon}

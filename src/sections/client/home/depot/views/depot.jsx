@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { paths } from 'src/routes/paths';
 
@@ -8,18 +9,19 @@ import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 export default function DepotPageView() {
+  const { t } = useTranslation();
   return (
     <DashboardContent>
         <CustomBreadcrumbs
-          heading="Déclaration d’impôt"
+          heading={t('taxReturn')}
           links={[
             {
-              name: 'Accueil',
-              href: paths.dashboard.root,
+              name: t('home'),
+              href: paths.dashboard.companyMenu.root,
               icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
             },
             {
-              name: 'Déclaration d’impôt',
+              name: t('taxReturn'),
               href: '#',
             },
           ]}

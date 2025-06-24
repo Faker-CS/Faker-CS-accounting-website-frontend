@@ -3,6 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 
+// eslint-disable-next-line import/no-unresolved
 import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------

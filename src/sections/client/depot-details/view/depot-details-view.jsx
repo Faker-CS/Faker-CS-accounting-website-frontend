@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Box, Card, Typography } from '@mui/material';
 
@@ -18,6 +19,7 @@ import DepotDetailsRow from '../depot-details-row';
 
 export default function DepotDetailsView({ id }) {
   const [files, setFiles] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -58,7 +60,7 @@ export default function DepotDetailsView({ id }) {
     const token = sessionStorage.getItem(STORAGE_KEY); // Retrieve auth token
 
     // Create a Promise without an async executor
-    const deletePromise = fetch(`http://127.0.0.1:8000/api/documents/${inputFile.id}`, {
+    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${inputFile.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -94,19 +96,19 @@ export default function DepotDetailsView({ id }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Dépot"
+        heading={t('deposit')}
         links={[
           {
-            name: 'Accueil',
-            href: paths.dashboard.root,
+            name: t('home'),
+            href: paths.dashboard.companyMenu.root,
             icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
           },
           {
-            name: 'Déclaration d’impôt',
+            name: t('taxReturn'),
             href: paths.dashboard.declarationImpot,
           },
           {
-            name: 'Déposer',
+            name: t('deposit'),
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
@@ -134,7 +136,7 @@ export default function DepotDetailsView({ id }) {
                 }}
               >
                 <Iconify icon="eva:cloud-upload-fill" width={40} />
-                <Typography variant="body2">Télécharger le fichier</Typography>
+                <Typography variant="body2">{t('uploadFile')}</Typography>
               </Box>
             }
             multiple

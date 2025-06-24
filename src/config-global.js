@@ -7,7 +7,7 @@ import packageJson from '../package.json';
 export const CONFIG = {
   appName: 'MoneyTeers',
   appVersion: packageJson.version,
-  serverUrl: 'http://127.0.0.1:8000',
+  serverUrl: 'http://35.171.211.165:8000',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   /**
    * Auth

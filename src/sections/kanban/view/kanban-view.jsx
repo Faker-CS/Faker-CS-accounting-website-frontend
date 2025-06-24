@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-unresolved */
 import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   arrayMove,
@@ -25,10 +25,13 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+import { useAuth } from 'src/hooks/useAuth';
+
 import { hideScrollY } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { moveTask, moveColumn, useGetBoard } from 'src/actions/kanban';
 
+import { toast } from 'src/components/snackbar';
 import { EmptyContent } from 'src/components/empty-content';
 
 import { kanbanClasses } from '../classes';
@@ -56,6 +59,7 @@ const cssVars = {
 
 export function KanbanView() {
   const { board, boardLoading, boardEmpty } = useGetBoard();
+  const { userData } = useAuth();
 
   const [columnFixed, setColumnFixed] = useState(true);
 
@@ -98,8 +102,7 @@ export function KanbanView() {
 
       if (overId != null) {
         if (overId in board.tasks) {
-          const columnItems = board.tasks[overId].map((task) => task.id);
-
+          const columnItems = (board.tasks[overId] || []).filter(Boolean).map((task) => task.id);
           // If a column is matched and it contains items (columns 'A', 'B', 'C')
           if (columnItems.length > 0) {
             // Return the closest droppable within that column
@@ -137,7 +140,7 @@ export function KanbanView() {
     }
 
     return Object.keys(board.tasks).find((key) =>
-      board.tasks[key].map((task) => task.id).includes(id)
+      (board.tasks[key] || []).filter(Boolean).map((task) => task.id).includes(id)
     );
   };
 
@@ -165,16 +168,58 @@ export function KanbanView() {
     }
 
     const overColumn = findColumn(overId);
-
     const activeColumn = findColumn(active.id);
 
     if (!overColumn || !activeColumn) {
       return;
     }
 
+    // Restrict moving from In Progress to Ready to Check if not all subtasks are completed
+    if (activeColumn === "In Progress" && overColumn === "Ready to Check") {
+      const task = (board.tasks[activeColumn] || []).filter(Boolean).find(t => t.id === active.id);
+      if (task && task.subtasks && task.subtasks.length > 0) {
+        const allCompleted = task.subtasks.every(sub => sub.is_completed);
+        if (!allCompleted) {
+          toast.error("Complete your subtasks to check it");
+          return; // Prevent the move
+        }
+      }
+    }
+
+    // Only comptable can move to Done
+    if (overColumn === "Done") {
+      const isComptable = Array.isArray(userData?.roles)
+        ? userData.roles.includes("comptable")
+        : userData?.roles === "comptable";
+      if (!isComptable) {
+        toast.error("Only accounter can reach that");
+        return; // Prevent the move
+      }
+    }
+
+    // Comptable: Prevent moving from To Do to In Progress if not assigned
+    if (activeColumn === "To Do" && overColumn === "In Progress") {
+      const isComptable = Array.isArray(userData?.roles)
+        ? userData.roles.includes("comptable")
+        : userData?.roles === "comptable";
+      if (isComptable) {
+        const task = (board.tasks[activeColumn] || []).filter(Boolean).find(t => t.id === active.id);
+        // Check for assigned aide-comptable (assignee or formHelpers)
+        const hasAssignee = task && (
+          (Array.isArray(task.form?.helper_forms) && task.form.helper_forms.length > 0) ||
+          (Array.isArray(task.formHelpers) && task.formHelpers.length > 0) ||
+          task.assignee_id || task.assignee
+        );
+        if (!hasAssignee) {
+          toast.error("You need to assign some one to work on this before");
+          return; // Prevent the move
+        }
+      }
+    }
+
     if (activeColumn !== overColumn) {
-      const activeItems = board.tasks[activeColumn].map((task) => task.id);
-      const overItems = board.tasks[overColumn].map((task) => task.id);
+      const activeItems = (board.tasks[activeColumn] || []).filter(Boolean).map((task) => task.id);
+      const overItems = (board.tasks[overColumn] || []).filter(Boolean).map((task) => task.id);
       const overIndex = overItems.indexOf(overId);
       const activeIndex = activeItems.indexOf(active.id);
 
@@ -195,15 +240,25 @@ export function KanbanView() {
 
       recentlyMovedToNewContainer.current = true;
 
-      const updateTasks = {
-        ...board.tasks,
-        [activeColumn]: board.tasks[activeColumn].filter((task) => task.id !== active.id),
-        [overColumn]: [
-          ...board.tasks[overColumn].slice(0, newIndex),
-          board.tasks[activeColumn][activeIndex],
-          ...board.tasks[overColumn].slice(newIndex, board.tasks[overColumn].length),
-        ],
-      };
+      // Build updateTasks with originalStatus and new status for each task
+      const updateTasks = {};
+      Object.keys(board.tasks).forEach(columnId => {
+        updateTasks[columnId] = (board.tasks[columnId] || []).filter(Boolean).map(task => {
+          // If the task is being moved, set its new status and originalStatus
+          if (columnId === activeColumn && task.id === active.id) {
+            return { ...task, originalStatus: activeColumn, status: overColumn };
+          }
+          return { ...task, originalStatus: columnId, status: columnId };
+        });
+      });
+
+      // Actually move the task in the arrays
+      updateTasks[activeColumn] = updateTasks[activeColumn].filter((task) => task.id !== active.id);
+      updateTasks[overColumn] = [
+        ...updateTasks[overColumn].slice(0, newIndex),
+        { ...((board.tasks[activeColumn] || []).filter(Boolean).find(task => task.id === active.id)), originalStatus: activeColumn, status: overColumn },
+        ...updateTasks[overColumn].slice(newIndex, updateTasks[overColumn].length),
+      ];
 
       moveTask(updateTasks);
     }
@@ -239,8 +294,8 @@ export function KanbanView() {
     const overColumn = findColumn(overId);
 
     if (overColumn) {
-      const activeContainerTaskIds = board.tasks[activeColumn].map((task) => task.id);
-      const overContainerTaskIds = board.tasks[overColumn].map((task) => task.id);
+      const activeContainerTaskIds = (board.tasks[activeColumn] || []).filter(Boolean).map((task) => task.id);
+      const overContainerTaskIds = (board.tasks[overColumn] || []).filter(Boolean).map((task) => task.id);
 
       const activeIndex = activeContainerTaskIds.indexOf(active.id);
       const overIndex = overContainerTaskIds.indexOf(overId);
@@ -248,7 +303,7 @@ export function KanbanView() {
       if (activeIndex !== overIndex) {
         const updateTasks = {
           ...board.tasks,
-          [overColumn]: arrayMove(board.tasks[overColumn], activeIndex, overIndex),
+          [overColumn]: arrayMove((board.tasks[overColumn] || []).filter(Boolean), activeIndex, overIndex),
         };
 
         moveTask(updateTasks);
@@ -299,13 +354,13 @@ export function KanbanView() {
               items={[...columnIds, PLACEHOLDER_ID]}
               strategy={horizontalListSortingStrategy}
             >
-              {board?.columns.map((column) => (
-                <KanbanColumn key={column.id} column={column} tasks={board.tasks[column.id]}>
+              {(board?.columns || []).filter(Boolean).map((column) => (
+                <KanbanColumn key={column.id} column={column} tasks={board.tasks[column.id] || []}>
                   <SortableContext
-                    items={board.tasks[column.id]}
+                    items={(board.tasks[column.id] || []).filter(Boolean).map((task) => task.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    {board.tasks[column.id].map((task) => (
+                    {(board.tasks[column.id] || []).filter(Boolean).map((task) => (
                       <KanbanTaskItem
                         task={task}
                         key={task.id}
@@ -352,7 +407,7 @@ export function KanbanView() {
         justifyContent="space-between"
         sx={{ pr: { sm: 3 }, mb: { xs: 3, md: 5 } }}
       >
-        <Typography variant="h4">Kanban</Typography>
+        <Typography variant="h4">Task managment</Typography>
 
         <FormControlLabel
           label="Column fixed"

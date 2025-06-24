@@ -8,5 +8,24 @@
     "title": "Blog",
     "caption": "Custom keyboard shortcuts."
   },
-  "subheader": "Sub header"
+  "subheader": "Sub header",
+  "home": "Home",
+  "profile": "Profile",
+  "accountUpdates": "Account updates",
+  "workingOverview": "Working Overview",
+  "dashboard": "Dashboard",
+  "menu": "Menu",
+  "demands": "Demands",
+  "files": "Files",
+  "management": "Management",
+  "users": "Users",
+  "entreprises": "Entreprises",
+  "accounterHelpers": "Accounter Helpers",
+  "fileManager": "File manager",
+  "chat": "Chat",
+  "calendar": "Calendar",
+  "tasks": "Tasks",
+  "team2": "Team 2",
+  "team3": "Team 3",
+  "pro": "Pro"
 }

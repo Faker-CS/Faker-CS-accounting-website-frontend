@@ -3,6 +3,7 @@ import { paths } from 'src/routes/paths';
 import { CONFIG } from 'src/config-global';
 
 import { SvgColor } from 'src/components/svg-color';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
@@ -39,62 +40,47 @@ const ICONS = {
 
 // ----------------------------------------------------------------------
 
-export const navData = [
-  /**
-   * Overview
-   */
-  {
-    subheader: 'Working Overview',
-    items: [
-      { title: 'Dashboard', path: paths.dashboard.group.root, roles:['comptable'], icon: ICONS.dashboard },
-      {
-        title: 'Menu',
-        path: paths.dashboard.companyMenu.root,
-        icon: ICONS.dashboard,
-        roles: ['entreprise'],
-      },
-      { title: 'Demands', path: paths.dashboard.demandes, roles:['comptable','aide-comptable'], icon: ICONS.analytics },
-      // {
-      //   title: 'Banking',
-      //   path: paths.dashboard.banking.root,
-      //   icon: ICONS.banking,
-      //   roles: ['comptable'],
-      // },
-      { title: 'Files', path: paths.dashboard.group.five, icon: ICONS.file },
-    ],
-  },
-  /**
-   * Management
-   */
-  {
-    subheader: 'Management',
-    items: [
-      {
-        title: 'Users',
-        path: paths.dashboard.users.root,
-        icon: ICONS.user,
-        roles: ['comptable'],
-        children: [
-          { title: 'Entreprises', path: paths.dashboard.users.root },
-          { title: 'Accounter Helpers', path: paths.dashboard.users.aideComptable },
-        ],
-      },
-      { title: 'File manager', path: paths.dashboard.fileManager, roles:['comptable','aide-comptable'], icon: ICONS.folder },
-      // {
-      //   title: 'Invoice',
-      //   path: paths.dashboard.invoice.root,
-      //   roles:['comptable','aide-comptable'],
-      //   icon: ICONS.invoice,
-      //   children: [
-      //     { title: 'List', path: paths.dashboard.invoice.root },
-      //     { title: 'Details', path: paths.dashboard.invoice.demo.details },
-      //     { title: 'Create', path: paths.dashboard.invoice.new },
-      //     { title: 'Edit', path: paths.dashboard.invoice.demo.edit },
-      //   ],
-      // },
-      { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
-      { title: 'Calendar', path: paths.dashboard.calendar, roles:['comptable','aide-comptable'], icon: ICONS.calendar },
-      { title: 'Tasks', path: paths.dashboard.kanban, roles:['comptable','aide-comptable'], icon: ICONS.kanban },
-    ],
-  },
-];
+export const useDashboardNav = () => {
+  const { t } = useTranslation('navbar');
+  return [
+    /**
+     * Overview
+     */
+    {
+      subheader: t('workingOverview'),
+      items: [
+        { title: t('dashboard'), path: paths.dashboard.group.root, roles:['comptable','aide-comptable'], icon: ICONS.dashboard },
+        {
+          title: t('menu'),
+          path: paths.dashboard.companyMenu.root,
+          icon: ICONS.dashboard,
+          roles: ['entreprise'],
+        },
+        { title: t('demands'), path: paths.dashboard.demandes, roles:['comptable','aide-comptable'], icon: ICONS.analytics },
+        { title: t('files'), roles: ['entreprise'], path: paths.dashboard.files.root, icon: ICONS.file },
+      ],
+    },
+    /**
+     * Management
+     */
+    {
+      subheader: t('management'),
+      items: [
+        {
+          title: t('users'),
+          path: paths.dashboard.users.root,
+          icon: ICONS.user,
+          roles: ['comptable'],
+          children: [
+            { title: t('entreprises'), path: paths.dashboard.users.root },
+            { title: t('accounterHelpers'), path: paths.dashboard.users.aideComptable },
+          ],
+        },
+        { title: t('fileManager'), path: paths.dashboard.fileManager, roles:['comptable','aide-comptable'], icon: ICONS.folder },
+        { title: t('chat'), path: paths.dashboard.chat, icon: ICONS.chat },
+        { title: t('calendar'), path: paths.dashboard.calendar, roles:['comptable','aide-comptable'], icon: ICONS.calendar },
+        { title: t('tasks'), path: paths.dashboard.kanban, roles:['comptable','aide-comptable'], icon: ICONS.kanban },
+      ],
+    },
+  ];
+};

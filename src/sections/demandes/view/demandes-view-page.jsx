@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
 import React, { useRef, useState, useCallback } from 'react';
 
@@ -86,7 +87,7 @@ export function DemandesViewPage({ form }) {
   const handleDeleteItem = (id) => {
     const token = localStorage.getItem(STORAGE_KEY);
 
-    const deletePromise = fetch(`http://127.0.0.1:8000/api/documents/${id}`, {
+    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

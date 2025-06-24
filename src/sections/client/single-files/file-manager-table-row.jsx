@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -28,6 +29,7 @@ import { STORAGE_KEY } from 'src/auth/context/jwt';
 
 export function FileManagerTableRow({ row, selected }) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const [file, setFile] = useState([]);
   const fileInputRef = useRef(null);
@@ -38,7 +40,7 @@ export function FileManagerTableRow({ row, selected }) {
 
   const fetchDocumentDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/documents/${row.id}`, {
+      const response = await axios.get(`http://35.171.211.165:8000/api/documents/${row.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
@@ -73,7 +75,7 @@ export function FileManagerTableRow({ row, selected }) {
 
   const deleteFile = async () => {
     confirm.onFalse();
-    const deletePromise = fetch(`http://127.0.0.1:8000/api/documents/${file.id}`, {
+    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${file.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
@@ -95,9 +97,9 @@ export function FileManagerTableRow({ row, selected }) {
     });
 
     toast.promise(deletePromise, {
-      loading: 'En cours de suppression...',
-      success: 'Suppression effectuée!',
-      error: 'Erreur lors de la suppression!',
+      loading: t('deleting'),
+      success: t('deleteSuccess'),
+      error: t('deleteError'),
     });
 
     return deletePromise;
@@ -199,11 +201,11 @@ export function FileManagerTableRow({ row, selected }) {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Supprimer"
-        content="Êtes-vous sûr de vouloir effacer ?"
+        title={t('delete')}
+        content={t('areYouSureDeleteOne')}
         action={
           <Button variant="contained" color="error" onClick={() => deleteFile()}>
-            Supprimer
+            {t('delete')}
           </Button>
         }
       />

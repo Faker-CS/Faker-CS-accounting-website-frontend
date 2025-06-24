@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useParams } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 
@@ -33,15 +34,15 @@ export default function Page() {
       <Container sx={{ my: 5 }}>
         <EmptyContent
           filled
-          title="Formulaire non trouvé !"
+          title="Formula not found!"
           action={
             <Button
               component={RouterLink}
-              href={paths.admin.demandes}
+              href={paths.dashboard.demandes}
               startIcon={<Iconify width={16} icon="eva:arrow-ios-back-fill" />}
               sx={{ mt: 3 }}
             >
-              Retour à la liste
+              Back to the list
             </Button>
           }
           sx={{ py: 10 }}

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
 import { useTheme } from '@emotion/react';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -40,7 +41,7 @@ import { DemandesTableFiltersResult } from '../demandes-table-filters-result';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Client' },
-  { id: 'created_at', label: 'Créer le' },
+  { id: 'created_at', label: 'Created at' },
   { id: 'service', label: 'Service' },
   { id: 'status', label: 'Status' },
   { id: '' },
@@ -111,34 +112,39 @@ export default function DemandesListeView() {
 
   const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
 
+  // Helper to count both 'accepted' and 'in_work' as 'In Work'
+  const getInWorkLength = () => tableData.filter((item) => item.status === 'accepted' || item.status === 'in_work').length;
+  const getInWorkAmount = () => sumBy(tableData.filter((item) => item.status === 'accepted' || item.status === 'in_work'), (invoice) => invoice.totalAmount);
+  const getInWorkPercent = () => (getInWorkLength() / tableData.length) * 100;
+
   const TABS = [
     {
       value: 'all',
-      label: 'Toutes',
+      label: 'All',
       color: 'default',
       count: tableData.length,
     },
     {
-      value: 'accepted',
-      label: 'Accepter',
+      value: 'in_work',
+      label: 'In Work',
       color: 'success',
-      count: getInvoiceLength('accepted'),
+      count: getInWorkLength(),
     },
     {
       value: 'review',
-      label: 'En Attente',
+      label: 'On Hold',
       color: 'warning',
       count: getInvoiceLength('review'),
     },
     {
       value: 'rejected',
-      label: 'Refusé',
+      label: 'Missing file',
       color: 'error',
       count: getInvoiceLength('rejected'),
     },
     {
       value: 'pending',
-      label: 'En Cours',
+      label: 'Done',
       color: 'default',
       count: getInvoiceLength('pending'),
     },
@@ -184,7 +190,7 @@ export default function DemandesListeView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Liste des demandes"
+        heading="Demands list"
         links={[
           { name: 'Home', href: paths.dashboard.root },
           { name: 'Demands', href: paths.dashboard.demandes },
@@ -201,7 +207,7 @@ export default function DemandesListeView() {
             sx={{ py: 2 }}
           >
             <DemandesAnalytic
-              title="Totale"
+              title="All demands"
               total={tableData.length}
               percent={100}
               price={sumBy(tableData, (invoice) => invoice.totalAmount)}
@@ -209,15 +215,15 @@ export default function DemandesListeView() {
               color={theme.vars.palette.info.main}
             />
             <DemandesAnalytic
-              title="Accepter"
-              total={getInvoiceLength('accepted')}
-              percent={getPercentByStatus('accepted')}
-              price={getTotalAmount('accepted')}
+              title="In Work"
+              total={getInWorkLength()}
+              percent={getInWorkPercent()}
+              price={getInWorkAmount()}
               icon="solar:file-check-bold-duotone"
               color={theme.vars.palette.success.main}
             />
             <DemandesAnalytic
-              title="En Attente"
+              title="On Hold"
               total={getInvoiceLength('review')}
               percent={getPercentByStatus('review')}
               price={getTotalAmount('review')}
@@ -225,7 +231,7 @@ export default function DemandesListeView() {
               color={theme.vars.palette.warning.main}
             />
             <DemandesAnalytic
-              title="Refusé"
+              title="Missing file"
               total={getInvoiceLength('rejected')}
               percent={getPercentByStatus('rejected')}
               price={getTotalAmount('rejected')}
@@ -233,7 +239,7 @@ export default function DemandesListeView() {
               color={theme.vars.palette.error.main}
             />
             <DemandesAnalytic
-              title="En Cours"
+              title="Done"
               total={getInvoiceLength('pending')}
               percent={getPercentByStatus('pending')}
               price={getTotalAmount('pending')}

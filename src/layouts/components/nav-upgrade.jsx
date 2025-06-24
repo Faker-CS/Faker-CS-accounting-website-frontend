@@ -19,35 +19,35 @@ export function NavUpgrade({ sx, ...other }) {
 
   const { userData } = useAuth();
 
-  return (
-    <Stack sx={{ px: 2, py: 5, textAlign: 'center', ...sx }} {...other}>
-      <Stack alignItems="center">
-        <Box sx={{ position: 'relative' }}>
-          <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
-            {user?.displayName?.charAt(0).toUpperCase()}
-          </Avatar>
-        </Box>
+  // return (
+  //   <Stack sx={{ px: 2, py: 5, textAlign: 'center', ...sx }} {...other}>
+  //     <Stack alignItems="center">
+  //       <Box sx={{ position: 'relative' }}>
+  //         <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
+  //           {user?.displayName?.charAt(0).toUpperCase()}
+  //         </Avatar>
+  //       </Box>
 
-        <Stack spacing={0.5} sx={{ mb: 2, mt: 1.5, width: 1 }}>
-          <Typography
-            variant="subtitle2"
-            noWrap
-            sx={{ color: 'var(--layout-nav-text-primary-color)' }}
-          >
-            {userData?.name}
-          </Typography>
+  //       <Stack spacing={0.5} sx={{ mb: 2, mt: 1.5, width: 1 }}>
+  //         <Typography
+  //           variant="subtitle2"
+  //           noWrap
+  //           sx={{ color: 'var(--layout-nav-text-primary-color)' }}
+  //         >
+  //           {/* {userData?.name} */}
+  //         </Typography>
 
-          <Typography
-            variant="body2"
-            noWrap
-            sx={{ color: 'var(--layout-nav-text-disabled-color)' }}
-          >
-            {userData?.email}
-          </Typography>
-        </Stack>
-      </Stack>
-    </Stack>
-  );
+  //         <Typography
+  //           variant="body2"
+  //           noWrap
+  //           sx={{ color: 'var(--layout-nav-text-disabled-color)' }}
+  //         >
+  //           {/* {userData?.email} */}
+  //         </Typography>
+  //       </Stack>
+  //     </Stack>
+  //   </Stack>
+  // );
 }
 
 // ----------------------------------------------------------------------

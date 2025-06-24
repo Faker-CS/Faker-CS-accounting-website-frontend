@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -53,37 +54,37 @@ export function KanbanColumnAdd({ sx, ...other }) {
     openAddColumn.onFalse();
   }, [openAddColumn]);
 
-  return (
-    <>
-      <Box sx={{ width: 'var(--column-width)', flex: '0 0 auto', ...sx }} {...other}>
-        {openAddColumn.value ? (
-          <ClickAwayListener onClickAway={handleCancel}>
-            <TextField
-              autoFocus
-              fullWidth
-              placeholder="Untitled"
-              value={columnName}
-              onChange={handleChangeName}
-              onKeyUp={handleKeyUpCreateColumn}
-              helperText="Press Enter to create the column."
-              sx={{ [`& .${inputBaseClasses.input}`]: { typography: 'h6' } }}
-            />
-          </ClickAwayListener>
-        ) : (
-          <Button
-            fullWidth
-            size="large"
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
-            onClick={openAddColumn.onTrue}
-          >
-            Add column
-          </Button>
-        )}
-      </Box>
+  // return (
+  //   <>
+  //     <Box sx={{ width: 'var(--column-width)', flex: '0 0 auto', ...sx }} {...other}>
+  //       {openAddColumn.value ? (
+  //         <ClickAwayListener onClickAway={handleCancel}>
+  //           <TextField
+  //             autoFocus
+  //             fullWidth
+  //             placeholder="Untitled"
+  //             value={columnName}
+  //             onChange={handleChangeName}
+  //             onKeyUp={handleKeyUpCreateColumn}
+  //             helperText="Press Enter to create the column."
+  //             sx={{ [`& .${inputBaseClasses.input}`]: { typography: 'h6' } }}
+  //           />
+  //         </ClickAwayListener>
+  //       ) : (
+  //         <Button
+  //           fullWidth
+  //           size="large"
+  //           color="inherit"
+  //           variant="outlined"
+  //           startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
+  //           onClick={openAddColumn.onTrue}
+  //         >
+  //           Add column
+  //         </Button>
+  //       )}
+  //     </Box>
 
-      <Box sx={{ width: '1px', flexShrink: 0 }} />
-    </>
-  );
+  //     <Box sx={{ width: '1px', flexShrink: 0 }} />
+  //   </>
+  // );
 }

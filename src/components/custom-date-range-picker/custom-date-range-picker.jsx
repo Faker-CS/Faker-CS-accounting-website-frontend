@@ -9,6 +9,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
+// eslint-disable-next-line import/no-unresolved
 import { useResponsive } from 'src/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
@@ -24,6 +25,7 @@ export function CustomDateRangePicker({
   variant = 'input',
   onChangeStartDate,
   title = 'Select date range',
+  onApply,
   ...other
 }) {
   const mdUp = useResponsive('up', 'md');
@@ -98,7 +100,14 @@ export function CustomDateRangePicker({
         <Button variant="outlined" color="inherit" onClick={onClose}>
           Cancel
         </Button>
-        <Button disabled={error} variant="contained" onClick={onClose}>
+        <Button
+          disabled={error}
+          variant="contained"
+          onClick={() => {
+            if (onApply) onApply();
+            onClose();
+          }}
+        >
           Apply
         </Button>
       </DialogActions>

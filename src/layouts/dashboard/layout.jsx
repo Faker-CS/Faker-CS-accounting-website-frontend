@@ -18,8 +18,8 @@ import { NavMobile } from './nav-mobile';
 import { layoutClasses } from '../classes';
 import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
-import { _account } from '../config-nav-account';
 import { Searchbar } from '../components/searchbar';
+import { useAccountNav } from '../config-nav-account';
 import { _workspaces } from '../config-nav-workspace';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
@@ -30,7 +30,7 @@ import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
 import { ContactsPopover } from '../components/contacts-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
-import { navData as dashboardNavData } from '../config-nav-dashboard';
+import { useDashboardNav } from '../config-nav-dashboard';
 import { NotificationsDrawer } from '../components/notifications-drawer';
 
 // ----------------------------------------------------------------------
@@ -41,6 +41,8 @@ export function DashboardLayout({ sx, children, header, data }) {
   const [loading, setLoading] = useState(true)
 
   const { userData } = useAuth();
+  const accountNav = useAccountNav();
+  const dashboardNav = useDashboardNav();
 
   useEffect(() => {
     setLoading(true)
@@ -57,7 +59,7 @@ export function DashboardLayout({ sx, children, header, data }) {
 
   const layoutQuery = 'lg';
 
-  const navData = data?.nav ?? dashboardNavData;
+  const navData = data?.nav ?? dashboardNav;
 
   const isNavMini = settings.navLayout === 'mini';
   const isNavHorizontal = settings.navLayout === 'horizontal';
@@ -162,7 +164,7 @@ export function DashboardLayout({ sx, children, header, data }) {
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
                 {/* -- Searchbar -- */}
-                <Searchbar data={navData} />
+                {/* <Searchbar data={navData} /> */}
                 {/* -- Language popover -- */}
                 <LanguagePopover
                   data={[
@@ -173,11 +175,11 @@ export function DashboardLayout({ sx, children, header, data }) {
                 {/* -- Notifications popover -- */}
                 <NotificationsDrawer data={_notifications} />
                 {/* -- Contacts popover -- */}
-                <ContactsPopover data={_contacts} />
+                {/* <ContactsPopover data={_contacts} /> */}
                 {/* -- Settings button -- */}
                 <SettingsButton />
                 {/* -- Account drawer -- */}
-                <AccountDrawer data={_account} />
+                <AccountDrawer data={accountNav} />
               </Box>
             ),
           }}

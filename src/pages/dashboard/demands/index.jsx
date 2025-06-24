@@ -6,7 +6,7 @@ import DemandesListeView from 'src/sections/demandes/view/demandes-liste-view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Liste des demandes - ${CONFIG.appName}` };
+const metadata = { title: `Demands list - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

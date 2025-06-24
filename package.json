@@ -17,7 +17,8 @@
     "re:start": "yarn rm:all && yarn install && yarn dev",
     "re:build": "yarn rm:all && yarn install && yarn build",
     "re:build-npm": "npm run rm:all && npm install && npm run build",
-    "dev:host": "vite --host"
+    "dev:host": "vite --host",
+    "test:e2e": "jest tests/e2e --config jest.config.js"
   },
   "engines": {
     "node": "20.x"
@@ -114,11 +115,16 @@
     "swr": "^2.3.3",
     "turndown": "^7.2.0",
     "yet-another-react-lightbox": "^3.21.4",
-    "zod": "^3.23.8"
+    "zod": "^3.25.64"
   },
   "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@types/jest": "^29.5.14",
     "@types/react": "^18.3.4",
+    "@types/selenium-webdriver": "^4.1.28",
     "@vitejs/plugin-react-swc": "^3.7.0",
+    "babel-jest": "^29.7.0",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
@@ -130,7 +136,10 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-unused-imports": "^3.2.0",
+    "jest": "^30.0.0",
+    "jest-junit": "^16.0.0",
     "prettier": "^3.3.3",
+    "selenium-webdriver": "^4.33.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.2",
     "vite-plugin-checker": "^0.7.2"

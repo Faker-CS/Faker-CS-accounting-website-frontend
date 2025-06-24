@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -33,7 +34,7 @@ export const UserQuickEditSchema = zod.object({
   state: zod.string().min(1, { message: 'State is required!' }),
   city: zod.string().min(1, { message: 'City is required!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  // zipCode: zod.bigint().min(1, { message: 'Zip code is required!' }),
+  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
 
 });
 
@@ -67,7 +68,6 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
   const { updateAideComptable } = useUpdateAideComptable();
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data)
     try {
       const result =  updateAideComptable(currentUser.id, data);
     toast.promise(result, {
@@ -105,13 +105,13 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
 
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-            <Field.Text name="name" label="Full name" />
-            <Field.Text name="email" label="Email address" />
-            <Field.Phone name="phoneNumber" label="Phone number" />
-            <Field.Text name="state" label="State/region" />
-            <Field.Text name="city" label="City" />
-            <Field.Text name="address" label="Address" />
-            <Field.Text name="zipCode" label="Zip/code" />
+            <Field.Text name="name" label="Full name" color="primary"/>
+            <Field.Text name="email" label="Email address" color="primary"/>
+            <Field.Phone name="phoneNumber" label="Phone number" color="primary"/>
+            <Field.Text name="state" label="State/region" color="primary"/>
+            <Field.Text name="city" label="City" color="primary"/>
+            <Field.Text name="address" label="Address" color="primary"/>
+            <Field.Text name="zipCode" label="Zip/code" color="primary"/>
           </Box>
         </DialogContent>
 

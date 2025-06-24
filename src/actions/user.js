@@ -2,8 +2,10 @@ import axios from 'axios';
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
+// eslint-disable-next-line import/no-unresolved
 import { fetcher, endpoints } from 'src/utils/axios';
 
+// eslint-disable-next-line import/no-unresolved
 import { STORAGE_KEY } from 'src/auth/context/jwt';
 
 const swrOptions = {
@@ -43,7 +45,7 @@ export function useGetUsers() {
 export function useDeleteUser() {
   const deleteUser = async (id) => {
     try {
-      const url = `http://127.0.1:8000/api/users/${id}`; // adjust endpoint if needed
+      const url = `http://35.171.211.165:8000/api/users/${id}`; // adjust endpoint if needed
 
       const res = await axios.delete(url, {
         headers: {
@@ -67,7 +69,7 @@ export function useDeleteUser() {
 export function useUpdateUser() {
   const updateUser = async (id, data) => {
     try {
-      const url = `http://127.0.1:8000/api/users/${id}`;
+      const url = `http://35.171.211.165:8000/api/users/${id}`;
 
       const res = await axios.put(url, data, {
         headers: {
@@ -91,7 +93,7 @@ export function useUpdateUser() {
 export function usePutRecords() {
   const updateRecords = async ({ demenagement, adresse, situation }) => {
     try {
-      const url = 'http://127.0.1:8000/api/user/profile';
+      const url = 'http://35.171.211.165:8000/api/user/profile';
       const params = { demenagement, adresse, situation };
 
       const res = await axios.put(url, params, {
@@ -111,7 +113,7 @@ export function usePutRecords() {
   };
   const updateMatricule = async ({ matricule }) => {
     try {
-      const url = 'http://127.0.1:8000/api/user/profile/matricule';
+      const url = 'http://35.171.211.165:8000/api/user/profile/matricule';
       const params = { matricule };
 
       const res = await axios.put(url, params, {

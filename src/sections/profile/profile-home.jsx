@@ -41,17 +41,17 @@ export function ProfileHome({ info, posts }) {
         direction="row"
         divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
       >
-        <Stack width={1}>
+        {/* <Stack width={1}>
           {fNumber(info.totalFollowers)}
           <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
             Companies 
           </Box>
-        </Stack>
+        </Stack> */}
 
         <Stack width={1}>
           {fNumber(info.totalFollowing)}
           <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
-            Tasks
+            Demands
           </Box>
         </Stack>
       </Stack>

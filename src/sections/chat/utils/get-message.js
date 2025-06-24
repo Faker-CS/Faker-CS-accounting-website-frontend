@@ -1,14 +1,23 @@
 export function getMessage({ message, participants, currentUserId }) {
+  // Find the sender in participants
   const sender = participants.find((participant) => participant.id === message.senderId);
 
-  const senderDetails =
-    message.senderId === currentUserId
-      ? { type: 'me' }
-      : { avatarUrl: sender?.avatarUrl, firstName: sender?.name.split(' ')[0] };
+  // Check if the message is from the current user
+  const isMe = message.senderId === currentUserId;
 
-  const me = senderDetails.type === 'me';
+  // Get sender details
+  const senderDetails = isMe
+    ? { type: 'me', firstName: 'You' }
+    : {
+        avatarUrl: sender?.avatarUrl,
+        firstName: sender?.name?.split(' ')[0] || 'Unknown',
+      };
 
   const hasImage = message.contentType === 'image';
 
-  return { hasImage, me, senderDetails };
+  return {
+    hasImage,
+    me: isMe,
+    senderDetails,
+  };
 }

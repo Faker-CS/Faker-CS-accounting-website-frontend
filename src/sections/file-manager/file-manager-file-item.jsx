@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -32,8 +33,10 @@ import { FileManagerFileDetails } from './file-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ...other }) {
+export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDownload, sx, ...other }) {
   const share = useBoolean();
+
+
 
   const confirm = useBoolean();
 
@@ -48,6 +51,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
   const favorite = useBoolean(file.isFavorited);
 
   const [inviteEmail, setInviteEmail] = useState('');
+  const [sending, setSending] = useState(false);
 
   const handleChangeInvite = useCallback((event) => {
     setInviteEmail(event.target.value);
@@ -57,6 +61,31 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
     toast.success('Copied!');
     copy(file.url);
   }, [copy, file.url]);
+
+  const handleSendEmail = async (email) => {
+    setSending(true);
+    try {
+      // Extract companyId and fileName from file.url or file object
+      // Assuming file.url is like /storage/company-files/{companyId}/{fileName}
+      const match = file.url.match(/company-files\/(\d+)\/(.+)$/);
+      if (!match) throw new Error('Invalid file URL');
+      const companyId = match[1];
+      const fileName = match[2];
+      const token = localStorage.getItem('jwt_access_token');
+      await axios.post(`/api/companies/${companyId}/files/send-email`, {
+        email,
+        fileName,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success('Email sent!');
+      share.onFalse();
+      setInviteEmail('');
+    } catch (err) {
+      toast.error('Failed to send email');
+    }
+    setSending(false);
+  };
 
   const renderIcon = (
     <Box
@@ -77,14 +106,25 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
           sx={{ width: 1, height: 1 }}
         />
       ) : (
-        <FileThumbnail file={file.type} sx={{ width: 1, height: 1 }} />
+        <FileThumbnail file={file.name} sx={{ width: 1, height: 1 }} />
       )}
     </Box>
   );
 
+  const renderDirectActions = (
+    <Stack direction="row" alignItems="center" sx={{ top: 8, right: 56, position: 'absolute' }}>
+      <IconButton onClick={onDownload}>
+        <Iconify icon="material-symbols:download-rounded" />
+      </IconButton>
+      <IconButton color="error" onClick={confirm.onTrue}>
+        <Iconify icon="tabler:trash" />
+      </IconButton>
+    </Stack>
+  );
+
   const renderAction = (
     <Stack direction="row" alignItems="center" sx={{ top: 8, right: 8, position: 'absolute' }}>
-      <Checkbox
+      {/* <Checkbox
         color="warning"
         icon={<Iconify icon="eva:star-outline" />}
         checkedIcon={<Iconify icon="eva:star-fill" />}
@@ -94,7 +134,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
           id: `favorite-checkbox-${file.id}`,
           'aria-label': `Favorite checkbox`,
         }}
-      />
+      /> */}
 
       <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
         <Iconify icon="eva:more-vertical-fill" />
@@ -170,6 +210,8 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
       <Paper
         variant="outlined"
         sx={{
+          width: 240,
+          height: 180,
           p: 2.5,
           display: 'flex',
           borderRadius: 2,
@@ -187,11 +229,9 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
         {...other}
       >
         {renderIcon}
-
         {renderText}
-
         {renderAvatar}
-
+        {renderDirectActions}
         {renderAction}
       </Paper>
 
@@ -252,23 +292,23 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
 
       <FileManagerShareDialog
         open={share.value}
-        shared={file.shared}
+        onClose={share.onFalse}
         inviteEmail={inviteEmail}
         onChangeInvite={handleChangeInvite}
-        onCopyLink={handleCopy}
-        onClose={() => {
-          share.onFalse();
-          setInviteEmail('');
-        }}
+        onSendEmail={handleSendEmail}
+        sending={sending}
       />
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
-        content="Are you sure want to delete?"
+        content="Are you sure you want to delete this file?"
         action={
-          <Button variant="contained" color="error" onClick={onDelete}>
+          <Button variant="contained" color="error" onClick={() => {
+            onDelete();
+            confirm.onFalse();
+          }}>
             Delete
           </Button>
         }

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Paper from '@mui/material/Paper';

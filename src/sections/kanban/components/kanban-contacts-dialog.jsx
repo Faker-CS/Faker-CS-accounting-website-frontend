@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -63,7 +64,7 @@ export function KanbanContactsDialog({ assignee = [], open, onClose }) {
           <Scrollbar sx={{ height: ITEM_HEIGHT * 6, px: 2.5 }}>
             <Box component="ul">
               {dataFiltered.map((contact) => {
-                const checked = assignee.map((person) => person.name).includes(contact.name);
+                const checked = (Array.isArray(assignee) ? assignee : []).map((person) => person.name).includes(contact.name);
 
                 return (
                   <Box
@@ -76,7 +77,7 @@ export function KanbanContactsDialog({ assignee = [], open, onClose }) {
                       alignItems: 'center',
                     }}
                   >
-                    <Avatar src={contact.avatarUrl} />
+                    <Avatar src={`${import.meta.env.VITE_SERVER}/storage/${contact?.photo}`} />
 
                     <ListItemText
                       primaryTypographyProps={{ typography: 'subtitle2', sx: { mb: 0.25 } }}

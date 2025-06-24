@@ -8,5 +8,24 @@
     "title": "Blog",
     "caption": "Raccourcis clavier personnalisés."
   },
-  "subheader": "Sous-titre"
+  "subheader": "Sous-titre",
+  "home": "Accueil",
+  "profile": "Profil",
+  "accountUpdates": "Mises à jour du compte",
+  "workingOverview": "Vue d'ensemble du travail",
+  "dashboard": "Tableau de bord",
+  "menu": "Menu",
+  "demands": "Demandes",
+  "files": "Fichiers",
+  "management": "Gestion",
+  "users": "Utilisateurs",
+  "entreprises": "Entreprises",
+  "accounterHelpers": "Assistants comptables",
+  "fileManager": "Gestionnaire de fichiers",
+  "chat": "Chat",
+  "calendar": "Calendrier",
+  "tasks": "Tâches",
+  "team2": "Équipe 2",
+  "team3": "Équipe 3",
+  "pro": "Pro"
 }

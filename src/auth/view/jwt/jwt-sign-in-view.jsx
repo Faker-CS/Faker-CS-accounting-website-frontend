@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+import axios from 'axios';
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,8 +18,11 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
+
+import { FileManagerShareDialog } from 'src/sections/file-manager/file-manager-share-dialog';
 
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
@@ -47,9 +52,13 @@ export function JwtSignInView() {
 
   const password = useBoolean();
 
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [sending, setSending] = useState(false);
+
   const defaultValues = {
-    email: 'chifaker@gmail.com',
-    password: 'faker123',
+    email: '',
+    password: '',
   };
 
   const methods = useForm({
@@ -77,17 +86,30 @@ export function JwtSignInView() {
     }
   });
 
+  const handleForgot = async (email) => {
+    setSending(true);
+    try {
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/forgot-password`, { email });
+      toast.success('A new password has been sent to your email.');
+      setForgotOpen(false);
+      setForgotEmail('');
+    } catch (err) {
+      toast.error('you are not part of this Team');
+    }
+    setSending(false);
+  };
+
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label="Email address" placeholder="Enter your email" InputLabelProps={{ shrink: true }} />
 
       <Box gap={1.5} display="flex" flexDirection="column">
         <Link
-          component={RouterLink}
-          href="#"
+          component="button"
           variant="body2"
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
+          onClick={() => setForgotOpen(true)}
         >
           Forgot password?
         </Link>
@@ -130,19 +152,19 @@ export function JwtSignInView() {
         title="Sign in to your account"
         description={
           <>
-            {`Don’t have an account? `}
-            <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
+            {`Don't have an account? `}
+            {/* <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
               Get started
-            </Link>
+            </Link> */}
           </>
         }
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
       />
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        Use <strong>{defaultValues.email}</strong>
+        Use the <strong>Email</strong>
         {' with  '}
-        <strong>{defaultValues.password}</strong>
+        <strong> Your pass word </strong>we send to you 
       </Alert>
 
       {!!errorMsg && (
@@ -154,6 +176,15 @@ export function JwtSignInView() {
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>
+
+      <FileManagerShareDialog
+        open={forgotOpen}
+        onClose={() => setForgotOpen(false)}
+        inviteEmail={forgotEmail}
+        onChangeInvite={e => setForgotEmail(e.target.value)}
+        onSendEmail={handleForgot}
+        sending={sending}
+      />
     </>
   );
 }

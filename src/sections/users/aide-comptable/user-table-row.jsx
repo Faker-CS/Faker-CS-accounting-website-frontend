@@ -28,7 +28,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
   const quickEdit = useBoolean();
 
- const avatarUrl = `http://127.0.0.1:8000/storage/${row.photo}`;  
+ const avatarUrl = `http://35.171.211.165:8000/storage/${row.photo}`;  
 
   return (
     <>

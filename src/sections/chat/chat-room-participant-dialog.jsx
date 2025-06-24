@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Dialog from '@mui/material/Dialog';

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -24,7 +25,7 @@ export function NotificationItem({ notification, handleMark }) {
         >
           <Box
             component="img"
-            src={`${CONFIG.assetsDir}/assets/icons/notification/${(notification.type === 'form_submission' && 'submit') || (notification.type === 'form_rejection' && 'rejected') || (notification.type === 'form_accepted' && 'accepted') || (notification.type === 'new_connection' && 'connect') || (notification.type === 'form_deleted' && 'deleted') || (notification.type === 'new_event' && 'appointment' ) || (notification.type === 'helper_assigned' && 'helper_assigned')}.png`}
+            src={`${CONFIG.assetsDir}/assets/icons/notification/${(notification.type === 'form_submission' && 'submit') || (notification.type === 'form_rejection' && 'rejected') || (notification.type === 'form_accepted' && 'accepted') || (notification.type === 'new_connection' && 'connect') || (notification.type === 'form_deleted' && 'deleted') || (notification.type === 'new_event' && 'appointment' ) || (notification.type === 'helper_assigned' && 'helper_assigned') || (notification.type === 'form_in_work' && 'in_work')}.png`}
             sx={{ width: 24, height: 24 }}
           />
         </Stack>

@@ -12,7 +12,7 @@ export function EntrepriseCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Create a new entreprise"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Entreprise', href: paths.dashboard.users.newEntreprise },

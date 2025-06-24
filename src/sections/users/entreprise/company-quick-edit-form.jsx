@@ -1,8 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
@@ -114,7 +114,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
           >
             <Field.Select name="status" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
+              {[{ value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }, { value: 'Pending', label: 'Pending' }].map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
@@ -130,7 +130,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }) {
             <Field.Text name="ville" label="City" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="zipCode" label="Zip/code" />
-            <Field.Text name="company" label="Company Name" />
+            {/* <Field.Text name="company" label="Company Name" /> */}
             <Field.Text name="role" label="Industry" />
           </Box>
         </DialogContent>

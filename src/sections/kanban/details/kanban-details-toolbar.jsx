@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -93,7 +94,7 @@ export function KanbanDetailsToolbar({
         slotProps={{ arrow: { placement: 'top-right' } }}
       >
         <MenuList>
-          {['To do', 'In progress', 'Ready to test', 'Done'].map((option) => (
+          {['To do', 'In progress', 'Ready to check', 'Done'].map((option) => (
             <MenuItem
               key={option}
               selected={status === option}

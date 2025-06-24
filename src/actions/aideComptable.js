@@ -2,8 +2,10 @@ import axios from 'axios';
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
+// eslint-disable-next-line import/no-unresolved
 import { poster, fetcher, endpoints } from 'src/utils/axios';
 
+// eslint-disable-next-line import/no-unresolved
 import { STORAGE_KEY } from 'src/auth/context/jwt';
 
 const swrOptions = {
@@ -32,7 +34,7 @@ export const useGetAideComptables = () => {
 export const useDeleteAideComptable = () => {
   const deleteAideComptable = async (id) => {
     try {
-      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable/${id}`;
+      const url = `${import.meta.env.VITE_SERVER_URL}/aideComptable/${id}`;
       const res = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
@@ -67,7 +69,7 @@ export const useAddAideComptable = () => {
         formData.append('avatarUrl', data.avatarUrl); // Must be a real File object
       }
 
-      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable`;
+      const url = `${import.meta.env.VITE_SERVER_URL}/aideComptable`;
 
       const res = await axios.post(url, formData, {
         headers: {
@@ -91,7 +93,7 @@ export const useAddAideComptable = () => {
 export const useUpdateAideComptable = () => {
   const updateAideComptable = async (id, data) => {
     try {
-      const url = `${import.meta.env.VITE_SERVER_URL}/api/aideComptable/${id}`;
+      const url = `${import.meta.env.VITE_SERVER_URL}/aideComptable/${id}`;
       const res = await axios.put(url, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,

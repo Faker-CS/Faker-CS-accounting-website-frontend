@@ -1,9 +1,18 @@
-import { useState, useCallback } from 'react';
+/* eslint-disable import/no-unresolved */
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
 
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 import ToggleButton from '@mui/material/ToggleButton';
+import CardActionArea from '@mui/material/CardActionArea';
+import InputAdornment from '@mui/material/InputAdornment';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -99,31 +108,29 @@ export function FileManagerView() {
     });
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearch = (event) => setSearchQuery(event.target.value);
+
   const renderFilters = (
     <Stack
       spacing={2}
       direction={{ xs: 'column', md: 'row' }}
       alignItems={{ xs: 'flex-end', md: 'center' }}
+      sx={{ mb: 2 }}
     >
-      <FileManagerFilters
-        filters={filters}
-        dateError={dateError}
-        onResetPage={table.onResetPage}
-        openDateRange={openDateRange.value}
-        onOpenDateRange={openDateRange.onTrue}
-        onCloseDateRange={openDateRange.onFalse}
-        options={{ types: FILE_TYPE_OPTIONS }}
+      <TextField
+        value={searchQuery}
+        onChange={handleSearch}
+        placeholder="Rechercher..."
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+            </InputAdornment>
+          ),
+        }}
+        sx={{ width: { xs: 1, md: 260 } }}
       />
-
-      <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
-        <ToggleButton value="list">
-          <Iconify icon="solar:list-bold" />
-        </ToggleButton>
-
-        <ToggleButton value="grid">
-          <Iconify icon="mingcute:dot-grid-fill" />
-        </ToggleButton>
-      </ToggleButtonGroup>
     </Stack>
   );
 
@@ -135,48 +142,69 @@ export function FileManagerView() {
     />
   );
 
+  const [companies, setCompanies] = useState([]);
+  const [companyFiles, setCompanyFiles] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt_access_token');
+    axios.get('/api/companies', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(async res => {
+      const companiesArr = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setCompanies(companiesArr);
+      // Fetch file counts for each company
+      const filesObj = {};
+      await Promise.all(companiesArr.map(async (company) => {
+        try {
+          const filesRes = await axios.get(`/api/companies/${company.id}/files`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          filesObj[company.id] = filesRes.data.files.length;
+        } catch {
+          filesObj[company.id] = 0;
+        }
+      }));
+      setCompanyFiles(filesObj);
+    });
+  }, []);
+
+  const filteredCompanies = companies.filter(company =>
+    company.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <DashboardContent>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">File manager</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-            onClick={upload.onTrue}
-          >
-            Upload
-          </Button>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 4 }}>
+          <Typography variant="h4">Companies</Typography>
         </Stack>
-
+        {renderFilters}
         <Stack spacing={2.5} sx={{ my: { xs: 3, md: 5 } }}>
-          {renderFilters}
-
-          {canReset && renderResults}
+          <Stack direction="row" spacing={3} flexWrap="wrap">
+            {filteredCompanies.map((company) => (
+              <Card key={company.id} sx={{ minWidth: 250, minHeight: 140, m: 1, borderRadius: 3, boxShadow: 2 }}>
+                <CardActionArea onClick={() => navigate(`/dashboard/files/company/${company.id}`)} sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 100 }}>
+                      <img
+                        src="/assets/icons/files/ic-folder.svg"
+                        alt="folder"
+                        style={{ width: 48, height: 48, marginBottom: 8 }}
+                      />
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>{company.company_name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {companyFiles[company.id] || 0} fichier(s)
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            ))}
+          </Stack>
         </Stack>
-
-        {notFound ? (
-          <EmptyContent filled sx={{ py: 10 }} />
-        ) : (
-          <>
-            {view === 'list' ? (
-              <FileManagerTable
-                table={table}
-                dataFiltered={dataFiltered}
-                onDeleteRow={handleDeleteItem}
-                notFound={notFound}
-                onOpenConfirm={confirm.onTrue}
-              />
-            ) : (
-              <FileManagerGridView
-                table={table}
-                dataFiltered={dataFiltered}
-                onDeleteItem={handleDeleteItem}
-                onOpenConfirm={confirm.onTrue}
-              />
-            )}
-          </>
-        )}
       </DashboardContent>
 
       <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />

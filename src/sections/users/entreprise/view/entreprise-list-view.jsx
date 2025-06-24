@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useState, useEffect, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
@@ -7,7 +8,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { Box, Table, TableBody } from '@mui/material';
-
+import { useNavigate } from 'react-router';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
@@ -16,8 +17,8 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
+import { _roles } from 'src/_mock';
 import { varAlpha } from 'src/theme/styles';
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetEntreprises, useDeleteEntreprise } from 'src/actions/entreprise';
 
@@ -46,7 +47,12 @@ import { UserTableFiltersResult } from '../company-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Inactive', label: 'Inactive' },
+  // Removed { value: 'Rejected', label: 'Rejected' }
+];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Raison Sociale' },
@@ -67,6 +73,8 @@ export function EntrepriseListView() {
   // console.log('entreprise :',entreprisesData)
 
   const router = useRouter();
+
+  const navigate = useNavigate();
 
   const confirm = useBoolean();
 
@@ -123,9 +131,9 @@ export function EntrepriseListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.users.editEntreprise(id));
+      navigate(`/dashboard/users/details/${id}`);
     },
-    [router]
+    [navigate]
   );
 
   const handleFilterStatus = useCallback(

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import axios from 'axios';
 
 import { CONFIG } from 'src/config-global';
@@ -85,7 +86,6 @@ export const patcher = async (url, data = {}, config = {}) => {
 // ----------------------------------------------------------------------
 
 export const endpoints = {
-  Tasks: '/api/tasks',
   calendar: '/api/calendar',
   auth: {
     login: '/api/login',
@@ -109,6 +109,7 @@ export const endpoints = {
     details: (id) => `/api/companies/${id}`, // Use with ID parameter
     update: (id) => `/api/companies/${id}`, // Use with ID parameter
     delete: (id) => `/api/companies/${id}`, // Use with ID parameter
+    show: (id) => `/api/companies/${id}`, // Use with ID parameter
 
     search: (query) => `/api/companies?search=${query}`, // Search by name/raison sociale
     filter: {
@@ -122,7 +123,8 @@ export const endpoints = {
     conversation: (id) => `/api/conversations/${id}`,
     messages: (conversationId) => `/api/conversations/${conversationId}/messages`,
     contacts: (id) => `/api/contacts/${id}`,
-    createConversation: '/api/new-conversation',
+    createConversation: '/api/conversations',
+    sendMessage: '/api/messages',
   },
   // documents endpoints
   documents: {
@@ -147,5 +149,23 @@ export const endpoints = {
   // statistics endpoints
   statistics: {
     get: '/api/statistics'
-  }
+  },
+
+  // Add tasks endpoints
+  tasks: {
+    all: '/api/tasks',
+    create: '/api/tasks',
+    update: (id) => `/api/tasks/${id}`,
+    delete: (id) => `/api/tasks/${id}`,
+    subtasks: {
+      create: (taskId) => `/api/tasks/${taskId}/subtasks`,
+      update: (id) => `/api/subtasks/${id}`,
+      delete: (id) => `/api/subtasks/${id}`,
+    },
+    comments: {
+      list: (taskId) => `/api/tasks/${taskId}/comments`,
+      create: (taskId) => `/api/tasks/${taskId}/comments`,
+      delete: (id) => `/api/comments/${id}`,
+    },
+  },
 };

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { paths } from 'src/routes/paths';
 
@@ -17,17 +18,17 @@ import { FileManagerView } from '../../file-manager/view';
 
 export default function DepotView({ data, loading }) {
   const renderLoading = <ProductItemSkeleton />;
-
+  const { t } = useTranslation();
   const [serviceStatus, setServiceStatus] = useState({
     value: 'loading',
-    label: 'Chargement...',
+    label: t('loading'),
     color: 'default',
   });
 
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/status/4`, {
+        const response = await axios.get(`http://35.171.211.165:8000/api/status/4`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
             'Content-Type': 'application/json',
@@ -41,30 +42,30 @@ export default function DepotView({ data, loading }) {
 
         setServiceStatus(selectedStatus);
       } catch (error) {
-        console.error('Erreur lors de la récupération du statut:', error);
+        console.error(t('errorRetrievingStatus'), error);
         setServiceStatus(statusData[0]);
       }
     };
 
     fetchServiceStatus();
-  }, [data]);
+  }, [data, t]);
 
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Déclaration d'impôt"
+        heading={t('taxReturn')}
         links={[
           {
-            name: 'Accueil',
-            href: paths.dashboard.root,
+            name: t('home'),
+            href: paths.dashboard.companyMenu.root,
             icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
           },
           {
-            name: 'Déclaration d’impôt',
+            name: t('taxReturn'),
             href: '#',
           },
         ]}
-        action={<Label color={serviceStatus.color}>{serviceStatus.label}</Label>} // ✅ Dynamic status
+        action={<Label color={serviceStatus.color}>{serviceStatus.label}</Label>}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       {loading ? (

@@ -39,7 +39,7 @@ export const EventSchema = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function CalendarForm({ currentEvent, colorOptions, onClose }) {
+export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = false }) {
   const methods = useForm({
     mode: 'all',
     resolver: zodResolver(EventSchema),
@@ -102,17 +102,18 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
     <Form methods={methods} onSubmit={onSubmit}>
       <Scrollbar sx={{ p: 3, bgcolor: 'background.neutral' }}>
         <Stack spacing={3}>
-          <Field.Text name="title" label="Title" />
+          <Field.Text name="title" label="Title" disabled={readOnly} />
 
-          <Field.Text name="description" label="Description" multiline rows={3} />
+          <Field.Text name="description" label="Description" multiline rows={3} disabled={readOnly} />
 
-          <Field.Switch name="allDay" label="All day" />
+          <Field.Switch name="allDay" label="All day" disabled={readOnly} />
 
-          <Field.MobileDateTimePicker name="start" label="Start date" />
+          <Field.MobileDateTimePicker name="start" label="Start date" disabled={readOnly} />
 
           <Field.MobileDateTimePicker
             name="end"
             label="End date"
+            disabled={readOnly}
             slotProps={{
               textField: {
                 error: dateError,
@@ -129,36 +130,47 @@ export function CalendarForm({ currentEvent, colorOptions, onClose }) {
                 selected={field.value}
                 onSelectColor={(color) => field.onChange(color)}
                 colors={colorOptions}
+                disabled={readOnly}
               />
             )}
           />
         </Stack>
       </Scrollbar>
 
-      <DialogActions sx={{ flexShrink: 0 }}>
-        {!!currentEvent?.id && (
-          <Tooltip title="Delete event">
-            <IconButton onClick={onDelete} color='error' >
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
-          </Tooltip>
-        )}
+      {!readOnly && (
+        <DialogActions sx={{ flexShrink: 0 }}>
+          {!!currentEvent?.id && (
+            <Tooltip title="Delete event">
+              <IconButton onClick={onDelete} color='error' >
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
+          )}
 
-        <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1 }} />
 
-        <Button variant="outlined" color="inherit" onClick={onClose}>
-          Cancel
-        </Button>
+          <Button variant="outlined" color="inherit" onClick={onClose}>
+            Cancel
+          </Button>
 
-        <LoadingButton
-          type="submit"
-          variant="contained"
-          loading={isSubmitting}
-          disabled={dateError}
-        >
-          Save changes
-        </LoadingButton>
-      </DialogActions>
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            loading={isSubmitting}
+            disabled={dateError}
+          >
+            Save changes
+          </LoadingButton>
+        </DialogActions>
+      )}
+      {readOnly && (
+        <DialogActions sx={{ flexShrink: 0 }}>
+          <Box sx={{ flexGrow: 1 }} />
+          <Button variant="outlined" color="inherit" onClick={onClose}>
+            Close
+          </Button>
+        </DialogActions>
+      )}
     </Form>
   );
 }

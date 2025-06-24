@@ -1,4 +1,5 @@
 import { m } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -14,7 +15,7 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { initializeEcho, subscribeToNotifications } from 'src/actions/echo';
-import { handleRead, handleAllRead, useGetNotifications } from 'src/actions/notifications';
+import { handleRead, handleDelete, handleAllRead, useGetNotifications } from 'src/actions/notifications';
 
 import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
@@ -24,10 +25,22 @@ import { NotificationItem } from './notification-item';
 
 // ----------------------------------------------------------------------
 
+function mapServiceLinkToFrontend(link) {
+  // Example: /dashboard/forms/123  -->  /dashboard/demandes/123/demands
+  const formMatch = link.match(/^\/dashboard\/forms\/(\d+)$/);
+  if (formMatch) {
+    const id = formMatch[1];
+    return `/dashboard/demandes/${id}/demands`;
+  }
+  // Add more mappings as needed
+  return link; // fallback to original if no mapping needed
+}
+
 export function NotificationsDrawer({ sx, ...other }) {
   const { userData } = useAuth();
   const drawer = useBoolean();
   const { notificationsData, mutateNotifications } = useGetNotifications();
+  const navigate = useNavigate();
 
   const [notifications, setNotifications] = useState([]);
 
@@ -79,13 +92,27 @@ export function NotificationsDrawer({ sx, ...other }) {
     setNotifications(notifications.map((notification) => ({ ...notification, isUnRead: false })));
   };
 
-  const handleMark = (id) => {
-    handleRead(id, mutateNotifications);
+  const handleNotificationClick = (notification) => {
+    handleRead(notification.id, mutateNotifications);
     setNotifications(
-      notifications.map((notification) =>
-        notification.id === id ? { ...notification, isUnRead: false } : notification
+      notifications.map((n) =>
+        n.id === notification.id ? { ...n, isUnRead: false } : n
       )
     );
+    
+    // Check if user has the required role
+    const allowedRoles = ['comptable', 'aide-comptable'];
+    const userRole = userData?.roles;
+    
+    if (notification.serviceLink && allowedRoles.includes(userRole)) {
+      const mappedLink = mapServiceLinkToFrontend(notification.serviceLink);
+      navigate(mappedLink);
+      console.log(mappedLink);
+    }
+    
+    setTimeout(() => {
+      handleDelete(notification.id, mutateNotifications);
+    }, 300000); // 5 minutes
   };
 
   const renderHead = (
@@ -115,7 +142,7 @@ export function NotificationsDrawer({ sx, ...other }) {
           <Box component="li" key={notification.id} sx={{ display: 'flex' }}>
             <NotificationItem
               notification={notification}
-              handleMark={() => handleMark(notification.id)}
+              handleMark={() => handleNotificationClick(notification)}
             />
           </Box>
         ))}

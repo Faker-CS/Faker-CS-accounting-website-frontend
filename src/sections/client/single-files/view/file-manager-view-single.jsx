@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -27,8 +28,8 @@ import { FileManagerTable } from '../file-manager-table';
 
 export function FileManagerView({ files, setServiceStatus, serviceId }) {
   const { user } = useMockedUser();
-
   const { updateMatricule } = usePutRecords();
+  const { t } = useTranslation();
 
   const [matricule, setMatricule] = useState(user.matricule);
 
@@ -66,96 +67,72 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
   const handleDeleteItem = useCallback(
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
-
-      toast.success('Delete success!');
-
+      toast.success(t('deleteSuccess'));
       setTableData(deleteRow);
-
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, tableData, t]
   );
 
   const handleDeleteItems = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-    toast.success('Delete success!');
-
+    toast.success(t('deleteSuccess'));
     setTableData(deleteRows);
-
     table.onUpdatePageDeleteRows({
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
-
-  const SubmitData = async (e) => {
-    e.preventDefault();
-    toast.promise(updateMatricule({ matricule }), {
-      loading: 'Mise à jour en cours...',
-      success: 'Profil mis à jour avec succès!',
-      error: 'Échec de la mise à jour du profil!',
-    });
-  };
+  }, [dataFiltered.length, dataInPage.length, table, tableData, t]);
 
   const SubmitFiles = async (e) => {
     e.preventDefault();
-
-    if (matricule) {
-      try {
-        const response = await axios.post(
-          `http://127.0.0.1:8000/api/form/${serviceId}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        switch (response.data.status) {
-          case 'form_not_found':
-            toast.info('Remplissez les documents nécessaires.');
-            break;
-          case 'submitted_for_review':
-            toast.success('Formulaire soumis pour révision.');
-            setServiceStatus({ value: 'review', label: 'En attente', color: 'warning' });
-            break;
-          case 'form_in_review':
-            toast.warning('Le formulaire est déjà en révision.');
-            break;
-          case 'form_accepted':
-            toast.success('Formulaire accepté.');
-            setServiceStatus({ value: 'accepted', label: 'Accepté', color: 'success' });
-            break;
-          default:
-            toast.error('Erreur inattendue.');
-            break;
+    try {
+      const response = await axios.post(
+        `http://35.171.211.165:8000/api/form/${serviceId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
+            'Content-Type': 'application/json',
+          },
         }
-      } catch (error) {
-        toast.error("Échec de l'envoi du formulaire. Veuillez réessayer.");
+      );
+      switch (response.data.status) {
+        case 'form_not_found':
+          toast.info(t('fillRequiredDocuments'));
+          break;
+        case 'submitted_for_review':
+          toast.success(t('formSubmittedForReview'));
+          setServiceStatus({ value: 'review', label: t('pending'), color: 'warning' });
+          break;
+        case 'form_in_review':
+          toast.warning(t('formAlreadyInReview'));
+          break;
+        case 'form_accepted':
+          toast.success(t('formAccepted'));
+          setServiceStatus({ value: 'accepted', label: t('accepted'), color: 'success' });
+          break;
+        default:
+          toast.error(t('unexpectedError'));
+          break;
       }
-    } else {
-      toast.info('Complétez vos informations!');
+    } catch (error) {
+      toast.error(t('formSendError'));
     }
   };
 
   return (
     <>
       <Typography mb={2} variant="h6">
-        General informations
+        {t('generalInformations')}
       </Typography>
       <Grid container spacing={2}>
         <Grid xs={12} md={4}>
-          <InputLabel mb={1}>Tax Identification Number (Matricule Fiscal)</InputLabel>
-          <TextField fullWidth value={matricule} onChange={(e) => setMatricule(e.target.value)} />
+          {/* Remove the Tax Identification Number (Matricule Fiscal) field and related code */}
         </Grid>
       </Grid>
       <Stack py={2} alignItems="flex-end">
-        <Button variant="contained" color="primary" onClick={(e) => SubmitData(e)}>
-          Valider
-        </Button>
+        {/* Remove the 'Valider' button and its Stack */}
       </Stack>
       <Divider sx={{ my: 1, borderStyle: 'dashed' }} />
       {notFound ? (
@@ -172,18 +149,14 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
 
       <Stack my={2} alignItems="flex-start">
         <Button variant="contained" color="primary" onClick={(e) => SubmitFiles(e)}>
-          Envoyer ma demande
+          {t('sendMyRequest')}
         </Button>
       </Stack>
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Supprimer"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
+        title={t('delete')}
+        content={t('areYouSureDelete', { count: table.selected.length })}
         action={
           <Button
             variant="contained"
@@ -193,7 +166,7 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
               confirm.onFalse();
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         }
       />

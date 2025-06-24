@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { paths } from 'src/routes/paths';
 
@@ -17,16 +18,17 @@ import { FileManagerView } from '../single-files/view';
 
 export default function SarlPageView({ data, loading }) {
   const renderLoading = <ProductItemSkeleton />;
+  const { t } = useTranslation();
   const [serviceStatus, setServiceStatus] = useState({
     value: 'loading',
-    label: 'Chargement...',
+    label: t('loading'),
     color: 'default',
   });
 
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/status/2`, {
+        const response = await axios.get(`http://35.171.211.165:8000/api/status/2`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
             'Content-Type': 'application/json',
@@ -50,15 +52,15 @@ export default function SarlPageView({ data, loading }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Constitution d'entreprise SARL"
+        heading={t('sarlCompanyFormation')}
         links={[
           {
-            name: 'Accueil',
-            href: paths.dashboard.root,
+            name: t('home'),
+            href: paths.dashboard.companyMenu.root,
             icon: <Iconify icon="solar:home-angle-2-bold-duotone" />,
           },
           {
-            name: "Constitution d'entreprise SARL",
+            name: t('sarlCompanyFormation'),
             href: '#',
           },
         ]}

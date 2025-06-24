@@ -50,9 +50,15 @@ module.exports = {
     'react/jsx-no-duplicate-props': [1, { ignoreCase: false }],
     'react/jsx-no-useless-fragment': [1, { allowExpressions: true }],
     'react/no-unstable-nested-components': [1, { allowAsProps: true }],
+    'react/button-has-type': 0,
+    'react/no-unescaped-entities': 0,
     // jsx-a11y
     'jsx-a11y/anchor-is-valid': 0,
     'jsx-a11y/control-has-associated-label': 0,
+    'jsx-a11y/click-events-have-key-events': 0,
+    'jsx-a11y/no-static-element-interactions': 0,
+    // arrow functions
+    'arrow-body-style': 0,
     // unused imports
     'unused-imports/no-unused-imports': 1,
     'unused-imports/no-unused-vars': [
@@ -89,14 +95,14 @@ module.exports = {
         ],
         'custom-groups': {
           value: {
-            ['custom-mui']: '@mui/**',
-            ['custom-auth']: 'src/auth/**',
-            ['custom-hooks']: 'src/hooks/**',
-            ['custom-utils']: 'src/utils/**',
-            ['custom-types']: 'src/types/**',
-            ['custom-routes']: 'src/routes/**',
-            ['custom-sections']: 'src/sections/**',
-            ['custom-components']: 'src/components/**',
+            'custom-mui': '@mui/**',
+            'custom-auth': 'src/auth/**',
+            'custom-hooks': 'src/hooks/**',
+            'custom-utils': 'src/utils/**',
+            'custom-types': 'src/types/**',
+            'custom-routes': 'src/routes/**',
+            'custom-sections': 'src/sections/**',
+            'custom-components': 'src/components/**',
           },
         },
         'internal-pattern': ['src/**'],

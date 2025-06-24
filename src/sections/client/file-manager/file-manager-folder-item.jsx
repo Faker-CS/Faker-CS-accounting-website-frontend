@@ -8,6 +8,7 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useTranslation } from 'react-i18next';
 
 import { CONFIG } from 'src/config-global';
 
@@ -20,6 +21,8 @@ export function FileManagerFolderItem({ sx, folder, selected, onSelect, canEdit,
   const details = useBoolean();
 
   const checkbox = useBoolean();
+
+  const { t } = useTranslation();
 
   const renderIcon = (
     <Box
@@ -47,7 +50,7 @@ export function FileManagerFolderItem({ sx, folder, selected, onSelect, canEdit,
       <ListItemText
         onClick={details.onTrue}
         primary={folder.name}
-        secondary={`${folder.totalFiles} fichier(s)`}
+        secondary={t('fileCount', { count: folder.totalFiles })}
         primaryTypographyProps={{ noWrap: true, typography: 'subtitle1', textOverflow: 'ellipsis', maxWidth: '200px' }}
         secondaryTypographyProps={{
           mt: 0.5,

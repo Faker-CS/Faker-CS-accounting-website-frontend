@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Box, Card, Button, Typography } from '@mui/material';
 
@@ -10,6 +11,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 
 export default function DepotDetailsRow({ file, onRemove }) {
   const confirm = useBoolean();
+  const { t } = useTranslation();
 
   
   return (
@@ -28,7 +30,7 @@ export default function DepotDetailsRow({ file, onRemove }) {
         <Box gap={2}>
           {/* <TextField label="Nom de fichier" fullWidth /> */}
           <Button sx={{ mt: 2 }} variant="contained" color="error" onClick={() => confirm.onTrue()}>
-            Supprimer
+            {t('delete')}
           </Button>
         </Box>
       </Card>
@@ -36,15 +38,14 @@ export default function DepotDetailsRow({ file, onRemove }) {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Supprimer"
-        content={`Êtes-vous sûr de vouloir supprimer ${file.original_name || file.name}?`}
+        title={t('delete')}
+        content={t('areYouSureDeleteFile', { name: file.original_name || file.name })}
         action={
           <Button variant="contained" color="error" onClick={() => {
             onRemove(file)
             confirm.onFalse()
-          }
-        }>
-            Supprimer
+          }}>
+            {t('delete')}
           </Button>
         }
       />

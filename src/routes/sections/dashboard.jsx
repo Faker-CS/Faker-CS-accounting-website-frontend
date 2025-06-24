@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
@@ -8,7 +9,8 @@ import { LoadingScreen } from 'src/components/loading-screen';
 
 import { AuthGuard } from 'src/auth/guard';
 // File manager
-const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
+const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager/index'));
+const FileManagerPageDetails = lazy(() => import('src/pages/dashboard/file-manager/details'));
 // Chat
 const ChatPage = lazy(() => import('src/pages/dashboard/chat'));
 // Invoice
@@ -29,6 +31,7 @@ const PageSix = lazy(() => import('src/pages/dashboard/six'));
 const EntreprisesList = lazy(() => import('src/pages/dashboard/users/entreprise/list'));
 const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/users/entreprise/new'));
 const EntrepriseEditPage = lazy(() => import('src/pages/dashboard/users/entreprise/edit'));
+const EntrepriseShowPage = lazy(() => import('src/pages/dashboard/users/entreprise/show'));
 
 const AideComptableCreatePage = lazy(() => import('src/pages/dashboard/users/aide-comptable/new'));
 const AideComptableListPage = lazy(() => import('src/pages/dashboard/users/aide-comptable/list'));
@@ -47,9 +50,14 @@ const ViewPage = lazy(() => import('src/pages/dashboard/demands/viewForm'));
 // _________________________company incorporation___________________________
 const Sarl = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl'));
 const SarlS = lazy(() => import('src/pages/dashboard/CompanyMenu/sarl-s'));
+const Suarl = lazy(() => import('src/pages/dashboard/CompanyMenu/suarl'));
+const Snc = lazy(() => import('src/pages/dashboard/CompanyMenu/snc'));
+const Sa = lazy(() => import('src/pages/dashboard/CompanyMenu/sa'));
 // ----------------------------------------------------------------------
 
 const UserProfilePage = lazy(() => import('src/auth/view/user-profile-view'));
+
+const FilesPage = lazy(() => import('src/pages/dashboard/files'));
 
 const layoutContent = (
   <DashboardLayout>
@@ -76,9 +84,17 @@ export const dashboardRoutes = [
         ],
       },
       {
+        path: 'files',
+        children: [
+          { element: <FilesPage />, index: true },
+          { path: 'company/:companyId', element: <FileManagerPageDetails /> },
+        ],
+      },
+      {
         path: 'users',
         children: [
           { element: <EntreprisesList />, index: true },
+          { path: 'details/:id', element: <EntrepriseShowPage /> },
           { path: 'new entreprise', element: <EntrepriseCreatePage /> },
           { path: ':id/edit/entreprise', element: <EntrepriseEditPage /> },
           { path: 'aide-comptable', element: <AideComptableListPage /> },
@@ -88,6 +104,7 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'calendar', element: <CalendarPage /> },
       { path: 'file-manager', element: <FileManagerPage /> },
+      { path: 'files/company/:companyId', element: <FileManagerPageDetails /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'chat', element: <ChatPage /> },
       {
@@ -109,6 +126,9 @@ export const dashboardRoutes = [
           { path: 'depot/:id', element: <DepotDropPage /> },
           { path: 'sarl', element: <Sarl /> },
           { path: 'sarl-s', element: <SarlS /> },
+          { path: 'suarl', element: <Suarl /> },
+          { path: 'snc', element: <Snc /> },
+          { path: 'sa', element: <Sa /> },
         ],
       },
       { path: 'profile', element: <UserProfilePage /> },

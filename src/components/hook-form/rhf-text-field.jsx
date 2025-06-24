@@ -16,6 +16,7 @@ export function RHFTextField({ name, helperText, type, ...other }) {
           {...field}
           fullWidth
           type={type}
+          color={other.color}
           value={type === 'number' && field.value === 0 ? '' : field.value}
           onChange={(event) => {
             if (type === 'number') {

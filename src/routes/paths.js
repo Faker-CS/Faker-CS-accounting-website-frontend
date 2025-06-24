@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { _id } from 'src/_mock/assets';
 
 // ----------------------------------------------------------------------
@@ -64,6 +65,10 @@ export const paths = {
       sarls: `${ROOTS.DASHBOARD}/document demands/sarl-s`,
       snc: `${ROOTS.DASHBOARD}/document demands/snc`,
       sa: `${ROOTS.DASHBOARD}/document demands/sa`,
+    },
+    files: {
+      root: `${ROOTS.DASHBOARD}/files`,
+      company: (id) => `${ROOTS.DASHBOARD}/files/company/${id}`,
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,

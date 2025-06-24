@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -6,6 +7,7 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 
+// eslint-disable-next-line import/no-unresolved
 import { paths } from 'src/routes/paths';
 
 import { useAuth } from 'src/hooks/useAuth';
@@ -30,7 +32,7 @@ const TABS = [
   { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
   {
     value: 'settings',
-    label: 'Settings',
+    label: 'Update Profile',
     icon: <Iconify width={24} icon="solar:settings-bold" />,
   },
 ];
@@ -53,6 +55,20 @@ export function UserProfileView() {
     setSearchFriends(event.target.value);
   }, []);
 
+  const roleMap = {
+    'comptable': 'Accountant',
+    'aide-comptable': 'Assistant Accountant',
+    'entreprise': 'Company',
+  };
+  let userRole = 'Accounter';
+  if (userData?.roles) {
+    if (Array.isArray(userData.roles) && userData.roles.length > 0) {
+      userRole = roleMap[userData.roles[0]] || userData.roles[0];
+    } else if (typeof userData.roles === 'string') {
+      userRole = roleMap[userData.roles] || userData.roles;
+    }
+  }
+
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -71,13 +87,15 @@ export function UserProfileView() {
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={userData?.roles && userData.roles.comptable === true ? 'Comptable' : 'Accounter'}
+          role={userRole}
           name={
             userData?.name ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1) : ''
           }
           avatarUrl={`${import.meta.env.VITE_SERVER}/storage/${userData?.photo}`}
           coverUrl={_userAbout.coverUrl}
+          
         />
+        
 
         <Box
           display="flex"

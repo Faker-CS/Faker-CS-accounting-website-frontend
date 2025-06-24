@@ -14,13 +14,14 @@ const dropAnimation = {
 // ----------------------------------------------------------------------
 
 export function KanbanDragOverlay({ columns, tasks, activeId, sx }) {
-  const columnIds = columns.map((column) => column.id);
+  const safeColumns = Array.isArray(columns) ? columns.filter(Boolean) : [];
+  const columnIds = safeColumns.map((column) => column.id);
 
-  const activeColumn = columns.find((column) => column.id === activeId);
+  const activeColumn = safeColumns.find((column) => column && column.id === activeId);
 
-  const allTasks = Object.values(tasks).flat();
+  const allTasks = tasks ? Object.values(tasks).flat().filter(Boolean) : [];
 
-  const activeTask = allTasks.find((task) => task.id === activeId);
+  const activeTask = allTasks.find((task) => task && task.id === activeId);
 
   return (
     <Portal>
@@ -28,9 +29,11 @@ export function KanbanDragOverlay({ columns, tasks, activeId, sx }) {
         {activeId ? (
           <>
             {columnIds.includes(activeId) ? (
-              <ColumnOverlay column={activeColumn} tasks={tasks[activeId]} sx={sx} />
+              activeColumn ? (
+                <ColumnOverlay column={activeColumn} tasks={tasks && tasks[activeId] ? tasks[activeId].filter(Boolean) : []} sx={sx} />
+              ) : null
             ) : (
-              <TaskItemOverlay task={activeTask} sx={sx} />
+              activeTask ? <TaskItemOverlay task={activeTask} sx={sx} /> : null
             )}
           </>
         ) : null}
@@ -42,11 +45,12 @@ export function KanbanDragOverlay({ columns, tasks, activeId, sx }) {
 // ----------------------------------------------------------------------
 
 export function ColumnOverlay({ column, tasks, sx }) {
+  const safeTasks = Array.isArray(tasks) ? tasks.filter(Boolean) : [];
   return (
     <ColumnBase
       slots={{
-        header: <KanbanColumnToolBar columnName={column.name} totalTasks={tasks.length} />,
-        main: tasks.map((task) => <ItemBase key={task.id} task={task} />),
+        header: <KanbanColumnToolBar columnName={column?.name} totalTasks={safeTasks.length} />,
+        main: safeTasks.map((task) => <ItemBase key={task.id} task={task} />),
       }}
       stateProps={{ dragOverlay: true }}
       sx={sx}

@@ -1,64 +1,64 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import PropTypes from 'prop-types';
+
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Collapse from '@mui/material/Collapse';
-import ListItemText from '@mui/material/ListItemText';
+import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
-import { fDateTime } from 'src/utils/format-time';
-
-import { FileThumbnail } from 'src/components/file-thumbnail';
-
-import { CollapseButton } from './styles';
+// eslint-disable-next-line import/no-unresolved
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function ChatRoomAttachments({ attachments }) {
-  const collapse = useBoolean(true);
-
-  const totalAttachments = attachments.length;
-
-  const renderList = attachments.map((attachment, index) => (
-    <Stack key={attachment.name + index} spacing={1.5} direction="row" alignItems="center">
-      <FileThumbnail
-        imageView
-        file={attachment.preview}
-        onDownload={() => console.info('DOWNLOAD')}
-        slotProps={{ icon: { width: 24, height: 24 } }}
-        sx={{ width: 40, height: 40, bgcolor: 'background.neutral' }}
-      />
-
-      <ListItemText
-        primary={attachment.name}
-        secondary={fDateTime(attachment.createdAt)}
-        primaryTypographyProps={{ noWrap: true, typography: 'body2' }}
-        secondaryTypographyProps={{
-          mt: 0.25,
-          noWrap: true,
-          component: 'span',
-          typography: 'caption',
-          color: 'text.disabled',
-        }}
-      />
-    </Stack>
-  ));
+export function ChatRoomAttachments({ attachments = [] }) {
+  if (!attachments?.length) {
+    return null;
+  }
 
   return (
-    <>
-      <CollapseButton
-        selected={collapse.value}
-        disabled={!totalAttachments}
-        onClick={collapse.onToggle}
-      >
-        {`Attachments (${totalAttachments})`}
-      </CollapseButton>
+    <Box
+      sx={{
+        p: 2,
+        borderRadius: 1,
+        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+      }}
+    >
+      <Stack spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Iconify icon="eva:attach-2-fill" />
+          <Box sx={{ typography: 'subtitle2' }}>Attachments ({attachments.length})</Box>
+        </Stack>
 
-      {!!totalAttachments && (
-        <Collapse in={collapse.value}>
-          <Stack spacing={2} sx={{ p: 2 }}>
-            {renderList}
-          </Stack>
-        </Collapse>
-      )}
-    </>
+        <Stack direction="row" flexWrap="wrap" spacing={1}>
+          {attachments.map((attachment) => (
+            attachment?.preview && (
+              <Button
+                key={attachment.preview}
+                variant="outlined"
+                size="small"
+                startIcon={<Iconify icon="eva:file-fill" />}
+                sx={{
+                  flexShrink: 0,
+                  borderRadius: 1,
+                  typography: 'body2',
+                }}
+              >
+                {attachment.name || 'File'}
+              </Button>
+            )
+          ))}
+        </Stack>
+      </Stack>
+    </Box>
   );
 }
+
+ChatRoomAttachments.propTypes = {
+  attachments: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      preview: PropTypes.string,
+    })
+  ),
+};

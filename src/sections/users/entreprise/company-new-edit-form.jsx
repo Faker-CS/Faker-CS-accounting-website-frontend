@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -118,12 +119,15 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // await updateEntreprise(currentUser?.id, data );
-      const res = await addEntreprise(data);
-      console.log('res', res);
-
-      toast.success('Update success!');
+      if (currentUser && currentUser.id) {
+        await updateEntreprise(currentUser.id, data);
+        toast.success('Update success!');
+      } else {
+        await addEntreprise(data);
+        toast.success('Company created!');
+      }
       reset();
+      router.push('/dashboard/users');
     } catch (error) {
       console.error('Update failed:', error);
       toast.error('Update failed!');
@@ -254,32 +258,23 @@ export function UserNewEditForm({ currentUser }) {
               >
                 {[
                   { label: 'Société à responsabilité limitée', value: 'SARL' },
-                  { label: 'Société par actions simplifiée', value: 'SAS' },
+                  { label: 'Société à responsabilité limitée', value: 'SARL-S' },
+                  { label: 'Société Unipersonnelle à Responsabilité Limitée', value: 'SUARL' },
                   { label: 'Société anonyme', value: 'SA' },
                   { label: 'Société en nom collectif', value: 'SNC' },
-                  { label: 'Société en commandite simple', value: 'SCS' },
-                  { label: 'Entreprise individuelle', value: 'EI' },
-                  { label: 'Société civile', value: 'SC' },
-                  { label: 'Société coopérative', value: 'SCOP' },
-                  { label: 'Association', value: 'ASSO' },
-                  { label: 'Groupement d’intérêt économique', value: 'GIE' },
-                  { label: 'Société européenne', value: 'SE' },
-                  { label: 'Société à responsabilité limitée à associé unique', value: 'EURL' },
-                  { label: 'Société par actions simplifiée unipersonnelle', value: 'SASU' },
                 ].map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text name="raisonSociale" label="Raison sociale" />
-              <Field.Text name="date" label="Date" />
-              <Field.Text name="matriculeFiscale" label="Matricule Fiscale" />
-              <Field.Text name="siren" label="SIREN" />
-              <Field.Text name="refCnss" label="Réf CNSS" />
-              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" />
-              <Field.Text name="zipCode" label="Code postale" />
-              <Field.Text name="city" label="Ville" />
+              <Field.Text name="raisonSociale" label="Raison sociale" color="primary" />
+              <Field.DatePicker name="date" label="Date" color="primary" />
+              <Field.Text name="siren" type="number" label="SIREN" color="primary" />
+              <Field.Text name="refCnss" label="Réf CNSS" color="primary" />
+              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" color="primary" />
+              <Field.Text name="zipCode" type="number" label="Code postale" color="primary" />
+              <Field.Text name="city" label="Ville" color="primary" />
               <Field.Select
                 name="activiteEntreprise"
                 label="Activité de l'entreprise / Code APE/NAF"
@@ -315,7 +310,7 @@ export function UserNewEditForm({ currentUser }) {
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text name="chiffreAffaire" label="Chiffre d'affaire" />
+              <Field.Text name="chiffreAffaire" type="number" label="Chiffre d'affaire" color="primary" />
             </Box>
           </Card>
         </Grid>
@@ -334,8 +329,8 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="trancheA" label="Masse salariale Tranche A" />
-              <Field.Text name="trancheB" label="Masse salariale Tranche B" />
+              <Field.Text name="trancheA" type="number" label="Masse salariale Tranche A" color="primary" />
+              <Field.Text name="trancheB" type="number" label="Masse salariale Tranche B" color="primary" />
             </Box>
           </Card>
         </Grid>
@@ -354,22 +349,26 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="nombreSalaries" type="number" label="Nombre de salariés" />
-              <Field.Text name="moyenneAge" label="Moyenne d'âge" />
+              <Field.Text name="nombreSalaries" type="number" label="Nombre de salariés" color="primary" />
+              <Field.Text name="moyenneAge" type="number" label="Moyenne d'âge" color="primary" />
               <Field.Text
                 name="nombreSalariesCadres"
                 type="number"
                 label="Nombre de salariés cadres"
+                color="primary"
               />
-              <Field.Text name="moyenneAgeCadres" label="Moyenne d'âge des salariés cadres" />
+              <Field.Text name="moyenneAgeCadres" type="number" label="Moyenne d'âge des salariés cadres" color="primary" />
               <Field.Text
                 name="nombreSalariesNonCadres"
                 type="number"
                 label="Nombre de salariés non cadres"
+                color="primary"
               />
               <Field.Text
                 name="moyenneAgeNonCadres"
+                type="number"
                 label="Moyenne d'âge des salariés non cadres"
+                color="primary"
               />
             </Box>
           </Card>
@@ -389,8 +388,8 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="email" label="Email" />
-              <Field.Text name="phoneNumber" label="Phone Number" />
+              <Field.Text name="email" label="Email" color="primary" />
+              <Field.Phone name="phoneNumber" label="Phone Number" color="primary" country="TN" />
             </Box>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
