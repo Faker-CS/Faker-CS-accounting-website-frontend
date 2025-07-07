@@ -28,13 +28,13 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
   const quickEdit = useBoolean();
 
- const avatarUrl = `http://35.171.211.165:8000/storage/${row.photo}`;  
+ const avatarUrl = `${import.meta.env.VITE_SERVER}/storage/${row.photo}`;  
 
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
         <TableCell padding="checkbox">
-          <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
+          <Checkbox id={String(row.id)} checked={selected} onClick={onSelectRow} />
         </TableCell>
 
         <TableCell>
@@ -99,7 +99,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
             Delete
           </MenuItem>
 
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               onEditRow();
               popover.onClose();
@@ -107,7 +107,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           >
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </CustomPopover>
 

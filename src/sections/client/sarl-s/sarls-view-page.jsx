@@ -29,10 +29,9 @@ export default function SarlssViewPage({ data, loading }) {
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`http://35.171.211.165:8000/api/status/2`, {
+        const response = await axios.get(`${import.meta.env.VITE_SERVER}/api/status/2`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY)}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
           },
         });
 

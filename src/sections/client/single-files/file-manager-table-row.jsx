@@ -40,7 +40,7 @@ export function FileManagerTableRow({ row, selected }) {
 
   const fetchDocumentDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`http://35.171.211.165:8000/api/documents/${row.id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_SERVER}/api/documents/${row.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
@@ -75,7 +75,7 @@ export function FileManagerTableRow({ row, selected }) {
 
   const deleteFile = async () => {
     confirm.onFalse();
-    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${file.id}`, {
+    const deletePromise = fetch(`${import.meta.env.VITE_SERVER}/api/documents/${file.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,

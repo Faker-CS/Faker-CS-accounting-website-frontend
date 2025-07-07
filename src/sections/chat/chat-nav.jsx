@@ -1,30 +1,26 @@
-/* eslint-disable import/no-unresolved */
-import useSWR, { mutate } from 'swr';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import CircularProgress from '@mui/material/CircularProgress';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useAuth } from 'src/hooks/useAuth';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { today } from 'src/utils/format-time';
 
-import { createConversation, useGetConversations } from 'src/actions/chat';
+import { createConversation } from 'src/actions/chat';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-import { LoadingScreen } from 'src/components/loading-screen';
+
+import { useMockedUser } from 'src/auth/hooks';
 
 import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
@@ -39,14 +35,12 @@ const NAV_WIDTH = 320;
 
 const NAV_COLLAPSE_WIDTH = 96;
 
-export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
+export function ChatNav({ loading, contacts, collapseNav, conversations, selectedConversationId }) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
 
-  const { userData } = useAuth();
-
-  const { conversations, conversationsLoading, conversationsError, loadNextPage, isLastPage } = useGetConversations(userData?.id);
+  const { user } = useMockedUser();
 
   const {
     openMobile,
@@ -64,17 +58,17 @@ export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
 
   const myContact = useMemo(
     () => ({
-      id: `${userData?.id}`,
-      role: `${userData?.role}`,
-      email: `${userData?.email}`,
-      address: `${userData?.address}`,
-      name: `${userData?.name}`,
+      id: `${user?.id}`,
+      role: `${user?.role}`,
+      email: `${user?.email}`,
+      address: `${user?.address}`,
+      name: `${user?.displayName}`,
       lastActivity: today(),
-      avatarUrl: `${userData?.photoURL}`,
-      phoneNumber: `${userData?.phoneNumber}`,
+      avatarUrl: `${user?.photoURL}`,
+      phoneNumber: `${user?.phoneNumber}`,
       status: 'online',
     }),
-    [userData]
+    [user]
   );
 
   useEffect(() => {
@@ -103,54 +97,30 @@ export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
       setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
 
       if (inputValue) {
-        // Filter contacts based on user role and permissions
-        const results = contacts.filter((contact) => {
-          const nameMatch = contact?.name?.toLowerCase().includes(inputValue.toLowerCase());
-          
-          // Additional role-based filtering
-          switch (userData?.role) {
-            case 'comptable':
-              // Comptable can chat with all aide-comptables and companies
-              return nameMatch && (contact.role === 'aide-comptable' || contact.role === 'company');
-            
-            case 'aide-comptable':
-              // Aide-comptable can chat with their responsible companies and main comptable
-              if (contact.role === 'comptable') return nameMatch;
-              if (contact.role === 'company') {
-                return nameMatch && contact.aide_comptable_id === userData.id;
-              }
-              return false;
-            
-            case 'company':
-              // Company can only chat with their assigned aide-comptable and main comptable
-              if (contact.role === 'comptable') return nameMatch;
-              if (contact.role === 'aide-comptable') {
-                return nameMatch && userData.aide_comptable_id === contact.id;
-              }
-              return false;
-            
-            default:
-              return false;
-          }
-        });
+        const results = contacts.filter((contact) =>
+          contact.name.toLowerCase().includes(inputValue)
+        );
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
       }
     },
-    [contacts, userData]
+    [contacts]
   );
+
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
   }, []);
 
   const handleClickResult = useCallback(
     async (result) => {
-      try {
-        handleClickAwaySearch();
+      handleClickAwaySearch();
 
+      const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
+
+      try {
         // Check if the conversation already exists
         if (conversations.allIds.includes(result.id)) {
-          router.push(`${paths.dashboard.chat}?id=${result.id}`);
+          linkTo(result.id);
           return;
         }
 
@@ -170,17 +140,12 @@ export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
         // Create a new conversation
         const res = await createConversation(conversationData);
 
-        if (!res || !res.id) {
+        if (!res || !res.conversation) {
           console.error('Failed to create conversation');
-          return;
         }
 
         // Navigate to the new conversation
-        router.push(`${paths.dashboard.chat}?id=${res.id}`);
-
-        // Revalidate conversations list
-        mutate('/api/conversations');
-
+        linkTo(res.conversation.id);
       } catch (error) {
         console.error('Error handling click result:', error);
       }
@@ -193,28 +158,16 @@ export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
   const renderList = (
     <nav>
       <Box component="ul">
-        {conversations?.allIds?.map((conversationId) => (
+        {conversations.allIds.map((conversationId) => (
           <ChatNavItem
             key={conversationId}
             collapse={collapseDesktop}
-            conversation={conversations?.byId?.[conversationId]}
+            conversation={conversations.byId[conversationId]}
             selected={conversationId === selectedConversationId}
             onCloseMobile={onCloseMobile}
           />
         ))}
       </Box>
-      {!conversationsLoading && !isLastPage && conversations?.allIds.length > 0 && (
-        <Box sx={{ p: 2, textAlign: 'center' }}>
-          <Button variant="outlined" onClick={loadNextPage}>
-            Load More
-          </Button>
-        </Box>
-      )}
-      {conversationsLoading && conversations?.allIds.length > 0 && (
-         <Box sx={{ p: 2, textAlign: 'center' }}>
-            <CircularProgress size={24} />
-         </Box>
-      )}
     </nav>
   );
 
@@ -270,11 +223,11 @@ export function ChatNav({ contacts, collapseNav, selectedConversationId }) {
 
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
-      {conversationsLoading ? (
+      {loading ? (
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query ? renderListResults : renderList}
+          {searchContacts.query && !!conversations.allIds.length ? renderListResults : renderList}
         </Scrollbar>
       )}
     </>

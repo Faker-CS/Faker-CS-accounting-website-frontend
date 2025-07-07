@@ -48,7 +48,7 @@ export function useGetConversations(userId) {
   const [allConversations, setAllConversations] = useState({ allIds: [], byId: {}, meta: null });
 
   const { data, error, isLoading, isValidating, mutate: mutateConversations } = useSWR(
-    userId ? `/api/conversations?page=${page}&per_page=${perPage}` : null,
+    userId ? endpoints.chat.conversation(userId) : null,
     fetcher,
     {
       ...swrOptions,
@@ -206,7 +206,7 @@ export async function createConversation(conversationData) {
       ...conversationData,
       recipient_ids: conversationData.recipients.map(r => r.id),
     };
-    delete payload.recipient_id;
+    delete payload.recipient;
   }
 
   try {

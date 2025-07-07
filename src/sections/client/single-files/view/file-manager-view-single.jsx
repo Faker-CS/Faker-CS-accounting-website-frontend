@@ -88,7 +88,7 @@ export function FileManagerView({ files, setServiceStatus, serviceId }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://35.171.211.165:8000/api/form/${serviceId}`,
+        `${import.meta.env.VITE_SERVER}/api/form/${serviceId}`,
         {},
         {
           headers: {

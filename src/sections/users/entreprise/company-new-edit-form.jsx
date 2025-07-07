@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -63,6 +64,22 @@ export const NewUserSchema = zod.object({
   isVerified: zod.boolean(),
 });
 
+// Add company creation schema
+const CompanySchema = zod.object({
+  Industrie: zod.string().min(1, { message: 'The industrie field is required.' }),
+  adresseSiegeSocial: zod.string().min(1, { message: 'The adresse siege social field is required.' }),
+  activiteEntreprise: zod.string().min(1, { message: 'The code company type field is required.' }),
+  refCnss: zod.string().min(1, { message: 'The code company value field is required.' }),
+  zipCode: zod.string().min(1, { message: 'The code postale field is required.' }),
+  email: zod.string().min(1, { message: 'The email field is required.' }).email({ message: 'Email must be valid.' }),
+  formeJuridique: zod.string().min(1, { message: 'The forme juridique field is required.' }),
+  date: zod.string().min(1, { message: 'The founded field is required.' }),
+  phoneNumber: zod.string().min(1, { message: 'The phone number field is required.' }),
+  raisonSociale: zod.string().min(1, { message: 'The raison sociale field is required.' }),
+  city: zod.string().min(1, { message: 'The ville field is required.' }),
+  siren: zod.string().min(1, { message: 'The SIREN field is required.' }),
+});
+
 // ----------------------------------------------------------------------
 
 export function UserNewEditForm({ currentUser }) {
@@ -102,7 +119,7 @@ export function UserNewEditForm({ currentUser }) {
 
   const methods = useForm({
     mode: 'all',
-    // resolver: zodResolver(NewUserSchema),
+    resolver: zodResolver(CompanySchema),
     defaultValues,
   });
 
@@ -111,7 +128,7 @@ export function UserNewEditForm({ currentUser }) {
     watch,
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
@@ -255,6 +272,8 @@ export function UserNewEditForm({ currentUser }) {
                 name="formeJuridique"
                 label="Forme juridique"
                 placeholder="Choisir Forme Juridique"
+                error={!!errors.formeJuridique}
+                helperText={errors.formeJuridique?.message}
               >
                 {[
                   { label: 'Société à responsabilité limitée', value: 'SARL' },
@@ -268,17 +287,19 @@ export function UserNewEditForm({ currentUser }) {
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text name="raisonSociale" label="Raison sociale" color="primary" />
-              <Field.DatePicker name="date" label="Date" color="primary" />
-              <Field.Text name="siren" type="number" label="SIREN" color="primary" />
-              <Field.Text name="refCnss" label="Réf CNSS" color="primary" />
-              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" color="primary" />
-              <Field.Text name="zipCode" type="number" label="Code postale" color="primary" />
-              <Field.Text name="city" label="Ville" color="primary" />
+              <Field.Text name="raisonSociale" label="Raison sociale" color="primary" error={!!errors.raisonSociale} helperText={errors.raisonSociale?.message} />
+              <Field.DatePicker name="date" label="Date" color="primary" error={!!errors.date} helperText={errors.date?.message} />
+              <Field.Text name="siren" type="number" label="SIREN" color="primary" error={!!errors.siren} helperText={errors.siren?.message} />
+              <Field.Text name="refCnss" label="Réf CNSS" color="primary" error={!!errors.refCnss} helperText={errors.refCnss?.message} />
+              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" color="primary" error={!!errors.adresseSiegeSocial} helperText={errors.adresseSiegeSocial?.message} />
+              <Field.Text name="zipCode" type="number" label="Code postale" color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
+              <Field.Text name="city" label="Ville" color="primary" error={!!errors.city} helperText={errors.city?.message} />
               <Field.Select
                 name="activiteEntreprise"
                 label="Activité de l'entreprise / Code APE/NAF"
                 placeholder="Choisir Activité de l'entreprise"
+                error={!!errors.activiteEntreprise}
+                helperText={errors.activiteEntreprise?.message}
               >
                 {[
                   { label: 'APE', value: 'APE' },
@@ -289,7 +310,7 @@ export function UserNewEditForm({ currentUser }) {
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie">
+              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie" error={!!errors.Industrie} helperText={errors.Industrie?.message}>
                 {[
                   { label: 'Services', value: 'Services' },
                   { label: 'Commerce', value: 'Commerce' },
@@ -388,8 +409,8 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="email" label="Email" color="primary" />
-              <Field.Phone name="phoneNumber" label="Phone Number" color="primary" country="TN" />
+              <Field.Text name="email" label="Email" color="primary" error={!!errors.email} helperText={errors.email?.message} />
+              <Field.Phone name="phoneNumber" label="Phone Number" color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
             </Box>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

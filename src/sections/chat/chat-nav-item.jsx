@@ -1,7 +1,4 @@
-/* eslint-disable import/no-unresolved */
 import { useCallback } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import useSWR, { mutate } from 'swr';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -15,23 +12,31 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useAuth } from 'src/hooks/useAuth';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
 
 import { clickConversation } from 'src/actions/chat';
 
+import { useMockedUser } from 'src/auth/hooks';
+
 import { getNavItem } from './utils/get-nav-item';
 
 // ----------------------------------------------------------------------
 
 export function ChatNavItem({ selected, collapse, conversation, onCloseMobile }) {
-  const { userData } = useAuth();
+  const { user } = useMockedUser();
 
   const mdUp = useResponsive('up', 'md');
 
   const router = useRouter();
+
+  const { group, displayName, displayText, participants, lastActivity, hasOnlineInGroup } =
+    getNavItem({ conversation, currentUserId: `${user?.id}` });
+
+  const singleParticipant = participants[0];
+
+  const { name, avatarUrl, status } = singleParticipant;
 
   const handleClickConversation = useCallback(async () => {
     try {
@@ -39,39 +44,13 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
         onCloseMobile();
       }
 
-      // Add check for conversation.id
-      if (!conversation?.id) {
-        console.error('ChatNavItem: conversation.id is undefined');
-        return;
-      }
-
-      // First navigate to the conversation
-      router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
-
-      // Then trigger the click conversation logic
       await clickConversation(conversation.id);
 
-      // Finally revalidate the conversation data
-      mutate(`/api/conversations/${conversation.id}`);
-
+      router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
     } catch (error) {
-      console.error('Error in handleClickConversation:', error);
+      console.error(error);
     }
-  }, [conversation?.id, mdUp, onCloseMobile, router]);
-
-  // Add early return if conversation is not defined
-  if (!conversation) {
-    console.warn('ChatNavItem: conversation is undefined');
-    return null;
-  }
-
-  const { group, displayName, displayText, otherParticipants, lastActivity, hasOnlineInGroup } =
-    getNavItem({ conversation, currentUserId: userData?.id });
-
-  // Find the single participant for one-to-one chats from otherParticipants
-  const singleParticipant = otherParticipants.length === 1 ? otherParticipants[0] : {};
-
-  const { name = '', avatarUrl = '', status = 'offline', roles = '', photo = null } = singleParticipant;
+  }, [conversation.id, mdUp, onCloseMobile, router]);
 
   const renderGroup = (
     <Badge
@@ -79,13 +58,8 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
     >
       <AvatarGroup variant="compact" sx={{ width: 48, height: 48 }}>
-        {/* Use otherParticipants for AvatarGroup */}
-        {otherParticipants.slice(0, 2).map((participant) => (
-          <Avatar 
-            key={participant?.id || 'unknown'} 
-            alt={participant?.name || 'Unknown'} 
-            src={participant?.photo || participant?.avatarUrl} 
-          />
+        {participants.slice(0, 2).map((participant) => (
+          <Avatar key={participant.id} alt={participant.name} src={participant.avatarUrl} />
         ))}
       </AvatarGroup>
     </Badge>
@@ -93,7 +67,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
 
   const renderSingle = (
     <Badge key={status} variant={status} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-      <Avatar alt={name} src={photo || avatarUrl} sx={{ width: 48, height: 48 }} />
+      <Avatar alt={name} src={avatarUrl} sx={{ width: 48, height: 48 }} />
     </Badge>
   );
 
@@ -113,7 +87,6 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
           overlap="circular"
           badgeContent={collapse ? conversation.unreadCount : 0}
         >
-          {/* Use singleParticipant for renderSingle */}
           {group ? renderGroup : renderSingle}
         </Badge>
 
@@ -141,7 +114,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
                 {fToNow(lastActivity)}
               </Typography>
 
-              {conversation.unreadCount > 0 && (
+              {!!conversation.unreadCount && (
                 <Box
                   sx={{
                     width: 8,

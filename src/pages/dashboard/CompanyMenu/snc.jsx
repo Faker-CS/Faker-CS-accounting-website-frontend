@@ -10,7 +10,7 @@ import SncPageView from 'src/sections/client/snc/snc-page-view';
 const metadata = { title: `SNC - ${CONFIG.appName}` };
 
 export default function Page() {
-  const { documents, documentsLoading } = useGetDocuments(6);
+  const { documents, documentsLoading } = useGetDocuments(5);
   return (
     <>
       <Helmet>

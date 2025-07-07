@@ -87,7 +87,7 @@ export function DemandesViewPage({ form }) {
   const handleDeleteItem = (id) => {
     const token = localStorage.getItem(STORAGE_KEY);
 
-    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${id}`, {
+    const deletePromise = fetch(`${import.meta.env.VITE_SERVER}/api/documents/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -240,6 +240,7 @@ export function DemandesViewPage({ form }) {
         <Box ref={containerRef}>
           {dataFiltered.map((document) => (
             <DemandeListRow
+              key={document.id}
               document={document}
               onDeleteItem={handleDeleteItem}
               onDownloadItem={handleDownloadItem}

@@ -57,10 +57,10 @@ export default function DepotDetailsView({ id }) {
   );
 
   const handleRemoveFile = (inputFile) => {
-    const token = sessionStorage.getItem(STORAGE_KEY); // Retrieve auth token
+    const token = localStorage.getItem(STORAGE_KEY); // Retrieve auth token
 
     // Create a Promise without an async executor
-    const deletePromise = fetch(`http://35.171.211.165:8000/api/documents/${inputFile.id}`, {
+    const deletePromise = fetch(`${import.meta.env.VITE_SERVER}/api/documents/${inputFile.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ export default function DepotDetailsView({ id }) {
       >
         {files.length > 0 &&
           files.map((file) => (
-            <DepotDetailsRow file={file} onRemove={() => handleRemoveFile(file)} />
+            <DepotDetailsRow key={file.id} file={file} onRemove={() => handleRemoveFile(file)} />
           ))}
         <Card sx={{ height: 250 }}>
           <UploadBox

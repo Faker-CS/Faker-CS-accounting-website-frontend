@@ -33,7 +33,7 @@ export function useGetForms() {
 export function useDeleteForm() {
   const deleteForm = async (id) => {
     try {
-      const url = `http://35.171.211.165:8000/api/forms/${id}`; // API endpoint
+      const url = `${import.meta.env.VITE_SERVER}/api/forms/${id}`; // API endpoint
 
       await axios.delete(url, {
         headers: {
@@ -56,7 +56,7 @@ export function useDeleteForm() {
 export function useUpdateForm() {
   const updateForm = async (id, status) => {
     try {
-      const url = `http://35.171.211.165:8000/api/forms/${id}`;
+      const url = `${import.meta.env.VITE_SERVER}/api/forms/${id}`;
 
       const response = await axios.patch(
         url,

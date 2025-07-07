@@ -3,8 +3,11 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-
+import { DemandesDetailsSkeleton } from 'src/sections/demandes/demandes-skeleton';
 import { RouterLink } from 'src/routes/components';
+
+
+import { useAuth } from 'src/hooks/useAuth';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -20,6 +23,10 @@ export function FileManagerPanel({
   onCollapse,
   ...other
 }) {
+  // Determine if the user is entreprise
+  const { userData, loading } = useAuth();
+  const isEntreprise = userData?.roles?.includes('entreprise')
+  if(loading) { return <DemandesDetailsSkeleton /> }
   return (
     <Stack direction="row" alignItems="center" sx={{ mb: 3, ...sx }} {...other}>
       <Stack flexGrow={1}>
@@ -45,7 +52,8 @@ export function FileManagerPanel({
         <Box sx={{ typography: 'body2', color: 'text.disabled', mt: 0.5 }}>{subtitle}</Box>
       </Stack>
 
-      {link && (
+      {/* Only show the button if not entreprise */}
+      {link && !isEntreprise && (
         <Button
           href={link}
           component={RouterLink}

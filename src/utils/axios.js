@@ -122,24 +122,26 @@ export const endpoints = {
     conversations: '/api/conversations',
     conversation: (id) => `/api/conversations/${id}`,
     messages: (conversationId) => `/api/conversations/${conversationId}/messages`,
-    contacts: (id) => `/api/contacts/${id}`,
-    createConversation: '/api/conversations',
-    sendMessage: '/api/messages',
+    contacts: (id) => `/api/chat/contacts/${id}`,
+    createConversation: '/api/chat/create-conversation',
+    sendMessage: '/api/chat/send-messages',
   },
   // documents endpoints
   documents: {
     getByService: (i)=> `api/services/${i}/documents`,
-    upload: "/api/documents/upload"
+    upload: "/api/documents/upload",
+    
   },
   // services endpoints
   services: {
     all: '/api/services',
+    status: (id) => `/api/status/${id}`,
   },
   // forms endpoints
   forms: {
     all: '/api/forms',
     deleteForm: (id)=> `/api/forms/${id}`,
-    get: (id) => `/api/forms/${id}`
+    get: (id) => `/api/forms/${id}`,
   },
   // notifications endpoints
   notification: {

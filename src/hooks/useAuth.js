@@ -34,4 +34,5 @@ export function useAuth() {
   }, []);
 
   return { userData, setUserData, loading, error };
+  
 }

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { CONFIG } from 'src/config-global';
 
 // import { ChatView } from 'src/sections/chat/view';
-import { ComptableChat } from 'src/sections/chat/view/comptable-chat';
+import { ChatView } from 'src/sections/chat/view/chat-view';
 // ----------------------------------------------------------------------
 
 const metadata = { title: `Chat | Dashboard - ${CONFIG.appName}` };
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <ComptableChat />
+      <ChatView />
     </>
   );
 }

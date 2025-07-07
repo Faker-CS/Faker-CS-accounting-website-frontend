@@ -110,6 +110,8 @@ export function JwtSignInView() {
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
           onClick={() => setForgotOpen(true)}
+          // tabIndex={-1}
+          type="button"   
         >
           Forgot password?
         </Link>

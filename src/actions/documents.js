@@ -32,7 +32,7 @@ export function useGetDocuments(i) {
 
 export async function dropFiles(files, serviceId, documentId) {
   const formData = new FormData();
-  const url = 'http://35.171.211.165:8000/api/documents/upload';
+  const url = `${import.meta.env.VITE_SERVER}/api/documents/upload`;
 
   formData.append('service_id', serviceId);
   formData.append('document_id', documentId);
@@ -63,7 +63,7 @@ export async function dropFiles(files, serviceId, documentId) {
 export const fetchDocuments = async (serviceId, id) => {
   try {
     const response = await axios.get(
-      `http://35.171.211.165:8000/api/user/documents/${serviceId}/${id}`,
+      `${import.meta.env.VITE_SERVER}/api/user/documents/${serviceId}/${id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
@@ -80,7 +80,7 @@ export const fetchDocuments = async (serviceId, id) => {
 export async function downloadDocumentFile(documentId) {
   try {
     const response = await axios.get(
-      `http://35.171.211.165:8000/api/documents/download/${documentId}`,
+      `${import.meta.env.VITE_SERVER}/api/documents/download/${documentId}`,
       {
         responseType: 'blob', // Important for binary files
         headers: { Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}` },

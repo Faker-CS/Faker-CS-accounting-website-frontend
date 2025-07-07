@@ -62,7 +62,7 @@ export function FileManagerView({ folders, setServiceStatus, status }) {
     if (demenagement && adresse && situation) {
       try {
         const response = await axios.post(
-          `http://35.171.211.165:8000/api/form/4`,
+          `${import.meta.env.VITE_SERVER}/api/form/4`,
           {},
           {
             headers: {

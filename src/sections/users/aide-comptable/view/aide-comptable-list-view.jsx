@@ -114,7 +114,14 @@ export function AideComptableListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.aideComptablesData.edit(id));
+    },
+    [router]
+  );
+
+  const handleDetailsRow = useCallback(
+    (id) => {
+      router.push(`/dashboard/users/aide-comptable/details/${id}`);
     },
     [router]
   );
@@ -206,7 +213,8 @@ export function AideComptableListView() {
                           selected={table.selected.includes(row.id)}
                           onSelectRow={() => table.onSelectRow(row.id)}
                           onDeleteRow={() => handleDeleteRow(row.id)}
-                          onEditRow={() => handleEditRow(row.id)}
+                          
+                          onDetailsRow={() => handleDetailsRow(row.id)}
                         />
                       ))}
 

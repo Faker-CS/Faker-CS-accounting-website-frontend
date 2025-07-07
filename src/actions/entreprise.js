@@ -36,7 +36,7 @@ export function useDeleteEntreprise() {
     // const url = endpoints.company.delete(id);
     // console.log('url', url);
     try {
-      const url = `http://35.171.211.165:8000/api/companies/${id}`; // adjust endpoint if needed
+      const url = `${import.meta.env.VITE_SERVER}/api/companies/${id}`; // adjust endpoint if needed
 
       const res = await axios.delete(url, {
         headers: {

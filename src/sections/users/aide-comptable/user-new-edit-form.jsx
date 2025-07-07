@@ -74,7 +74,7 @@ export function UserNewEditForm({ currentUser }) {
     watch,
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
@@ -179,13 +179,13 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" color="primary" />
-              <Field.Text name="email" label="Email address" color="primary" />
-              <Field.Phone name="phoneNumber" label="Phone number" color="primary" country="TN" />
-              <Field.Text name="city" label="City" country="TN" color="primary" />
-              <Field.Text name="state" label="State/region" color="primary" />
-              <Field.Text name="address" label="Address" color="primary" />
-              <Field.Text name="zipCode" label="Zip/code" color="primary" />
+              <Field.Text name="name" label="Full name" color="primary" error={!!errors.name} helperText={errors.name?.message} />
+              <Field.Text name="email" label="Email address" color="primary" error={!!errors.email} helperText={errors.email?.message} />
+              <Field.Phone name="phoneNumber" label="Phone number" color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
+              <Field.Text name="city" label="City" country="TN" color="primary" error={!!errors.city} helperText={errors.city?.message} />
+              <Field.Text name="state" label="State/region" color="primary" error={!!errors.state} helperText={errors.state?.message} />
+              <Field.Text name="address" label="Address" color="primary" error={!!errors.address} helperText={errors.address?.message} />
+              <Field.Text name="zipCode" label="Zip/code" color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

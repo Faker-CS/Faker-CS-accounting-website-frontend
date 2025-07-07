@@ -28,7 +28,7 @@ export default function DepotView({ data, loading }) {
   useEffect(() => {
     const fetchServiceStatus = async () => {
       try {
-        const response = await axios.get(`http://35.171.211.165:8000/api/status/4`, {
+        const response = await axios.get(`${import.meta.env.VITE_SERVER}/api/status/4`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
             'Content-Type': 'application/json',
