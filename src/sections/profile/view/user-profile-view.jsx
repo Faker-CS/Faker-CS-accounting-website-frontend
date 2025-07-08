@@ -42,6 +42,7 @@ const TABS = [
 export function UserProfileView() {
   const { user } = useMockedUser();
   const { userData } = useAuth();
+  console.log('first', userData);
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -60,12 +61,12 @@ export function UserProfileView() {
     'aide-comptable': 'Assistant Accountant',
     'entreprise': 'Company',
   };
-  let userRole = 'Accounter';
+  let userRole = 'Accountant';
   if (userData?.roles) {
     if (Array.isArray(userData.roles) && userData.roles.length > 0) {
-      userRole = roleMap[userData.roles[0]] || userData.roles[0];
+      userRole = roleMap[userData.roles[0]?.toLowerCase()] || userData.roles[0];
     } else if (typeof userData.roles === 'string') {
-      userRole = roleMap[userData.roles] || userData.roles;
+      userRole = roleMap[userData.roles?.toLowerCase()] || userData.roles;
     }
   }
 

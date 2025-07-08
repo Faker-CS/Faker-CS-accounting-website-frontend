@@ -29,6 +29,20 @@ export function ProfileHome({ info, posts }) {
   const fileRef = useRef(null);
   const { userData } = useAuth();
 
+  const roleMap = {
+    'comptable': 'Accountant',
+    'aide-comptable': 'Assistant Accountant',
+    'entreprise': 'Company',
+  };
+  let userRole = 'Accountant';
+  if (userData?.roles) {
+    if (Array.isArray(userData.roles) && userData.roles.length > 0) {
+      userRole = roleMap[userData.roles[0]?.toLowerCase()] || userData.roles[0];
+    } else if (typeof userData.roles === 'string') {
+      userRole = roleMap[userData.roles?.toLowerCase()] || userData.roles;
+    }
+  }
+
   const handleAttach = () => {
     if (fileRef.current) {
       fileRef.current.click();
@@ -80,7 +94,7 @@ export function ProfileHome({ info, posts }) {
 
         <Box display="flex">
           <Iconify width={24} icon="ic:round-business-center" sx={{ mr: 2 }} />
-          {userData?.roles && userData.roles.comptable === true ? 'Accounter Helper' : 'Accounter'} 
+          {userRole}
         </Box>
       </Stack>
     </Card>

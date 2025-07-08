@@ -301,7 +301,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
         <DialogTitle>Modifier status</DialogTitle>
         <DialogContent>
           <Alert variant="outlined" severity="warning" sx={{ mb: 3 }}>
-            Demande en attente de confirmation
+            Request awaiting confirmation
           </Alert>
           <Box
             rowGap={3}
