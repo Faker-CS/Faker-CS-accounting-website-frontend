@@ -2,6 +2,7 @@
 /* eslint-disable perfectionist/sort-imports */
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -15,6 +16,7 @@ import { toast } from 'src/components/snackbar';
 import { FileManagerNewFolderDialog } from '../file-manager-new-folder-dialog';
 
 export function CompanyFilesView() {
+  const { t } = useTranslation();
   const { companyId } = useParams();
   const [files, setFiles] = useState([]);
   const [company, setCompany] = useState(null);
@@ -22,15 +24,15 @@ export function CompanyFilesView() {
   const upload = useBoolean();
 
   const fetchFiles = useCallback(() => {
-    axios.get(`/api/companies/${companyId}/files`, {
+    axios.get(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}/files`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt_access_token')}`,
       },
-    }).then(res => setFiles(res.data.files));
+    }).then(res => setFiles(res.data.files || []));
   }, [companyId]);
   
   useEffect(() => {
-    axios.get(`/api/companies/${companyId}`, {
+    axios.get(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt_access_token')}`,
       },
@@ -44,7 +46,7 @@ export function CompanyFilesView() {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await axios.post(`/api/companies/${companyId}/files`, formData, {
+      await axios.post(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}/files`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('jwt_access_token')}`,
@@ -61,7 +63,7 @@ export function CompanyFilesView() {
     if (!fileInfo) return null;
     
     // Extract the filename from the URL
-    const name = fileInfo.name;
+    const { name } = fileInfo;
     // Remove the unique ID prefix if it exists
     const cleanName = name.includes('_') ? name.split('_').slice(1).join('_') : name;
     const type = fileInfo.type || (cleanName.includes('.') ? cleanName.split('.').pop() : '');
@@ -86,7 +88,7 @@ export function CompanyFilesView() {
       const filePath = file.url;
       
       // Make sure we're using the correct API endpoint
-      const response = await axios.delete(`/api/companies/${companyId}/files`, {
+      const response = await axios.delete(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}/files`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwt_access_token')}`,
         },
@@ -94,13 +96,13 @@ export function CompanyFilesView() {
       });
       
       // Show success toast
-      toast.success('File deleted successfully');
+      toast.success(t('fileDeletedSuccessfully'));
       
       // Refresh the files list after successful deletion
       fetchFiles();
     } catch (error) {
       console.error('Delete error:', error);
-      toast.error('Failed to delete file');
+      toast.error(t('failedToDeleteFile'));
     }
   };
 
@@ -116,9 +118,9 @@ export function CompanyFilesView() {
     <>
     <DashboardContent>
     <Stack spacing={3}>
-      <Typography variant="h4">{company ? company.company_name : 'Company'} Files</Typography>
+      <Typography variant="h4">{company ? company.company_name : t('company')} {t('files')}</Typography>
       <FileManagerPanel
-        title="Recent files"
+        title={t('recentFiles')}
         link={paths.dashboard.fileManager}
         onOpen={upload.onTrue}
       />
@@ -129,8 +131,8 @@ export function CompanyFilesView() {
         onChange={handleUpload}
       /> */}
       <Stack spacing={2} direction="row" flexWrap="wrap">
-        {files.length === 0 && <Typography>No files found.</Typography>}
-        {files.map((fileInfo, idx) => {
+        {Array.isArray(files) && files.length === 0 && <Typography>{t('noFilesFound')}</Typography>}
+        {Array.isArray(files) && files.map((fileInfo, idx) => {
           const file = mapUrlToFile(fileInfo);
           if (!file) return null;
           return (

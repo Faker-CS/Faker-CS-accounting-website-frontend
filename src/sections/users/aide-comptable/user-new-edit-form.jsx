@@ -2,6 +2,7 @@
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
@@ -26,26 +27,28 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export const NewUserSchema = zod.object({
-  avatarUrl: schemaHelper.file({
-    message: { required_error: 'Avatar is required!' },
-  }),
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  isVerified: zod.boolean(),
-});
-
 // ----------------------------------------------------------------------
 
 export function UserNewEditForm({ currentUser }) {
+  const { t } = useTranslation();
+  
+  const NewUserSchema = zod.object({
+    avatarUrl: schemaHelper.file({
+      message: { required_error: t('avatarRequired') },
+    }),
+    name: zod.string().min(1, { message: t('nameRequired') }),
+    email: zod
+      .string()
+      .min(1, { message: t('emailRequired') })
+      .email({ message: t('emailMustBeValid') }),
+    phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+    address: zod.string().min(1, { message: t('addressRequired') }),
+    state: zod.string().min(1, { message: t('stateRequired') }),
+    city: zod.string().min(1, { message: t('cityRequired') }),
+    zipCode: zod.string().min(1, { message: t('zipCodeRequired') }),
+    isVerified: zod.boolean(),
+  });
+  
   const router = useRouter();
 
   const defaultValues = useMemo(
@@ -85,7 +88,7 @@ export function UserNewEditForm({ currentUser }) {
       await addAideComptable(data);
 
       reset();
-      toast.success(currentUser ? 'Update success!' : 'Create success!');
+      toast.success(currentUser ? t('updateSuccess') : t('createSuccess'));
       router.push(paths.dashboard.users.aideComptable);
 
     } catch (error) {
@@ -113,8 +116,8 @@ export function UserNewEditForm({ currentUser }) {
                       color: 'text.disabled',
                     }}
                   >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
+                    {t('allowedFileTypes')}
+                    <br /> {t('maxFileSize', { size: fData(3145728) })}
                   </Typography>
                 }
               />
@@ -126,10 +129,10 @@ export function UserNewEditForm({ currentUser }) {
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
+                      {t('banned')}
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
+                      {t('applyDisableAccount')}
                     </Typography>
                   </>
                 }
@@ -148,10 +151,10 @@ export function UserNewEditForm({ currentUser }) {
               label={
                 <>
                   <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email verified
+                    {t('emailVerified')}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
+                    {t('emailVerificationNote')}
                   </Typography>
                 </>
               }
@@ -161,7 +164,7 @@ export function UserNewEditForm({ currentUser }) {
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
-                  Delete user
+                  {t('deleteUser')}
                 </Button>
               </Stack>
             )}
@@ -179,18 +182,18 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" color="primary" error={!!errors.name} helperText={errors.name?.message} />
-              <Field.Text name="email" label="Email address" color="primary" error={!!errors.email} helperText={errors.email?.message} />
-              <Field.Phone name="phoneNumber" label="Phone number" color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
-              <Field.Text name="city" label="City" country="TN" color="primary" error={!!errors.city} helperText={errors.city?.message} />
-              <Field.Text name="state" label="State/region" color="primary" error={!!errors.state} helperText={errors.state?.message} />
-              <Field.Text name="address" label="Address" color="primary" error={!!errors.address} helperText={errors.address?.message} />
-              <Field.Text name="zipCode" label="Zip/code" color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
+              <Field.Text name="name" label={t('fullName')} color="primary" error={!!errors.name} helperText={errors.name?.message} />
+              <Field.Text name="email" label={t('emailAddress')} color="primary" error={!!errors.email} helperText={errors.email?.message} />
+              <Field.Phone name="phoneNumber" label={t('phoneNumber')} color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
+              <Field.Text name="city" label={t('city')} country="TN" color="primary" error={!!errors.city} helperText={errors.city?.message} />
+              <Field.Text name="state" label={t('stateRegion')} color="primary" error={!!errors.state} helperText={errors.state?.message} />
+              <Field.Text name="address" label={t('address')} color="primary" error={!!errors.address} helperText={errors.address?.message} />
+              <Field.Text name="zipCode" label={t('zipCode')} color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create Accounter Helper' : 'Save changes'}
+                {!currentUser ? t('createAccounterHelper') : t('saveChanges')}
               </LoadingButton>
             </Stack>
           </Card>

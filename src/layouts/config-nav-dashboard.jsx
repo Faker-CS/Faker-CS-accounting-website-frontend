@@ -1,9 +1,10 @@
+import { useTranslation } from 'react-i18next';
+
 import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/config-global';
 
 import { SvgColor } from 'src/components/svg-color';
-import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
@@ -74,12 +75,16 @@ export const useDashboardNav = () => {
           children: [
             { title: t('entreprises'), path: paths.dashboard.users.root },
             { title: t('accounterHelpers'), path: paths.dashboard.users.aideComptable },
+            
           ],
         },
+        { title: t('employees'), path: paths.dashboard.users.employee.root, icon: ICONS.user,roles:['entreprise'] },
         { title: t('fileManager'), path: paths.dashboard.fileManager, roles:['comptable','aide-comptable'], icon: ICONS.folder },
-        { title: t('chat'), path: paths.dashboard.chat, icon: ICONS.chat },
+        { title: t('services'), path: paths.dashboard.services.root, icon: ICONS.job },
+        // { title: t('chat'), path: paths.dashboard.chat, icon: ICONS.chat },
         { title: t('calendar'), path: paths.dashboard.calendar, roles:['comptable','aide-comptable'], icon: ICONS.calendar },
         { title: t('tasks'), path: paths.dashboard.kanban, roles:['comptable','aide-comptable'], icon: ICONS.kanban },
+        
       ],
     },
   ];

@@ -2,17 +2,15 @@ import { Helmet } from 'react-helmet-async';
 
 import { Container } from '@mui/material';
 
-import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 
 import { CONFIG } from 'src/config-global';
+import { useGetEntrepriseById } from 'src/actions/entreprise';
 
-import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 import { EntrepriseShowView } from 'src/sections/users/entreprise/view/entreprise-show-view';
-import { useGetEntrepriseById } from 'src/actions/entreprise';
 
 // ----------------------------------------------------------------------
 
@@ -21,10 +19,9 @@ const metadata = { title: `Show Entreprise | Dashboard - ${CONFIG.appName}` };
 export default function Page() {
     const { id = '' } = useParams();
 
-    // console.log(id)
     const {entrepriseData, entrepriseLoading, entrepriseError} = useGetEntrepriseById(id);
     if (entrepriseLoading) {
-        return <div>Loading...</div>;
+        return <LoadingScreen />;
     }
     if (entrepriseError) {
       return (

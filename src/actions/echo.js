@@ -40,7 +40,6 @@ export const subscribeToNotifications = (echo, userId, callback) => {
   const channel = echo.private(`notifications.${userId}`);
 
   channel.listen('.new-notification', (data) => {
-    console.log('New real-time notification:', data);
     callback(data);
   });
 

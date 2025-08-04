@@ -1,7 +1,8 @@
+import { mutate } from 'swr';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import useSWR, { mutate } from 'swr';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -17,9 +18,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useAuth } from 'src/hooks/useAuth';
 
 // eslint-disable-next-line import/no-unresolved
-import { axiosInstance, endpoints } from 'src/utils/axios';
-// eslint-disable-next-line import/no-unresolved
 import { fData } from 'src/utils/format-number';
+// eslint-disable-next-line import/no-unresolved
+import { endpoints, axiosInstance } from 'src/utils/axios';
 
 // eslint-disable-next-line import/no-unresolved
 import { Iconify } from 'src/components/iconify';
@@ -28,6 +29,7 @@ import { Field } from 'src/components/hook-form/fields';
 
 export function ProfileSettings() {
   const { userData, setUserData } = useAuth();
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,7 +94,7 @@ export function ProfileSettings() {
 
   const onSubmit = async (data) => {
     if (!data.name || !data.email) {
-      toast.error('Name and Email are required');
+      toast.error(t('nameEmailRequired'));
       return;
     }
     try {
@@ -126,7 +128,7 @@ export function ProfileSettings() {
       }
 
       // Use POST instead of PUT for file upload
-      const response = await axiosInstance.post('/api/profile', formData, {
+      const response = await axiosInstance.post(`${import.meta.env.VITE_SERVER}/api/profile`, formData, {
         headers: {
           'Accept': 'application/json',
         },
@@ -139,7 +141,7 @@ export function ProfileSettings() {
       // Optionally refresh user data from the server
       mutate(endpoints.auth.me);
 
-      toast.success('Profile updated successfully');
+      toast.success(t('profileUpdatedSuccessfully'));
       
       // Reset password fields
       reset({
@@ -159,10 +161,10 @@ export function ProfileSettings() {
             errors.forEach(err => toast.error(err));
           });
         } else {
-          toast.error(error.response.data.message || 'Validation failed');
+          toast.error(error.response.data.message || t('validationFailed'));
         }
       } else {
-        toast.error(error.response?.data?.message || 'Failed to update profile');
+        toast.error(error.response?.data?.message || t('failedToUpdateProfile'));
       }
     } finally {
       setIsSubmitting(false);
@@ -192,8 +194,8 @@ export function ProfileSettings() {
                           color: 'text.disabled',
                         }}
                       >
-                        Allowed *.jpeg, *.jpg, *.png, *.gif
-                        <br /> max size of {fData(3145728)}
+                        {t('allowedFileTypes')}
+                        <br /> {t('maxSize')} {fData(3145728)}
                       </Typography>
                     }
                   />
@@ -204,11 +206,11 @@ export function ProfileSettings() {
             <Grid item xs={12} md={8}>
               {/* Login Settings */}
               <Card>
-                <CardHeader title="Login Settings" />
+                <CardHeader title={t('loginSettings')} />
                 <Stack spacing={2.69} sx={{ p: 3 }}>
                   <Field.Text
                     name="name"
-                    label="Full Name"
+                    label={t('fullName')}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -220,7 +222,7 @@ export function ProfileSettings() {
 
                   <Field.Text
                     name="email"
-                    label="Email"
+                    label={t('email')}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -232,7 +234,7 @@ export function ProfileSettings() {
 
                   <Field.Text
                     name="currentPassword"
-                    label="Current Password"
+                    label={t('currentPassword')}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
                       startAdornment: (
@@ -252,7 +254,7 @@ export function ProfileSettings() {
 
                   <Field.Text
                     name="newPassword"
-                    label="New Password"
+                    label={t('newPassword')}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
                       startAdornment: (
@@ -265,7 +267,7 @@ export function ProfileSettings() {
 
                   <Field.Text
                     name="confirmPassword"
-                    label="Confirm New Password"
+                    label={t('confirmNewPassword')}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
                       startAdornment: (
@@ -282,11 +284,11 @@ export function ProfileSettings() {
 
           {/* Contact Information */}
           <Card>
-            <CardHeader title="Contact Information" />
+            <CardHeader title={t('contactInformation')} />
             <Stack spacing={3} sx={{ p: 3 }}>
               <Field.Text
                 name="phoneNumber"
-                label="Phone Number"
+                label={t('phoneNumber')}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -297,7 +299,7 @@ export function ProfileSettings() {
               />
               <Field.Text
                 name="address"
-                label="Address"
+                label={t('address')}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -311,7 +313,7 @@ export function ProfileSettings() {
               >
                 <Field.Text
                   name="city"
-                  label="City"
+                  label={t('city')}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -322,7 +324,7 @@ export function ProfileSettings() {
                 />
                 <Field.Text
                   name="state"
-                  label="State"
+                  label={t('state')}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -334,7 +336,7 @@ export function ProfileSettings() {
               </Box>
               <Field.Text
                 name="zipCode"
-                label="ZIP Code"
+                label={t('zipCode')}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -354,7 +356,7 @@ export function ProfileSettings() {
               disabled={isSubmitting}
               sx={{ minWidth: 200 }}
             >
-              {isSubmitting ? 'Updating...' : 'Update Profile'}
+              {isSubmitting ? t('updating') : t('updateProfile')}
             </Button>
           </Box>
         </Stack>

@@ -1,16 +1,16 @@
 /* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
 import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Tab, Box, Card, Tabs, Stack, Table, Divider, TableBody } from '@mui/material';
+import { Tab, Box, Card, Tabs, Table, TableBody } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { sumBy } from 'src/utils/helper';
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
@@ -30,27 +30,26 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
+  TablePaginationCustom,
 } from 'src/components/table';
 
-import { DemandesAnalytic } from '../demandes-analytic';
 import { DemandesTableRow } from '../demandes-table-row';
 import { DemandesTableToolbar } from '../demandes-table-toolbar';
 import { DemandesTableFiltersResult } from '../demandes-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Client' },
-  { id: 'created_at', label: 'Created at' },
-  { id: 'service', label: 'Service' },
-  { id: 'status', label: 'Status' },
-  { id: '' },
-];
-
-// ----------------------------------------------------------------------
-
 export default function DemandesListeView() {
+  const { t } = useTranslation();
   const { servicesData } = useGetServices();
+
+  const TABLE_HEAD = [
+    { id: 'name', label: t('client') },
+    { id: 'created_at', label: t('createdAt') },
+    { id: 'service', label: t('service') },
+    { id: 'status', label: t('status') },
+    { id: '' },
+  ];
   const { deleteForm } = useDeleteForm();
   const [services, setServices] = useState([]);
 
@@ -102,49 +101,38 @@ export default function DemandesListeView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
+  // Helper functions for TABS counts
   const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
-
-  const getTotalAmount = (status) =>
-    sumBy(
-      tableData.filter((item) => item.status === status),
-      (invoice) => invoice.totalAmount
-    );
-
-  const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
-
-  // Helper to count both 'accepted' and 'in_work' as 'In Work'
   const getInWorkLength = () => tableData.filter((item) => item.status === 'accepted' || item.status === 'in_work').length;
-  const getInWorkAmount = () => sumBy(tableData.filter((item) => item.status === 'accepted' || item.status === 'in_work'), (invoice) => invoice.totalAmount);
-  const getInWorkPercent = () => (getInWorkLength() / tableData.length) * 100;
 
   const TABS = [
     {
       value: 'all',
-      label: 'All',
+      label: t('all'),
       color: 'default',
       count: tableData.length,
     },
     {
       value: 'in_work',
-      label: 'In Work',
+      label: t('inWork'),
       color: 'success',
       count: getInWorkLength(),
     },
     {
       value: 'review',
-      label: 'On Hold',
+      label: t('onHold'),
       color: 'warning',
       count: getInvoiceLength('review'),
     },
     {
       value: 'rejected',
-      label: 'Missing file',
+      label: t('missingFile'),
       color: 'error',
       count: getInvoiceLength('rejected'),
     },
     {
       value: 'pending',
-      label: 'Done',
+      label: t('done'),
       color: 'default',
       count: getInvoiceLength('pending'),
     },
@@ -163,13 +151,13 @@ export default function DemandesListeView() {
           table.onUpdatePageDeleteRow(dataInPage.length);
         },
         {
-          loading: 'Suppression...',
-          success: 'Formulaire supprimé avec succès !',
-          error: 'Échec de la suppression du formulaire !',
+          loading: t('deleting'),
+          success: t('formDeletedSuccessfully'),
+          error: t('formDeletionFailed'),
         }
       );
     },
-    [dataInPage.length, table, tableData, deleteForm]
+    [dataInPage.length, table, tableData, deleteForm, t]
   );
 
   const handleViewRow = useCallback(
@@ -190,65 +178,14 @@ export default function DemandesListeView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Demands list"
+        heading={t('demandsListHeading')}
         links={[
-          { name: 'Home', href: paths.dashboard.root },
-          { name: 'Demands', href: paths.dashboard.demandes },
-          { name: 'List' },
+          { name: t('home'), href: paths.dashboard.root },
+          { name: t('demands'), href: paths.dashboard.demandes },
+          { name: t('list') },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-
-      <Card sx={{ mb: { xs: 3, md: 5 } }}>
-        <Scrollbar sx={{ minHeight: 108 }}>
-          <Stack
-            direction="row"
-            divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-            sx={{ py: 2 }}
-          >
-            <DemandesAnalytic
-              title="All demands"
-              total={tableData.length}
-              percent={100}
-              price={sumBy(tableData, (invoice) => invoice.totalAmount)}
-              icon="solar:bill-list-bold-duotone"
-              color={theme.vars.palette.info.main}
-            />
-            <DemandesAnalytic
-              title="In Work"
-              total={getInWorkLength()}
-              percent={getInWorkPercent()}
-              price={getInWorkAmount()}
-              icon="solar:file-check-bold-duotone"
-              color={theme.vars.palette.success.main}
-            />
-            <DemandesAnalytic
-              title="On Hold"
-              total={getInvoiceLength('review')}
-              percent={getPercentByStatus('review')}
-              price={getTotalAmount('review')}
-              icon="solar:file-check-bold-duotone"
-              color={theme.vars.palette.warning.main}
-            />
-            <DemandesAnalytic
-              title="Missing file"
-              total={getInvoiceLength('rejected')}
-              percent={getPercentByStatus('rejected')}
-              price={getTotalAmount('rejected')}
-              icon="solar:file-check-bold-duotone"
-              color={theme.vars.palette.error.main}
-            />
-            <DemandesAnalytic
-              title="Done"
-              total={getInvoiceLength('pending')}
-              percent={getPercentByStatus('pending')}
-              price={getTotalAmount('pending')}
-              icon="solar:file-check-bold-duotone"
-              color={theme.vars.palette.text.secondary}
-            />
-          </Stack>
-        </Scrollbar>
-      </Card>
 
       <Card>
         <Tabs
@@ -343,6 +280,15 @@ export default function DemandesListeView() {
               </TableBody>
             </Table>
           </Scrollbar>
+          <TablePaginationCustom
+            page={table.page}
+            dense={table.dense}
+            count={dataFiltered.length}
+            rowsPerPage={table.rowsPerPage}
+            onPageChange={table.onChangePage}
+            onChangeDense={table.onChangeDense}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
+          />
         </Box>
       </Card>
     </DashboardContent>

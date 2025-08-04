@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
@@ -30,6 +31,8 @@ export function CalendarFilters({
   colorOptions,
   onClickEvent,
 }) {
+  const { t } = useTranslation();
+  
   const handleFilterColors = useCallback(
     (newValue) => {
       filters.setState({ colors: newValue });
@@ -55,10 +58,10 @@ export function CalendarFilters({
     <>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          History
+          {t('history')}
         </Typography>
 
-        <Tooltip title="Reset">
+        <Tooltip title={t('reset')}>
           <IconButton onClick={filters.onResetState}>
             <Badge color="error" variant="dot" invisible={!canReset}>
               <Iconify icon="solar:restart-bold" />
@@ -78,7 +81,7 @@ export function CalendarFilters({
   const renderColors = (
     <Box display="flex" flexDirection="column" sx={{ my: 3, px: 2.5 }}>
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Colors
+        {t('colors')}
       </Typography>
       <ColorPicker
         colors={colorOptions}
@@ -91,24 +94,24 @@ export function CalendarFilters({
   const renderDateRange = (
     <Box display="flex" flexDirection="column" sx={{ mb: 3, px: 2.5 }}>
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-        Range
+        {t('range')}
       </Typography>
 
       <DatePicker
-        label="Start date"
+        label={t('startDate')}
         value={filters.state.startDate}
         onChange={handleFilterStartDate}
         sx={{ mb: 2.5 }}
       />
 
       <DatePicker
-        label="End date"
+        label={t('endDate')}
         value={filters.state.endDate}
         onChange={handleFilterEndDate}
         slotProps={{
           textField: {
             error: dateError,
-            helperText: dateError ? 'End date must be later than start date' : null,
+            helperText: dateError ? t('endDateMustBeLater') : null,
           },
         }}
       />
@@ -118,7 +121,7 @@ export function CalendarFilters({
   const renderEvents = (
     <>
       <Typography variant="subtitle2" sx={{ px: 2.5, mb: 1 }}>
-        Events ({events.length})
+        {t('events')} ({events.length})
       </Typography>
 
       <Box component="ul">

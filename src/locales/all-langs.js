@@ -9,16 +9,6 @@ import { enUS as enUSDataGrid, frFR as frFRDataGrid } from '@mui/x-data-grid/loc
 
 export const allLangs = [
   {
-    value: 'en',
-    label: 'English',
-    countryCode: 'GB',
-    adapterLocale: 'en',
-    numberFormat: { code: 'en-US', currency: 'USD' },
-    systemValue: {
-      components: { ...enUSDate.components, ...enUSDataGrid.components },
-    },
-  },
-  {
     value: 'fr',
     label: 'French',
     countryCode: 'FR',
@@ -26,6 +16,16 @@ export const allLangs = [
     numberFormat: { code: 'fr-Fr', currency: 'EUR' },
     systemValue: {
       components: { ...frFRCore.components, ...frFRDate.components, ...frFRDataGrid.components },
+    },
+  },
+  {
+    value: 'en',
+    label: 'English',
+    countryCode: 'GB',
+    adapterLocale: 'en',
+    numberFormat: { code: 'en-US', currency: 'USD' },
+    systemValue: {
+      components: { ...enUSDate.components, ...enUSDataGrid.components },
     },
   },
 ];

@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import React from 'react';
 import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -23,6 +24,7 @@ import { CourseWidgetSummary } from '../course-widget-summary';
 
 export default function HomePageView() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { forms, formsLoading } = useGetForms();
   const {
     totalUsers,
@@ -80,8 +82,8 @@ export default function HomePageView() {
       <Grid container spacing={3}>
         <Grid xs={12}>
           <AppWelcome
-            title="Welcome 👋"
-            description="Check out the request lists, users are waiting for your action"
+            title={t('welcome')}
+            description={t('welcomeDescription')}
             img={<SeoIllustration hideBackground />}
             action={
               <Button
@@ -90,7 +92,7 @@ export default function HomePageView() {
                 href={paths.dashboard.demandes}
                 LinkComponent={RouterLink}
               >
-                Take a look at the demands
+                {t('takeALookAtDemands')}
               </Button>
             }
           />
@@ -98,7 +100,7 @@ export default function HomePageView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total users"
+            title={t('totalUsers')}
             percent={percentUsers}
             total={totalUsers}
             chart={{
@@ -110,7 +112,7 @@ export default function HomePageView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total demands"
+            title={t('totalDemands')}
             percent={percentForms}
             total={totalForms}
             chart={{
@@ -123,7 +125,7 @@ export default function HomePageView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total documents"
+            title={t('totalDocuments')}
             percent={percentDocuments}
             total={totalDocuments}
             chart={{
@@ -135,7 +137,7 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <AppWidget
-            title="Authorization Demand"
+            title={t('authorizationDemand')}
             total={countByService(1)}
             icon="solar:user-rounded-bold"
             chart={{
@@ -183,7 +185,7 @@ export default function HomePageView() {
 
         <Grid xs={6} md={3}>
           <AppWidget
-            title="Tax declaration"
+            title={t('taxDeclaration')}
             total={countByService(4)}
             icon="solar:user-rounded-bold"
             chart={{
@@ -193,14 +195,14 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demands on hold"
+            title={t('demandsOnHold')}
             total={forms.filter((form) => form.status === 'review').length}
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-progress.svg`}
           />
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demands in work"
+            title={t('demandsInWork')}
             total={forms.filter((form) => form.status === 'in_work').length}
             color="success"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-completed.svg`}
@@ -208,7 +210,7 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demands missing file"
+            title={t('demandsMissingFile')}
             total={forms.filter((form) => form.status === 'rejected').length}
             color="error"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-certificates.svg`}
@@ -216,7 +218,7 @@ export default function HomePageView() {
         </Grid>
         <Grid xs={6} md={3}>
           <CourseWidgetSummary
-            title="Demands done with it"
+            title={t('demandsDoneWithIt')}
             total={forms.filter((form) => form.status === 'pending').length}
             color="info"
             icon={`${CONFIG.assetsDir}/assets/icons/courses/ic-courses-certificates.svg`}

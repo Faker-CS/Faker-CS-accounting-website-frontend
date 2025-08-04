@@ -1,4 +1,6 @@
 /* eslint-disable import/no-unresolved */
+import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
@@ -8,9 +10,8 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { Box, Table, TableBody } from '@mui/material';
-import { useNavigate } from 'react-router';
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useAuth } from 'src/hooks/useAuth';
@@ -47,32 +48,32 @@ import { UserTableFiltersResult } from '../company-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' },
-  { value: 'Active', label: 'Active' },
-  { value: 'Pending', label: 'Pending' },
-  { value: 'Inactive', label: 'Inactive' },
-  // Removed { value: 'Rejected', label: 'Rejected' }
-];
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Raison Sociale' },
-  { id: 'phone_number', label: 'Phone number', width: 180 },
-  { id: 'role', label: 'Industry', width: 180 },
-  { id: 'ville', label: 'City', width: 220 },
-  { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 88 },
-];
-
 // ----------------------------------------------------------------------
 
 export function EntrepriseListView() {
+  const { t } = useTranslation();
+  
+  const STATUS_OPTIONS = [
+    { value: 'all', label: t('all') },
+    { value: 'Active', label: t('active') },
+    { value: 'Pending', label: t('pending') },
+    { value: 'Inactive', label: t('inactive') },
+  ];
+
+  const TABLE_HEAD = [
+    { id: 'name', label: t('raisonSociale') },
+    { id: 'phone_number', label: t('phoneNumber'), width: 180 },
+    { id: 'role', label: t('industry'), width: 180 },
+    { id: 'ville', label: t('city'), width: 220 },
+    { id: 'status', label: t('status'), width: 100 },
+    { id: '', width: 88 },
+  ];
+  
   const table = useTable();
 
   const {entreprisesData} = useGetEntreprises();
 
-  // console.log('entreprise :',entreprisesData)
 
-  const router = useRouter();
 
   const navigate = useNavigate();
 
@@ -83,7 +84,6 @@ export function EntrepriseListView() {
   useEffect(() => {
     if (entreprisesData) {
         setTableData(entreprisesData); 
-        // console.log(entreprisesData.data);
     }
 }, [entreprisesData]);
 
@@ -109,9 +109,9 @@ export function EntrepriseListView() {
         await deleteEntreprise(id);
       },
       {
-        loading: 'Deleting...',
-        success: 'Entreprise Deleted successfully!',
-        error: 'Delete failed!',
+        loading: t('deleting'),
+        success: t('entrepriseDeletedSuccessfully'),
+        error: t('deleteFailed'),
       }
     );
   };
@@ -119,7 +119,7 @@ export function EntrepriseListView() {
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    toast.success('Delete success!');
+    toast.success(t('deleteSuccess'));
 
     setTableData(deleteRows);
 
@@ -127,7 +127,7 @@ export function EntrepriseListView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData, t]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -150,11 +150,11 @@ export function EntrepriseListView() {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading={t('list')}
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Users', href: paths.dashboard.users.root },
-            { name: 'Entreprises' },
+            { name: t('dashboard'), href: paths.dashboard.root },
+            { name: t('users'), href: paths.dashboard.users.root },
+            { name: t('entreprises') },
           ]}
           action={
             !isAideComptable && (<Button
@@ -163,7 +163,7 @@ export function EntrepriseListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Entreprise
+              {t('newEntreprise')}
             </Button>)
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -299,10 +299,10 @@ export function EntrepriseListView() {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title={t('delete')}
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            {t('areYouSureDeleteItems', { count: table.selected.length })}
           </>
         }
         action={
@@ -314,7 +314,7 @@ export function EntrepriseListView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         }
       />

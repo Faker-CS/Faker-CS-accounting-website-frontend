@@ -1,6 +1,6 @@
-import { useMemo, useState, useCallback } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import useSWR, { mutate } from 'swr';
+import { useState, useCallback } from 'react';
 
 // import { keyBy } from 'src/utils/helper'; // Check if this utility is actually used or needed
 import axios, { fetcher, endpoints } from '../utils/axios'; // Correct relative path if axios is in src/utils
@@ -139,7 +139,6 @@ export function useGetConversation(conversationId) {
 
 export async function sendMessage(messageData) {
   try {
-    console.log('Sending message to backend:', messageData);
     // Send message to backend
     const response = await axios.post(endpoints.chat.sendMessage, messageData, {
       headers: {
@@ -147,14 +146,12 @@ export async function sendMessage(messageData) {
       },
     });
 
-    console.log('Message sent successfully:', response.data);
 
     // Update local state
     const conversationId = messageData.conversation_id;
     const conversationUrl = `/api/conversations/${conversationId}`;
     const conversationsUrl = `/api/conversations`;
 
-    console.log('Updating local state for conversation:', conversationId);
 
   mutate(
     conversationUrl,

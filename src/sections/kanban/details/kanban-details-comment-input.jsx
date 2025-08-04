@@ -1,28 +1,22 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import TextField from '@mui/material/TextField';
-import { useTheme } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
 
 import { useAuth } from 'src/hooks/useAuth';
 
-import { Iconify } from 'src/components/iconify';
-
-import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export function KanbanDetailsCommentInput({ taskId, onAddComment }) {
-  const theme = useTheme();
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const [message, setMessage] = useState('');
-  const { user } = useMockedUser();
 
   const handleChangeMessage = useCallback((event) => {
     setMessage(event.target.value);
@@ -69,7 +63,7 @@ export function KanbanDetailsCommentInput({ taskId, onAddComment }) {
           fullWidth
           multiline
           rows={2}
-          placeholder="Type a message"
+          placeholder={t('typeMessage')}
           value={message}
           onChange={handleChangeMessage}
           sx={{ px: 1, pr: 12, py: 2 }}
@@ -91,7 +85,7 @@ export function KanbanDetailsCommentInput({ taskId, onAddComment }) {
             disabled={!message.trim()}
             sx={{ minWidth: 100, height: 36 }}
           >
-            Comment
+            {t('comment')}
           </Button>
         </Box>
       </Paper>

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -21,7 +23,9 @@ import { UserQuickEditForm } from './user-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow, onDetailsRow }) {
+  const { t } = useTranslation();
+  
   const confirm = useBoolean();
   
   const popover = usePopover();
@@ -42,7 +46,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
             <Avatar alt={row.name} src={avatarUrl} />
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
+              <Link color="inherit" onClick={onDetailsRow} sx={{ cursor: 'pointer' }}>
                 {row.name}
               </Link>
               <Box component="span" sx={{ color: 'text.disabled' }}>
@@ -63,12 +67,20 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell>
           <Stack direction="row" alignItems="center">
-            <Tooltip title="Quick Edit" placement="top" arrow>
+            <Tooltip title={t('quickEdit')} placement="top" arrow>
               <IconButton
                 color={quickEdit.value ? 'inherit' : 'default'}
                 onClick={quickEdit.onTrue}
               >
                 <Iconify icon="solar:pen-bold" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('see')} placement="top" arrow>
+              <IconButton
+                color={quickEdit.value ? 'inherit' : 'default'}
+                onClick={onDetailsRow}
+              >
+                <Iconify icon="solar:eye-scan-broken" />
               </IconButton>
             </Tooltip>
 
@@ -96,7 +108,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
+            {t('delete')}
           </MenuItem>
 
           {/* <MenuItem
@@ -114,11 +126,11 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title={t('delete')}
+        content={t('areYouSureDelete', { count: 1 })}
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            {t('delete')}
           </Button>
         }
       />

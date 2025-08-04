@@ -1,4 +1,5 @@
 /* eslint-disable import/no-unresolved */
+import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
 import { useState, useEffect, useCallback } from 'react';
 
@@ -15,6 +16,7 @@ import { KanbanDetails } from '../details/kanban-details';
 // ----------------------------------------------------------------------
 
 export function KanbanTaskItem({ task, disabled, columnId, sx }) {
+  const { t } = useTranslation();
   const openDetails = useBoolean();
 
   const { setNodeRef, listeners, isDragging, isSorting, transform, transition } = useSortable({
@@ -28,12 +30,12 @@ export function KanbanTaskItem({ task, disabled, columnId, sx }) {
   const handleDeleteTask = useCallback(async () => {
     try {
       await deleteTask(columnId, task.id);
-      toast.success('Delete success!', { position: 'top-center' });
+      toast.success(t('deleteSuccess'), { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error('Delete failed!', { position: 'top-center' });
+      toast.error(t('deleteFailed'), { position: 'top-center' });
     }
-  }, [columnId, task.id]);
+  }, [columnId, task.id, t]);
 
   const handleUpdateTask = useCallback(
     async (taskData) => {
@@ -41,49 +43,49 @@ export function KanbanTaskItem({ task, disabled, columnId, sx }) {
         await updateTask(task.id, taskData, { position: 'top-center' });
       } catch (error) {
         console.error(error);
-        toast.error('Update failed!', { position: 'top-center' });
+        toast.error(t('updateFailed'), { position: 'top-center' });
       }
     },
-    [task.id]
+    [task.id, t]
   );
 
   const handleCreateSubtask = useCallback(
     async (subtaskData) => {
       try {
         await createSubtask(task.id, subtaskData);
-        toast.success('Subtask created successfully!');
+        toast.success(t('subtaskCreatedSuccess'));
       } catch (error) {
         console.error(error);
-        toast.error('Failed to create subtask');
+        toast.error(t('subtaskCreateFailed'));
       }
     },
-    [task.id]
+    [task.id, t]
   );
 
   const handleUpdateSubtask = useCallback(
     async (subtaskId, subtaskData) => {
       try {
         await updateSubtask(subtaskId, subtaskData);
-        toast.success('Subtask updated successfully!');
+        toast.success(t('subtaskUpdatedSuccess'));
       } catch (error) {
         console.error(error);
-        toast.error('Failed to update subtask');
+        toast.error(t('subtaskUpdateFailed'));
       }
     },
-    []
+    [t]
   );
 
   const handleDeleteSubtask = useCallback(
     async (subtaskId) => {
       try {
         await deleteSubtask(subtaskId);
-        toast.success('Subtask deleted successfully!');
+        toast.success(t('subtaskDeletedSuccess'));
       } catch (error) {
         console.error(error);
-        toast.error('Failed to delete subtask');
+        toast.error(t('subtaskDeleteFailed'));
       }
     },
-    []
+    [t]
   );
 
   return (

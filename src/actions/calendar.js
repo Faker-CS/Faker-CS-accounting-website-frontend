@@ -46,7 +46,6 @@ export async function createEvent(eventData) {
    * Work on server
    */
 
-  console.log(eventData)
   if (enableServer) {
     try {
       const data = { eventData };

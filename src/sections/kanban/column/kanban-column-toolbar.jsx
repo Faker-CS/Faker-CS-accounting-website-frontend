@@ -1,9 +1,8 @@
 /* eslint-disable import/no-unresolved */
+import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -15,7 +14,6 @@ import { varAlpha } from 'src/theme/styles';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { KanbanInputName } from '../components/kanban-input-name';
@@ -31,6 +29,7 @@ export function KanbanColumnToolBar({
   onDeleteColumn,
   onUpdateColumn,
 }) {
+  const { t } = useTranslation();
   const renameRef = useRef(null);
   const popover = usePopover();
   const confirmDialog = useBoolean();
@@ -79,7 +78,7 @@ export function KanbanColumnToolBar({
 
         <KanbanInputName
           inputRef={renameRef}
-          placeholder="Column name"
+          placeholder={t('columnName')}
           value={name}
           onChange={handleChangeName}
           onKeyUp={handleKeyUpUpdateColumn}
@@ -116,7 +115,7 @@ export function KanbanColumnToolBar({
               }}
             >
               <Iconify icon="solar:eraser-bold" />
-              Clear
+              {t('clear')}
             </MenuItem>
           </MenuList>
         )}

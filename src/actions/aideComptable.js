@@ -30,6 +30,24 @@ export const useGetAideComptables = () => {
   return memoizedValue;
 };
 
+// Fetch single aide-comptable by ID
+export const useGetAideComptableById = (id) => {
+  const url = id ? endpoints.aideComptable.details(id) : null;
+  const { data, isLoading, error } = useSWR(url, fetcher, swrOptions);
+  
+  const memoizedValue = useMemo(
+    () => ({
+      aideComptableData: data ?? null,
+      aideComptableLoading: isLoading,
+      aideComptableError: error,
+      aideComptableEmpty: !isLoading && !data,
+    }),
+    [data, error, isLoading]
+  );
+  
+  return memoizedValue;
+};
+
 // delete aideComptable
 export const useDeleteAideComptable = () => {
   const deleteAideComptable = async (id) => {

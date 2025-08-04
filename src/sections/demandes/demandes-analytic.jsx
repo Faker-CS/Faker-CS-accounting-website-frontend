@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -12,6 +14,8 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export function DemandesAnalytic({ title, total, icon, color, percent }) {
+  const { t } = useTranslation();
+  
   return (
     <Stack
       spacing={2.5}
@@ -50,7 +54,7 @@ export function DemandesAnalytic({ title, total, icon, color, percent }) {
         <Typography variant="subtitle1">{title}</Typography>
 
         <Box component="span" sx={{ color: 'text.disabled', typography: 'body2' }}>
-          {fShortenNumber(total)} demandes
+          {fShortenNumber(total)} {t('demandsText')}
         </Box>
       </Stack>
     </Stack>

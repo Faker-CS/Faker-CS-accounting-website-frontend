@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { useTheme } from '@mui/material/styles';
@@ -11,6 +13,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 export function AppWidgetSummary({ title, percent, total, chart, sx, ...other }) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const chartColors = chart.colors ?? [theme.palette.primary.main];
 
@@ -43,7 +46,7 @@ export function AppWidgetSummary({ title, percent, total, chart, sx, ...other })
         {fPercent(percent)}
       </Box>
       <Box component="span" sx={{ typography: 'body2', color: 'text.secondary' }}>
-        last month
+        {t('lastMonth')}
       </Box>
     </Box>
   );

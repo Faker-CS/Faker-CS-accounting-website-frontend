@@ -117,6 +117,18 @@ export const endpoints = {
       industry: (id) => `/api/companies?industry=${id}`, // Filter by industry ID
     },
   },
+
+  // employee management endpoints
+  employee: {
+    list: '/api/employees',
+    byCompany: (companyId) => `/api/companies/${companyId}/employees`,
+    create: '/api/employees',
+    details: (id) => `/api/employees/${id}`, // Use with ID parameter
+    update: (id) => `/api/employees/${id}`, // Use with ID parameter
+    delete: (id) => `/api/employees/${id}`, // Use with ID parameter
+    show: (id) => `/api/employees/${id}`, // Use with ID parameter
+  },
+
   // chat endpoints
   chat: {
     conversations: '/api/conversations',

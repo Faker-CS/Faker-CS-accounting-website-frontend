@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
@@ -16,12 +18,17 @@ export function Section({
   method,
   layoutQuery,
   methods,
-  title = 'Manage the job',
+  title,
   imgUrl = `${CONFIG.assetsDir}/assets/illustrations/illustration-dashboard.webp`,
-  subtitle = 'Simplify your finances with our efficient workflows.',
+  subtitle,
   ...other
 }) {
+  const { t } = useTranslation();
   const theme = useTheme();
+
+  // Use translation for default values if not provided
+  const displayTitle = title || t('manageTheJob');
+  const displaySubtitle = subtitle || t('simplifyFinancesWorkflows');
 
   return (
     <Box
@@ -53,19 +60,19 @@ export function Section({
     >
       <div>
         <Typography variant="h3" sx={{ textAlign: 'center' }}>
-          {title}
+          {displayTitle}
         </Typography>
 
-        {subtitle && (
+        {displaySubtitle && (
           <Typography sx={{ color: 'text.secondary', textAlign: 'center', mt: 2 }}>
-            {subtitle}
+            {displaySubtitle}
           </Typography>
         )}
       </div>
 
       <Box
         component="img"
-        alt="Dashboard illustration"
+        alt={t('dashboardIllustration')}
         src={imgUrl}
         sx={{ width: 1, aspectRatio: '4/3', objectFit: 'cover' }}
       />

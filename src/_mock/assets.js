@@ -298,8 +298,16 @@ export const _countryNames = [
 ];
 
 // ----------------------------------------------------------------------
+export const _contracts = [
+  `cvip`,
+  `cdi`,
+  `karama`,
+  `freelance`,
+];
 
+// ----------------------------------------------------------------------
 export const _roles = [
+  `industry`,
   `Services`,
   `Commerce`,
   `Artisanat`,

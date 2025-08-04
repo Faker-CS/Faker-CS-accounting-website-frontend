@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
@@ -18,6 +19,8 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export function UserTableToolbar({ filters, options, onResetPage }) {
+  const { t } = useTranslation();
+  
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -52,13 +55,13 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             htmlFor="user-filter-role-select-label"
             sx={{ fontSize: '0.875rem', fontWeight: 500 }}
           >
-            Industry
+            {t('industry')}
           </InputLabel>
           <Select
             multiple
             value={filters.state.role}
             onChange={handleFilterRole}
-            input={<OutlinedInput label="Industry" />}
+            input={<OutlinedInput label={t('industry')} />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             inputProps={{ id: 'user-filter-role-select-label' }}
             MenuProps={{ PaperProps: { sx: { maxHeight: 240, fontSize: '0.875rem' } } }}
@@ -81,7 +84,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder={t('search')}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -110,7 +113,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:printer-minimalistic-bold" />
-            Print
+            {t('print')}
           </MenuItem>
 
           <MenuItem
@@ -119,7 +122,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:import-bold" />
-            Import
+            {t('import')}
           </MenuItem>
 
           <MenuItem
@@ -128,7 +131,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:export-bold" />
-            Export
+            {t('export')}
           </MenuItem>
         </MenuList>
       </CustomPopover>

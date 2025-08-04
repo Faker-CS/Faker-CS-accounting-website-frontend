@@ -3,6 +3,7 @@ import axios from 'axios';
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -12,9 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -30,20 +29,22 @@ import { signInWithPassword } from '../../context/jwt';
 
 // ----------------------------------------------------------------------
 
-export const SignInSchema = zod.object({
+export const SignInSchema = (t) => zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: t('emailRequired') })
+    .email({ message: t('emailMustBeValid') }),
   password: zod
     .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(1, { message: t('passwordRequired') })
+    .min(6, { message: t('passwordMinLength') }),
 });
 
 // ----------------------------------------------------------------------
 
 export function JwtSignInView() {
+  const { t } = useTranslation();
+  
   const router = useRouter();
 
   const { signIn, checkUserSession } = useAuthContext();
@@ -62,7 +63,7 @@ export function JwtSignInView() {
   };
 
   const methods = useForm({
-    resolver: zodResolver(SignInSchema),
+    resolver: zodResolver(SignInSchema(t)),
     defaultValues,
   });
 
@@ -90,18 +91,18 @@ export function JwtSignInView() {
     setSending(true);
     try {
       await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/forgot-password`, { email });
-      toast.success('A new password has been sent to your email.');
+      toast.success(t('passwordSentToEmail'));
       setForgotOpen(false);
       setForgotEmail('');
     } catch (err) {
-      toast.error('you are not part of this Team');
+      toast.error(t('notPartOfTeam'));
     }
     setSending(false);
   };
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Field.Text name="email" label="Email address" placeholder="Enter your email" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label={t('emailAddress')} placeholder={t('enterYourEmail')} InputLabelProps={{ shrink: true }} />
 
       <Box gap={1.5} display="flex" flexDirection="column">
         <Link
@@ -113,13 +114,13 @@ export function JwtSignInView() {
           // tabIndex={-1}
           type="button"   
         >
-          Forgot password?
+          {t('forgotPassword')}
         </Link>
 
         <Field.Text
           name="password"
-          label="Password"
-          placeholder="6+ characters"
+          label={t('password')}
+          placeholder={t('passwordPlaceholder')}
           type={password.value ? 'text' : 'password'}
           InputLabelProps={{ shrink: true }}
           InputProps={{
@@ -141,9 +142,9 @@ export function JwtSignInView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Sign in..."
+        loadingIndicator={t('signingIn')}
       >
-        Sign in
+        {t('signIn')}
       </LoadingButton>
     </Box>
   );
@@ -151,10 +152,10 @@ export function JwtSignInView() {
   return (
     <>
       <FormHead
-        title="Sign in to your account"
+        title={t('signInToAccount')}
         description={
           <>
-            {`Don't have an account? `}
+            {t('dontHaveAccount')}
             {/* <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
               Get started
             </Link> */}
@@ -164,9 +165,8 @@ export function JwtSignInView() {
       />
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        Use the <strong>Email</strong>
-        {' with  '}
-        <strong> Your pass word </strong>we send to you 
+        {t('useEmailWithPassword')} <strong>{t('email')}</strong>
+        {t('withYourPassword')} <strong>{t('yourPassword')}</strong> {t('weSendToYou')}
       </Alert>
 
       {!!errorMsg && (

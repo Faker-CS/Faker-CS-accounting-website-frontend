@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -34,6 +35,7 @@ import { FileManagerFileDetails } from './file-manager-file-details';
 // ----------------------------------------------------------------------
 
 export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDownload, sx, ...other }) {
+  const { t } = useTranslation();
   const share = useBoolean();
 
 
@@ -58,9 +60,9 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
   }, []);
 
   const handleCopy = useCallback(() => {
-    toast.success('Copied!');
+    toast.success(t('copied'));
     copy(file.url);
-  }, [copy, file.url]);
+  }, [copy, file.url, t]);
 
   const handleSendEmail = async (email) => {
     setSending(true);
@@ -72,17 +74,17 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
       const companyId = match[1];
       const fileName = match[2];
       const token = localStorage.getItem('jwt_access_token');
-      await axios.post(`/api/companies/${companyId}/files/send-email`, {
+      await axios.post(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}/files/send-email`, {
         email,
         fileName,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success('Email sent!');
+      toast.success(t('emailSent'));
       share.onFalse();
       setInviteEmail('');
     } catch (err) {
-      toast.error('Failed to send email');
+      toast.error(t('failedToSendEmail'));
     }
     setSending(false);
   };
@@ -249,7 +251,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
             }}
           >
             <Iconify icon="eva:link-2-fill" />
-            Copy Link
+            {t('copyLink')}
           </MenuItem>
 
           <MenuItem
@@ -259,7 +261,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
             }}
           >
             <Iconify icon="solar:share-bold" />
-            Share
+            {t('share')}
           </MenuItem>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
@@ -272,7 +274,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
+            {t('delete')}
           </MenuItem>
         </MenuList>
       </CustomPopover>
@@ -302,14 +304,14 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, onDown
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure you want to delete this file?"
+        title={t('delete')}
+        content={t('areYouSureDeleteFile')}
         action={
           <Button variant="contained" color="error" onClick={() => {
             onDelete();
             confirm.onFalse();
           }}>
-            Delete
+            {t('delete')}
           </Button>
         }
       />

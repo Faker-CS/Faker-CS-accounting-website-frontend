@@ -1,9 +1,11 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable perfectionist/sort-imports */
 
 import Calendar from '@fullcalendar/react'; // => request placed at the top
 
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -41,6 +43,7 @@ import { CalendarFiltersResult } from '../calendar-filters-result';
 // ----------------------------------------------------------------------
 
 export function CalendarView() {
+  const { t } = useTranslation();
   const theme = useTheme();
 
   const openFilters = useBoolean();
@@ -113,14 +116,14 @@ export function CalendarView() {
           justifyContent="space-between"
           sx={{ mb: { xs: 3, md: 5 } }}
         >
-          <Typography variant="h4">Calendar</Typography>
+          <Typography variant="h4">{t('calendar')}</Typography>
           {userData?.roles === 'comptable' && (
             <Button
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
               onClick={onOpenForm}
             >
-              New event
+              {t('newEvent')}
             </Button>
           )}
         </Stack>
@@ -196,7 +199,7 @@ export function CalendarView() {
         }}
       >
         <DialogTitle sx={{ minHeight: 76 }}>
-          {openForm && <> {currentEvent?.id ? 'Edit' : 'Add'} event</>}
+          {openForm && <> {currentEvent?.id ? t('edit') : t('add')} {t('event')}</>}
         </DialogTitle>
 
         <CalendarForm

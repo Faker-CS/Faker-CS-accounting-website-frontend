@@ -1,15 +1,18 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { DemandesDetailsSkeleton } from 'src/sections/demandes/demandes-skeleton';
-import { RouterLink } from 'src/routes/components';
 
+import { RouterLink } from 'src/routes/components';
 
 import { useAuth } from 'src/hooks/useAuth';
 
 import { Iconify } from 'src/components/iconify';
+
+import { DemandesDetailsSkeleton } from 'src/sections/demandes/demandes-skeleton';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +26,7 @@ export function FileManagerPanel({
   onCollapse,
   ...other
 }) {
+  const { t } = useTranslation();
   // Determine if the user is entreprise
   const { userData, loading } = useAuth();
   const isEntreprise = userData?.roles?.includes('entreprise')
@@ -61,7 +65,7 @@ export function FileManagerPanel({
           color="inherit"
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
         >
-          Go back to companies folders list
+          {t('goBackToCompaniesFoldersList')}
         </Button >
       )}
 

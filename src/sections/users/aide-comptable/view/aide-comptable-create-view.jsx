@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -9,14 +11,16 @@ import { UserNewEditForm } from 'src/sections/users/aide-comptable/user-new-edit
 // ----------------------------------------------------------------------
 
 export function AideComptableCreateView() {
+  const { t } = useTranslation();
+  
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading={t('createNewUser')}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Accounter Helper', href: paths.dashboard.users.newAideComptable },
-          { name: 'New Accounter Helper' },
+          { name: t('dashboard'), href: paths.dashboard.root },
+          { name: t('accounterHelper'), href: paths.dashboard.users.newAideComptable },
+          { name: t('newAccounterHelper') },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

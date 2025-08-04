@@ -29,10 +29,8 @@ export function ChatView() {
   const router = useRouter();
 
   const { userData } = useAuth();
-  console.log('userData',userData);
 
   const { contacts } = useGetContacts(userData?.id);
-  console.log('contacts',contacts);
 
   const searchParams = useSearchParams();
 
@@ -53,7 +51,6 @@ export function ChatView() {
   const participants = Array.isArray(conversation?.participants)
     ? conversation.participants.filter((participant) => participant.id !== `${userData?.id}`)
     : [];
-  console.log('parti',participants);
 
   useEffect(() => {
     if (conversationError || !selectedConversationId) {

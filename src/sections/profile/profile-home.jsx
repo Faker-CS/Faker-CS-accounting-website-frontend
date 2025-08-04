@@ -1,40 +1,32 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import InputBase from '@mui/material/InputBase';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 
 import { useAuth } from 'src/hooks/useAuth';
 
-import { fNumber } from 'src/utils/format-number';
-
-import { _socials } from 'src/_mock';
-import { varAlpha } from 'src/theme/styles';
-import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
-
 import { Iconify } from 'src/components/iconify';
 
-import { ProfilePostItem } from './profile-post-item';
 
 // ----------------------------------------------------------------------
 
 export function ProfileHome({ info, posts }) {
   const fileRef = useRef(null);
   const { userData } = useAuth();
+  const { t } = useTranslation();
 
   const roleMap = {
-    'comptable': 'Accountant',
-    'aide-comptable': 'Assistant Accountant',
-    'entreprise': 'Company',
+    'comptable': t('accountant'),
+    'aide-comptable': t('assistantAccountant'),
+    'entreprise': t('company'),
   };
-  let userRole = 'Accountant';
+  let userRole = t('accountant');
   if (userData?.roles) {
     if (Array.isArray(userData.roles) && userData.roles.length > 0) {
       userRole = roleMap[userData.roles[0]?.toLowerCase()] || userData.roles[0];
@@ -62,26 +54,21 @@ export function ProfileHome({ info, posts }) {
           </Box>
         </Stack> */}
 
-        <Stack width={1}>
-          {fNumber(info.totalFollowing)}
-          <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
-            Demands
-          </Box>
-        </Stack>
+        
       </Stack>
     </Card>
   );
 
   const renderAbout = (
     <Card>
-      <CardHeader title="About" />
+      <CardHeader title={t('about')} />
 
       <Stack spacing={2} sx={{ p: 3, typography: 'body2' }}>
         {/* <Box>{info.quote}</Box> */}
 
         <Box display="flex">
-          <Iconify width={24} icon="mingcute:location-fill" sx={{ mr: 2 }} />
-          Live at
+          <Iconify width={26} icon="mingcute:location-fill" sx={{ mr: 2 }} />
+          {t('liveAt')}
           <Link variant="subtitle2" color="inherit">
             &nbsp;{userData?.address}
           </Link>
@@ -113,7 +100,6 @@ export function ProfileHome({ info, posts }) {
     <Grid container spacing={3}>
       <Grid xs={12} md={4}>
         <Stack spacing={3}>
-          {renderFollows}
           {renderAbout}
         </Stack>
       </Grid>

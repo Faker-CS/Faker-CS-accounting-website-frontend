@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -19,6 +21,7 @@ import { FileThumbnail } from 'src/components/file-thumbnail';
 // ----------------------------------------------------------------------
 
 export function DemandesFileItem({ file, selected, onSelect, onDelete, onDownload, sx, ...other }) {
+  const { t } = useTranslation();
 
   const confirm = useBoolean();
 
@@ -143,14 +146,14 @@ export function DemandesFileItem({ file, selected, onSelect, onDelete, onDownloa
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Supprimer"
-        content="Êtes-vous sûr de vouloir effacer ?"
+        title={t('deleteConfirmTitle')}
+        content={t('deleteConfirmContent')}
         action={
           <Button variant="contained" color="error" onClick={()=> {
             onDelete();
             confirm.onFalse()
           }}>
-            Supprimer
+            {t('deleteConfirmButton')}
           </Button>
         }
       />

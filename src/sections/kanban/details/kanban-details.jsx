@@ -1,12 +1,12 @@
 /* eslint-disable import/no-unresolved */
 import dayjs from 'dayjs';
-import { mutate } from 'swr';
+/* eslint-disable import/order */
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
 
 // eslint-disable-next-line perfectionist/sort-imports
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
-import Chip from '@mui/material/Chip';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -70,6 +70,7 @@ export function KanbanDetails({
   onDeleteSubtask,
   onCloseDetails,
 }) {
+  const { t } = useTranslation();
   const tabs = useTabs('overview');
   const { userData } = useAuth();
   const isComptable = Array.isArray(userData?.roles)
@@ -239,42 +240,43 @@ export function KanbanDetails({
       slotProps={{ tab: { px: 0 } }}
     >
       {[
-        { value: 'overview', label: 'Overview' },
-        { value: 'subTasks', label: `Subtasks (${task.subtasks?.length || 0})` },
-        { value: 'comments', label: `Comments (${comments?.length || 0})` },
+        { value: 'overview', label: t('overview') },
+        { value: 'subTasks', label: `${t('subtasks')} (${task.subtasks?.length || 0})` },
+        { value: 'comments', label: `${t('comments')} (${comments?.length || 0})` },
       ].map((tab) => (
         <Tab key={tab.value} value={tab.value} label={tab.label} />
       ))}
     </CustomTabs>
   );
-
   const renderTabOverview = (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
       {/* Task name */}
-      <KanbanInputName
-        placeholder="Task name"
-        value={taskName}
-        onChange={handleChangeTaskName}
-        onKeyUp={handleUpdateTask}
-        inputProps={{ id: `input-task-${taskName}` }}
-      />
+        <KanbanInputName
+          placeholder={t('taskName')}
+          value={task.title}
+          readOnly 
+          Disabled
+          onChange={handleChangeTaskName}
+          onKeyUp={handleUpdateTask}
+          inputProps={{ id: `input-task-${taskName}` }}
+        />
 
       {/* Reporter */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <StyledLabel>Reporter</StyledLabel>
+        <StyledLabel>{t('reporter')}</StyledLabel>
         <Avatar alt={task.reporter?.name} src={`${import.meta.env.VITE_SERVER}/storage/${task.reporter?.photo}`} />
       </Box>
 
       {/* Assignee */}
       <Box sx={{ display: 'flex' }}>
-        <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>Assignee</StyledLabel>
+        <StyledLabel sx={{ height: 40, lineHeight: '40px' }}>{t('assignee')}</StyledLabel>
 
         <Box sx={{ gap: 1, display: 'flex', flexWrap: 'wrap' }}>
           {assignees.map((user) => (
             <Avatar key={user.id} alt={user.name} src={`${import.meta.env.VITE_SERVER}/storage/${user?.photo}`} />
           ))}
 
-          <Tooltip title="Add assignee">
+          <Tooltip title={t('addAssignee')}>
             <IconButton
               onClick={contacts.onTrue}
               sx={{
@@ -296,7 +298,7 @@ export function KanbanDetails({
 
       {/* Due date */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <StyledLabel> Due date </StyledLabel>
+        <StyledLabel> {t('dueDate')} </StyledLabel>
 
         {isComptable ? (
           rangePicker.selected ? (
@@ -304,7 +306,7 @@ export function KanbanDetails({
               {rangePicker.shortLabel}
             </Button>
           ) : (
-            <Tooltip title="Add due date">
+            <Tooltip title={t('addDueDate')}>
               <IconButton
                 onClick={rangePicker.onOpen}
                 sx={{
@@ -318,14 +320,14 @@ export function KanbanDetails({
           )
         ) : (
           <Typography variant="body2" sx={{ ml: 1 }}>
-            {rangePicker.shortLabel || 'No due date'}
+            {rangePicker.shortLabel || t('noDueDate')}
           </Typography>
         )}
 
         {isComptable && (
           <CustomDateRangePicker
             variant="calendar"
-            title="Choose due date"
+            title={t('chooseDueDate')}
             startDate={rangePicker.startDate}
             endDate={rangePicker.endDate}
             onChangeStartDate={() => {}} // Disable changing the start date
@@ -341,7 +343,7 @@ export function KanbanDetails({
 
       {/* Priority */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <StyledLabel>Priority</StyledLabel>
+        <StyledLabel>{t('priorityLabel')}</StyledLabel>
         {isComptable ? (
           <KanbanDetailsPriority priority={priority} onChangePriority={handleChangePriority} />
         ) : (
@@ -353,8 +355,10 @@ export function KanbanDetails({
 
       {/* Description */}
       <Box sx={{ display: 'flex' }}>
-        <StyledLabel> Description </StyledLabel>
+        <StyledLabel> {t('description')} </StyledLabel>
         <TextField
+          readOnly
+          className="text-black bg-white cursor-default"
           fullWidth
           multiline
           size="small"
@@ -362,7 +366,16 @@ export function KanbanDetails({
           value={taskDescription}
           onChange={handleChangeTaskDescription}
           onBlur={() => onUpdateTask({ ...task, description: taskDescription })}
-          InputProps={{ sx: { typography: 'body2' }, readOnly: !isComptable }}
+          InputProps={{
+            readOnly: !isComptable,
+            sx: {
+              typography: 'body2',
+              color: 'black', // <-- Force black text
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black', // fix Safari too
+              },
+            },
+          }}  
         />
       </Box>
     </Box>
@@ -375,7 +388,7 @@ export function KanbanDetails({
         <TextField
           fullWidth
           size="small"
-          placeholder="Add a subtask"
+          placeholder={t('addSubtask')}
           value={newSubtask}
           onChange={(e) => setNewSubtask(e.target.value)}
           onKeyUp={handleCreateSubtask}
@@ -441,10 +454,10 @@ export function KanbanDetails({
         <Box sx={{ mt: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-              Progress
+              {t('progress')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {task.subtasks.filter((subtask) => subtask.is_completed).length} of {task.subtasks.length}
+              {task.subtasks.filter((subtask) => subtask.is_completed).length} {t('of')} {task.subtasks.length}
             </Typography>
           </Box>
 

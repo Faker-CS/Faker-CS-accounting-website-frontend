@@ -1,15 +1,11 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
-import Select from '@mui/material/Select';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
@@ -18,6 +14,8 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export function UserTableToolbar({ filters, options, onResetPage }) {
+  const { t } = useTranslation();
+  
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -41,7 +39,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder={t('search')}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -70,7 +68,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:printer-minimalistic-bold" />
-            Print
+            {t('print')}
           </MenuItem>
 
           <MenuItem
@@ -79,7 +77,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:import-bold" />
-            Import
+            {t('import')}
           </MenuItem>
 
           <MenuItem
@@ -88,7 +86,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
             }}
           >
             <Iconify icon="solar:export-bold" />
-            Export
+            {t('export')}
           </MenuItem>
         </MenuList>
       </CustomPopover>

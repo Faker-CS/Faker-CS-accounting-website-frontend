@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@mui/material/Button';
 
@@ -11,6 +12,7 @@ import { logout } from 'src/auth/context/jwt/action';
 
 export function SignOutButton({ onClose, ...other }) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const { checkUserSession } = useAuthContext();
 
@@ -28,7 +30,7 @@ export function SignOutButton({ onClose, ...other }) {
 
   return (
     <Button fullWidth variant="soft" size="large" color="error" onClick={handleLogout} {...other}>
-      Logout
+      {t('logout')}
     </Button>
   );
 }

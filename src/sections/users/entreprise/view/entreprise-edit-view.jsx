@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -9,14 +11,16 @@ import { UserNewEditForm } from '../company-new-edit-form';
 // ----------------------------------------------------------------------
 
 export function EntrepriseEditView({currentUser}) {
+  const { t } = useTranslation();
+  
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit Entreprise"
+        heading={t('editEntreprise')}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Entreprise', href: paths.dashboard.users.newEntreprise },
-          { name: 'New entreprise' },
+          { name: t('dashboard'), href: paths.dashboard.root },
+          { name: t('entreprise'), href: paths.dashboard.users.newEntreprise },
+          { name: t('newEntreprise') },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

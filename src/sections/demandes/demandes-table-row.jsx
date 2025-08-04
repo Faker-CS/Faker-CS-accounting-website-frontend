@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -46,6 +47,8 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
+  const { t } = useTranslation();
+  
   const confirm = useBoolean();
 
   const { userData } = useAuth();
@@ -75,13 +78,13 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
           edit.onFalse();
         },
         {
-          loading: 'Mise à jour en cours...',
-          success: 'Formulaire mis à jour avec succès',
-          error: 'Erreur lors de la mise à jour du formulaire',
+          loading: t('updatingInProgress'),
+          success: t('formUpdatedSuccessfully'),
+          error: t('formUpdateError'),
         }
       );
     },
-    [updateForm, statusValue, edit]
+    [updateForm, statusValue, edit, t]
   );
 
   const handleAssign = useCallback(
@@ -91,13 +94,13 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
           const result = await assignToDemande(row.id, id);
         },
         {
-          loading: 'Mise à jour en cours...',
-          success: 'Formulaire mis à jour avec succès',
-          error: 'Erreur lors de la mise à jour du formulaire',
+          loading: t('updatingInProgress'),
+          success: t('formUpdatedSuccessfully'),
+          error: t('formUpdateError'),
         }
       );
     },
-    [row.id]
+    [row.id, t]
   );
 
   return (
@@ -137,7 +140,32 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
           />
         </TableCell>
 
-        <TableCell>{row.service.name}</TableCell>
+        <TableCell>
+          <Stack spacing={1}>
+            <Typography variant="body2" noWrap>
+              {row.service.name}
+            </Typography>
+            {row.helper_forms && row.helper_forms.length > 0 ? (
+              <Stack direction="row" spacing={0.5} flexWrap="wrap">
+                {row.helper_forms.map((helper, index) => (
+                  <Label 
+                    key={helper.user_id || index} 
+                    variant="soft" 
+                    color="primary" 
+                    size="small"
+                    sx={{ fontSize: '0.75rem' }}
+                  >
+                    {helper.user?.name || 'Aide-comptable'}
+                  </Label>
+                ))}
+              </Stack>
+            ) : (
+              <Label variant="soft" color="default" size="small" sx={{ fontSize: '0.75rem' }}>
+                {t('notAssigned')}
+              </Label>
+            )}
+          </Stack>
+        </TableCell>
 
         <TableCell>
           {(() => {
@@ -175,7 +203,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
             }}
           >
             <Iconify icon="solar:eye-bold" />
-            See
+            {t('see')}
           </MenuItem>
 
           <MenuItem
@@ -185,7 +213,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
             }}
           >
             <Iconify icon="solar:pen-bold" />
-            Modify
+            {t('modify')}
           </MenuItem>
           {!isAideComptable && (
             <MenuItem
@@ -195,7 +223,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
               }}
             >
               <Iconify icon="mingcute:add-line" />
-              Assign to
+              {t('assignTo')}
             </MenuItem>
           )}
 
@@ -209,7 +237,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
               sx={{ color: 'error.main' }}
             >
               <Iconify icon="solar:trash-bin-trash-bold" />
-              Delete
+              {t('delete')}
             </MenuItem>
           )}
         </MenuList>
@@ -223,11 +251,11 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
         fullWidth
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle>Helpers List</DialogTitle>
+        <DialogTitle>{t('helpersList')}</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
-            placeholder="Search..."
+            placeholder={t('search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             sx={{ mb: 2 }}
@@ -262,7 +290,7 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
                         />
                       }
                     >
-                      {isAssigned ? 'Assigned' : 'Assign'}
+                      {isAssigned ? t('assigned') : t('assign')}
                     </Button>
                   </Stack>
                 );
@@ -270,23 +298,25 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAssignOpen(false)}>Close</Button>
+          <Button onClick={() => setAssignOpen(false)}>{t('close')}</Button>
         </DialogActions>
       </Dialog>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Supprimer"
+        title={t('delete')}
         content={
-          <>
-            Êtes-vous sûr de vouloir supprimer la demande de <b>{row.user.name}</b> à{' '}
-            <b>{row.service.name}</b>?
-          </>
+          <span
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: t('areYouSureDeleteRequest', { userName: row.user.name, serviceName: row.service.name }),
+            }}
+          />
         }
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Supprimer
+            {t('delete')}
           </Button>
         }
       />
@@ -298,10 +328,10 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
         onClose={edit.onFalse}
         PaperProps={{ sx: { maxWidth: 720 } }}
       >
-        <DialogTitle>Modifier status</DialogTitle>
+        <DialogTitle>{t('modifyStatus')}</DialogTitle>
         <DialogContent>
           <Alert variant="outlined" severity="warning" sx={{ mb: 3 }}>
-            Request awaiting confirmation
+            {t('requestAwaitingConfirmation')}
           </Alert>
           <Box
             rowGap={3}
@@ -310,14 +340,14 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
             gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
           >
             <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-              <InputLabel htmlFor="user-filter-role-select-label">Statut</InputLabel>
+              <InputLabel htmlFor="user-filter-role-select-label">{t('status')}</InputLabel>
               <Select
                 value={statusValue}
                 onChange={(e) => setStatusValue(e.target.value)}
                 inputProps={{ id: 'user-filter-role-select-label' }}
-                input={<OutlinedInput label="Statut" />}
+                input={<OutlinedInput label={t('status')} />}
                 name="status"
-                label="Statut"
+                label={t('status')}
               >
                 {statusData
                   .filter((status) => status.value !== 'none')
@@ -332,11 +362,11 @@ export function DemandesTableRow({ row, onViewRow, onDeleteRow }) {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => edit.onFalse()}>
-            canlcel
+            {t('cancel')}
           </Button>
 
           <LoadingButton type="submit" variant="contained" onClick={() => handleEditRow(row.id)}>
-            Modify
+            {t('modify')}
           </LoadingButton>
         </DialogActions>
       </Dialog>

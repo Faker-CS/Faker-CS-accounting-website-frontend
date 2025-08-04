@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -12,6 +13,8 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 // ----------------------------------------------------------------------
 
 export function CalendarFiltersResult({ filters, totalResults, sx }) {
+  const { t } = useTranslation();
+  
   const handleRemoveColor = useCallback(
     (inputValue) => {
       const newValue = filters.state.colors.filter((item) => item !== inputValue);
@@ -27,7 +30,7 @@ export function CalendarFiltersResult({ filters, totalResults, sx }) {
 
   return (
     <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
-      <FiltersBlock label="Colors:" isShow={!!filters.state.colors.length}>
+      <FiltersBlock label={`${t('colors')}:`} isShow={!!filters.state.colors.length}>
         {filters.state.colors.map((item) => (
           <Chip
             {...chipProps}
@@ -51,7 +54,7 @@ export function CalendarFiltersResult({ filters, totalResults, sx }) {
       </FiltersBlock>
 
       <FiltersBlock
-        label="Date:"
+        label={`${t('date')}:`}
         isShow={Boolean(filters.state.startDate && filters.state.endDate)}
       >
         <Chip

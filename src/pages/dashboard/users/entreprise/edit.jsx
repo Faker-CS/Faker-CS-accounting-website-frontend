@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Container } from '@mui/material';
 
@@ -19,20 +20,21 @@ import { EntrepriseEditView } from 'src/sections/users/entreprise/view/entrepris
 const metadata = { title: `Edit Entreprise | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
+    const { t } = useTranslation();
     const { id = '' } = useParams();
 
-    // console.log(id)
     const {entrepriseData, entrepriseLoading, entrepriseError} = useGetEntreprise(id);
-console.log(entrepriseData)
+    
+    const pageTitle = `${t('editEntreprise')} | Dashboard - ${CONFIG.appName}`;
     if (entrepriseLoading) {
-        return <div>Loading...</div>;
+        return <div>{t('loading')}</div>;
     }
     if (entrepriseError) {
       return (
         <Container sx={{ my: 5 }}>
           <EmptyContent
             filled
-            title="Formulaire non trouvé !"
+            title={t('formNotFound')}
             action={
               <Button
                 component={RouterLink}
@@ -40,7 +42,7 @@ console.log(entrepriseData)
                 startIcon={<Iconify width={16} icon="eva:arrow-ios-back-fill" />}
                 sx={{ mt: 3 }}
               >
-                Go back to the liste
+                {t('goBackToList')}
               </Button>
             }
             sx={{ py: 10 }}
@@ -51,7 +53,7 @@ console.log(entrepriseData)
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> {pageTitle}</title>
       </Helmet>
 
       <EntrepriseEditView 

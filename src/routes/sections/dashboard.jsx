@@ -33,8 +33,16 @@ const EntrepriseCreatePage = lazy(() => import('src/pages/dashboard/users/entrep
 const EntrepriseEditPage = lazy(() => import('src/pages/dashboard/users/entreprise/edit'));
 const EntrepriseShowPage = lazy(() => import('src/pages/dashboard/users/entreprise/show'));
 
+// employee
+const EmployeeListView = lazy(() => import('src/pages/dashboard/users/employee/list'));
+const EmployeeListViewbyId = lazy(() => import('src/pages/dashboard/users/employee/list'));
+const EmployeeShowView = lazy(() => import('src/pages/dashboard/users/employee/show'));
+const EmployeeCreateView = lazy(() => import('src/pages/dashboard/users/employee/new'));
+const EmployeeEditView = lazy(() => import('src/pages/dashboard/users/employee/edit'));
+
 const AideComptableCreatePage = lazy(() => import('src/pages/dashboard/users/aide-comptable/new'));
 const AideComptableListPage = lazy(() => import('src/pages/dashboard/users/aide-comptable/list'));
+const AideComptableShowPage = lazy(() => import('src/pages/dashboard/users/aide-comptable/show'));
 
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
@@ -99,6 +107,12 @@ export const dashboardRoutes = [
           { path: ':id/edit/entreprise', element: <EntrepriseEditPage /> },
           { path: 'aide-comptable', element: <AideComptableListPage /> },
           { path: 'aide-comptable/new', element: <AideComptableCreatePage /> },
+          { path: 'aide-comptable/:id', element: <AideComptableShowPage /> },
+          { path: 'employee', element: <EmployeeListView /> },
+          { path: 'employee/:id/view', element: <EmployeeListViewbyId /> },
+          { path: 'employee/new', element: <EmployeeCreateView /> },
+          { path: 'employee/:id/edit', element: <EmployeeEditView /> },
+          { path: 'employee/:id', element: <EmployeeShowView /> },
         ],
       },
       { path: 'banking', element: <OverviewBankingPage /> },

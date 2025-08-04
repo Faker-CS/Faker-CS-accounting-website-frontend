@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -24,22 +25,24 @@ import { ColorPicker } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
 
-export const EventSchema = zod.object({
-  title: zod
-    .string()
-    .min(1, { message: 'Title is required!' })
-    .max(100, { message: 'Title must be less than 100 characters' }),
-  description: zod.string().min(1, { message: 'Description is required!' }),
-  // Not required
-  color: zod.string(),
-  allDay: zod.boolean(),
-  start: zod.union([zod.string(), zod.number()]),
-  end: zod.union([zod.string(), zod.number()]),
-});
-
 // ----------------------------------------------------------------------
 
 export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = false }) {
+  const { t } = useTranslation();
+
+  const EventSchema = zod.object({
+    title: zod
+      .string()
+      .min(1, { message: t('titleRequired') })
+      .max(100, { message: t('titleMaxLength') }),
+    description: zod.string().min(1, { message: t('descriptionRequired') }),
+    // Not required
+    color: zod.string(),
+    allDay: zod.boolean(),
+    start: zod.union([zod.string(), zod.number()]),
+    end: zod.union([zod.string(), zod.number()]),
+  });
+
   const methods = useForm({
     mode: 'all',
     resolver: zodResolver(EventSchema),
@@ -75,10 +78,10 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
       if (!dateError) {
         if (currentEvent?.id) {
           await updateEvent(eventData);
-          toast.success('Update success!');
+          toast.success(t('updateSuccess'));
         } else {
           await createEvent(eventData);
-          toast.success('Create success!');
+          toast.success(t('createSuccess'));
         }
         onClose();
         reset();
@@ -91,33 +94,33 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
   const onDelete = useCallback(async () => {
     try {
       await deleteEvent(`${currentEvent?.id}`);
-      toast.success('Delete success!');
+      toast.success(t('deleteSuccess'));
       onClose();
     } catch (error) {
       console.error(error);
     }
-  }, [currentEvent?.id, onClose]);
+  }, [currentEvent?.id, onClose, t]);
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Scrollbar sx={{ p: 3, bgcolor: 'background.neutral' }}>
         <Stack spacing={3}>
-          <Field.Text name="title" label="Title" disabled={readOnly} />
+          <Field.Text name="title" label={t('title')} disabled={readOnly} />
 
-          <Field.Text name="description" label="Description" multiline rows={3} disabled={readOnly} />
+          <Field.Text name="description" label={t('description')} multiline rows={3} disabled={readOnly} />
 
-          <Field.Switch name="allDay" label="All day" disabled={readOnly} />
+          <Field.Switch name="allDay" label={t('allDay')} readOnly />
 
-          <Field.MobileDateTimePicker name="start" label="Start date" disabled={readOnly} />
+          <Field.MobileDateTimePicker name="start" label={t('startDate')} readOnly />
 
           <Field.MobileDateTimePicker
             name="end"
-            label="End date"
-            disabled={readOnly}
+            label={t('endDate')}
+            readOnly
             slotProps={{
               textField: {
                 error: dateError,
-                helperText: dateError ? 'End date must be later than start date' : null,
+                helperText: dateError ? t('endDateMustBeLater') : null,
               },
             }}
           />
@@ -140,7 +143,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
       {!readOnly && (
         <DialogActions sx={{ flexShrink: 0 }}>
           {!!currentEvent?.id && (
-            <Tooltip title="Delete event">
+            <Tooltip title={t('deleteEvent')}>
               <IconButton onClick={onDelete} color='error' >
                 <Iconify icon="solar:trash-bin-trash-bold" />
               </IconButton>
@@ -150,7 +153,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
           <Box sx={{ flexGrow: 1 }} />
 
           <Button variant="outlined" color="inherit" onClick={onClose}>
-            Cancel
+            {t('cancel')}
           </Button>
 
           <LoadingButton
@@ -159,7 +162,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
             loading={isSubmitting}
             disabled={dateError}
           >
-            Save changes
+            {t('saveChanges')}
           </LoadingButton>
         </DialogActions>
       )}
@@ -167,7 +170,7 @@ export function CalendarForm({ currentEvent, colorOptions, onClose, readOnly = f
         <DialogActions sx={{ flexShrink: 0 }}>
           <Box sx={{ flexGrow: 1 }} />
           <Button variant="outlined" color="inherit" onClick={onClose}>
-            Close
+            {t('close')}
           </Button>
         </DialogActions>
       )}

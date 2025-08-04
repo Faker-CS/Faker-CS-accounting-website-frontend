@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
 import TablePagination from '@mui/material/TablePagination';
@@ -12,20 +14,21 @@ export function TablePaginationCustom({
   rowsPerPageOptions = [5, 10, 25],
   ...other
 }) {
+  const { t } = useTranslation();
+  
   return (
     <Box sx={{ position: 'relative', ...sx }}>
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
         component="div"
-        // lang='fr'
-        // labelRowsPerPage='Lignes par page'
+        labelRowsPerPage={t('rowsPerPage')}
         {...other}
         sx={{ borderTopColor: 'transparent' }}
       />
 
       {onChangeDense && (
         <FormControlLabel
-          label="Dense"
+          label={t('dense')}
           control={<Switch name="dense" checked={dense} onChange={onChangeDense} />}
           sx={{
             pl: 2,

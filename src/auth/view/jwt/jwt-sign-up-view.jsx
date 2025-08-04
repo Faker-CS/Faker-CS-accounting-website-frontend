@@ -1,6 +1,7 @@
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -27,22 +28,24 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 
 // ----------------------------------------------------------------------
 
-export const SignUpSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
+export const SignUpSchema = (t) => zod.object({
+  name: zod.string().min(1, { message: t('nameRequired') }),
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: t('emailRequired') })
+    .email({ message: t('emailMustBeValid') }),
   password: zod
     .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
+    .min(1, { message: t('passwordRequired') })
+    .min(6, { message: t('passwordMinLength') }),
+  role: zod.string().min(1, { message: t('roleRequired') }),
 });
 
 // ----------------------------------------------------------------------
 
 export function JwtSignUpView() {
+  const { t } = useTranslation();
+  
   const { checkUserSession } = useAuthContext();
 
   const router = useRouter();
@@ -59,7 +62,7 @@ export function JwtSignUpView() {
   };
 
   const methods = useForm({
-    resolver: zodResolver(SignUpSchema),
+    resolver: zodResolver(SignUpSchema(t)),
     defaultValues,
   });
 
@@ -88,25 +91,25 @@ export function JwtSignUpView() {
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
       <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
-        <Field.Text name="name" label="Full Name" InputLabelProps={{ shrink: true }} fullWidth />
+        <Field.Text name="name" label={t('fullName')} InputLabelProps={{ shrink: true }} fullWidth />
         <Field.Select
           name="role"
-          label="Role"
+          label={t('role')}
           InputLabelProps={{ shrink: true }}
           fullWidth
         >
-          <MenuItem value="comptable">Accountant</MenuItem>
-          <MenuItem value="aide-comptable">Accountant Assistant</MenuItem>
-          <MenuItem value="entreprise">Company</MenuItem>
+          <MenuItem value="comptable">{t('accountant')}</MenuItem>
+          <MenuItem value="aide-comptable">{t('accountantAssistant')}</MenuItem>
+          <MenuItem value="entreprise">{t('company')}</MenuItem>
         </Field.Select>
       </Box>
 
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label={t('emailAddress')} InputLabelProps={{ shrink: true }} />
 
       <Field.Text
         name="password"
-        label="Password"
-        placeholder="6+ characters"
+        label={t('password')}
+        placeholder={t('passwordPlaceholder')}
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{
@@ -127,9 +130,9 @@ export function JwtSignUpView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Create account..."
+        loadingIndicator={t('creatingAccount')}
       >
-        Create account
+        {t('createAccount')}
       </LoadingButton>
     </Box>
   );
@@ -137,12 +140,12 @@ export function JwtSignUpView() {
   return (
     <>
       <FormHead
-        title="Get started absolutely free"
+        title={t('getStartedFree')}
         description={
           <>
-            {`Already have an account? `}
+            {t('alreadyHaveAccount')}
             <Link component={RouterLink} href={paths.auth.jwt.signIn} variant="subtitle2">
-              Get started
+              {t('getStarted')}
             </Link>
           </>
         }

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
@@ -12,13 +14,6 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-const VIEW_OPTIONS = [
-  { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
-  { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
-  { value: 'timeGridDay', label: 'Day', icon: 'mingcute:calendar-day-line' },
-  { value: 'listWeek', label: 'Agenda', icon: 'fluent:calendar-agenda-24-regular' },
-];
-
 // ----------------------------------------------------------------------
 
 export function CalendarToolbar({
@@ -32,6 +27,15 @@ export function CalendarToolbar({
   onChangeView,
   onOpenFilters,
 }) {
+  const { t } = useTranslation();
+
+  const VIEW_OPTIONS = [
+    { value: 'dayGridMonth', label: t('month'), icon: 'mingcute:calendar-month-line' },
+    { value: 'timeGridWeek', label: t('week'), icon: 'mingcute:calendar-week-line' },
+    { value: 'timeGridDay', label: t('day'), icon: 'mingcute:calendar-day-line' },
+    { value: 'listWeek', label: t('agenda'), icon: 'fluent:calendar-agenda-24-regular' },
+  ];
+
   const popover = usePopover();
 
   const selectedItem = VIEW_OPTIONS.filter((item) => item.value === view)[0];
@@ -69,7 +73,7 @@ export function CalendarToolbar({
 
         <Stack direction="row" alignItems="center" spacing={1}>
           <Button size="small" color="error" variant="contained" onClick={onToday}>
-            Today
+            {t('today')}
           </Button>
 
           <IconButton onClick={onOpenFilters}>

@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -19,8 +20,6 @@ import { _userAbout, _userFeeds, _userFriends } from 'src/_mock';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { useMockedUser } from 'src/auth/hooks';
-
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
 import { ProfileFriends } from '../profile-friends';
@@ -28,21 +27,18 @@ import { ProfileSettings } from '../profile-settings';
 
 // ----------------------------------------------------------------------
 
-const TABS = [
-  { value: 'profile', label: 'Profile', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  {
-    value: 'settings',
-    label: 'Update Profile',
-    icon: <Iconify width={24} icon="solar:settings-bold" />,
-  },
-];
-
-// ----------------------------------------------------------------------
-
 export function UserProfileView() {
-  const { user } = useMockedUser();
+  const { t } = useTranslation();
   const { userData } = useAuth();
-  console.log('first', userData);
+
+  const TABS = [
+    { value: 'profile', label: t('profile'), icon: <Iconify icon="solar:user-id-bold" width={24} /> },
+    {
+      value: 'settings',
+      label: t('updateProfile'),
+      icon: <Iconify width={24} icon="solar:settings-bold" />,
+    },
+  ];
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -57,11 +53,11 @@ export function UserProfileView() {
   }, []);
 
   const roleMap = {
-    'comptable': 'Accountant',
-    'aide-comptable': 'Assistant Accountant',
-    'entreprise': 'Company',
+    'comptable': t('accountant'),
+    'aide-comptable': t('assistantAccountant'),
+    'entreprise': t('company'),
   };
-  let userRole = 'Accountant';
+  let userRole = t('accountant');
   if (userData?.roles) {
     if (Array.isArray(userData.roles) && userData.roles.length > 0) {
       userRole = roleMap[userData.roles[0]?.toLowerCase()] || userData.roles[0];
@@ -73,10 +69,10 @@ export function UserProfileView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading={t('profile')}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Profile', href: paths.dashboard.profile },
+          { name: t('dashboard'), href: paths.dashboard.root },
+          { name: t('profile'), href: paths.dashboard.profile },
           {
             name: userData?.name
               ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1)

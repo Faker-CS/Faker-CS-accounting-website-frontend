@@ -18,6 +18,7 @@ export function useGetUser() {
   const url = endpoints.auth.me;
 
   const { data } = useSWR(url, fetcher, swrOptions);
+  
   const memoizedValue = useMemo(
     () => ({
       userData: data || [],

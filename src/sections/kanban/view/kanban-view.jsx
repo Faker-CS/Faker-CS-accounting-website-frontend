@@ -1,4 +1,5 @@
 /* eslint-disable import/no-unresolved */
+import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   arrayMove,
@@ -58,6 +59,7 @@ const cssVars = {
 // ----------------------------------------------------------------------
 
 export function KanbanView() {
+  const { t } = useTranslation();
   const { board, boardLoading, boardEmpty } = useGetBoard();
   const { userData } = useAuth();
 
@@ -175,35 +177,35 @@ export function KanbanView() {
     }
 
     // Restrict moving from In Progress to Ready to Check if not all subtasks are completed
-    if (activeColumn === "In Progress" && overColumn === "Ready to Check") {
-      const task = (board.tasks[activeColumn] || []).filter(Boolean).find(t => t.id === active.id);
+    if (activeColumn === "En cours" && overColumn === "Prêt à vérifier") {
+      const task = (board.tasks[activeColumn] || []).filter(Boolean).find(taskItem => taskItem.id === active.id);
       if (task && task.subtasks && task.subtasks.length > 0) {
         const allCompleted = task.subtasks.every(sub => sub.is_completed);
         if (!allCompleted) {
-          toast.error("Complete your subtasks to check it");
+          toast.error(t('completeSubtasksFirst'));
           return; // Prevent the move
         }
       }
     }
 
     // Only comptable can move to Done
-    if (overColumn === "Done") {
+    if (overColumn === "Terminé") {
       const isComptable = Array.isArray(userData?.roles)
         ? userData.roles.includes("comptable")
         : userData?.roles === "comptable";
       if (!isComptable) {
-        toast.error("Only accounter can reach that");
+        toast.error(t('onlyAccounterCanReach'));
         return; // Prevent the move
       }
     }
 
     // Comptable: Prevent moving from To Do to In Progress if not assigned
-    if (activeColumn === "To Do" && overColumn === "In Progress") {
+    if (activeColumn === "À faire" && overColumn === "En cours") {
       const isComptable = Array.isArray(userData?.roles)
         ? userData.roles.includes("comptable")
         : userData?.roles === "comptable";
       if (isComptable) {
-        const task = (board.tasks[activeColumn] || []).filter(Boolean).find(t => t.id === active.id);
+        const task = (board.tasks[activeColumn] || []).filter(Boolean).find(taskItem => taskItem.id === active.id);
         // Check for assigned aide-comptable (assignee or formHelpers)
         const hasAssignee = task && (
           (Array.isArray(task.form?.helper_forms) && task.form.helper_forms.length > 0) ||
@@ -211,7 +213,7 @@ export function KanbanView() {
           task.assignee_id || task.assignee
         );
         if (!hasAssignee) {
-          toast.error("You need to assign some one to work on this before");
+          toast.error(t('needToAssignSomeone'));
           return; // Prevent the move
         }
       }
@@ -407,10 +409,10 @@ export function KanbanView() {
         justifyContent="space-between"
         sx={{ pr: { sm: 3 }, mb: { xs: 3, md: 5 } }}
       >
-        <Typography variant="h4">Task managment</Typography>
+        <Typography variant="h4">{t('taskManagement')}</Typography>
 
         <FormControlLabel
-          label="Column fixed"
+          label={t('columnFixed')}
           labelPlacement="start"
           control={
             <Switch

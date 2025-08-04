@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
@@ -43,18 +44,20 @@ import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'city', label: 'City', width: 220 },
-  { id: 'state', label: 'State', width: 180 },
-  { id: 'zipcode', label: 'Zip/Code', width: 180 },
-  { id: '', width: 88 },
-];
-
 // ----------------------------------------------------------------------
 
 export function AideComptableListView() {
+  const { t } = useTranslation();
+  
+  const TABLE_HEAD = [
+    { id: 'name', label: t('name') },
+    { id: 'phoneNumber', label: t('phoneNumber'), width: 180 },
+    { id: 'city', label: t('city'), width: 220 },
+    { id: 'state', label: t('state'), width: 180 },
+    { id: 'zipcode', label: t('zipCode'), width: 180 },
+    { id: '', width: 88 },
+  ];
+  
   const table = useTable();
   const { aideComptablesData } = useGetAideComptables();
   const { userData, loading } = useAuth();
@@ -92,9 +95,9 @@ export function AideComptableListView() {
         await deleteAideComptable(id);
       },
       {
-        loading: 'Deleting...',
-        success: 'Your Helper Deleted successfully!',
-        error: 'Delete failed!',
+        loading: t('deleting'),
+        success: t('helperDeletedSuccessfully'),
+        error: t('deleteFailed'),
       }
     );
   };
@@ -102,7 +105,7 @@ export function AideComptableListView() {
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    toast.success('Delete success!');
+    toast.success(t('deleteSuccess'));
 
     setTableData(deleteRows);
 
@@ -110,7 +113,7 @@ export function AideComptableListView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData, t]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -121,7 +124,7 @@ export function AideComptableListView() {
 
   const handleDetailsRow = useCallback(
     (id) => {
-      router.push(`/dashboard/users/aide-comptable/details/${id}`);
+      router.push(paths.dashboard.users.showAideComptable(id));
     },
     [router]
   );
@@ -134,11 +137,11 @@ export function AideComptableListView() {
       <RoleBasedGuard currentRole={userData?.roles} acceptRoles={['comptable']} sx={{ py: 10 }}>
         <DashboardContent>
           <CustomBreadcrumbs
-            heading="List"
+            heading={t('list')}
             links={[
-              { name: 'Dashboard', href: paths.dashboard.root },
-              { name: 'Users', href: paths.dashboard.users.root },
-              { name: 'Accounter Helpers' },
+              { name: t('dashboard'), href: paths.dashboard.root },
+              { name: t('users'), href: paths.dashboard.users.root },
+              { name: t('accounterHelpers') },
             ]}
             action={
               <Button
@@ -147,7 +150,7 @@ export function AideComptableListView() {
                 variant="contained"
                 startIcon={<Iconify icon="mingcute:add-line" />}
               >
-                New Accounter Helper
+                {t('newAccounterHelper')}
               </Button>
             }
             sx={{ mb: { xs: 3, md: 5 } }}
@@ -176,7 +179,7 @@ export function AideComptableListView() {
                   )
                 }
                 action={
-                  <Tooltip title="Delete">
+                  <Tooltip title={t('delete')}>
                     <IconButton color="primary" onClick={confirm.onTrue}>
                       <Iconify icon="solar:trash-bin-trash-bold" />
                     </IconButton>
@@ -244,10 +247,10 @@ export function AideComptableListView() {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title={t('delete')}
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            {t('areYouSureDeleteItems', { count: table.selected.length })}
           </>
         }
         action={
@@ -259,7 +262,7 @@ export function AideComptableListView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         }
       />

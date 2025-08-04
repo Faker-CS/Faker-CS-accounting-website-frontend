@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -25,6 +26,7 @@ const ITEM_HEIGHT = 64;
 // ----------------------------------------------------------------------
 
 export function KanbanContactsDialog({ assignee = [], open, onClose }) {
+  const { t } = useTranslation();
   const [searchContact, setSearchContact] = useState('');
 
   const handleSearchContacts = useCallback((event) => {
@@ -38,7 +40,7 @@ export function KanbanContactsDialog({ assignee = [], open, onClose }) {
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
       <DialogTitle sx={{ pb: 0 }}>
-        Contacts <Typography component="span">({_contacts.length})</Typography>
+        {t('contacts')} <Typography component="span">({_contacts.length})</Typography>
       </DialogTitle>
 
       <Box sx={{ px: 3, py: 2.5 }}>
@@ -46,7 +48,7 @@ export function KanbanContactsDialog({ assignee = [], open, onClose }) {
           fullWidth
           value={searchContact}
           onChange={handleSearchContacts}
-          placeholder="Search..."
+          placeholder={t('search')}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -97,7 +99,7 @@ export function KanbanContactsDialog({ assignee = [], open, onClose }) {
                         />
                       }
                     >
-                      {checked ? 'Assigned' : 'Assign'}
+                      {checked ? t('assigned') : t('assign')}
                     </Button>
                   </Box>
                 );

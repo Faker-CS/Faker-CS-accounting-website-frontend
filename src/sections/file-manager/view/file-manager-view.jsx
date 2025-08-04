@@ -1,7 +1,9 @@
 /* eslint-disable import/no-unresolved */
+/* eslint-disable perfectionist/sort-imports */
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -10,35 +12,30 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import ToggleButton from '@mui/material/ToggleButton';
 import CardActionArea from '@mui/material/CardActionArea';
 import InputAdornment from '@mui/material/InputAdornment';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
+import { _allFiles } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { fileFormat } from 'src/components/file-thumbnail';
-import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useTable, rowInPage, getComparator } from 'src/components/table';
 
-import { FileManagerTable } from '../file-manager-table';
-import { FileManagerFilters } from '../file-manager-filters';
-import { FileManagerGridView } from '../file-manager-grid-view';
 import { FileManagerFiltersResult } from '../file-manager-filters-result';
 import { FileManagerNewFolderDialog } from '../file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------
 
 export function FileManagerView() {
+  const { t } = useTranslation();
   const table = useTable({ defaultRowsPerPage: 10 });
 
   const openDateRange = useBoolean();
@@ -86,19 +83,19 @@ export function FileManagerView() {
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      toast.success('Delete success!');
+      toast.success(t('deleteSuccess'));
 
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, tableData, t]
   );
 
   const handleDeleteItems = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    toast.success('Delete success!');
+    toast.success(t('deleteSuccess'));
 
     setTableData(deleteRows);
 
@@ -106,7 +103,7 @@ export function FileManagerView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData, t]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const handleSearch = (event) => setSearchQuery(event.target.value);
@@ -121,7 +118,7 @@ export function FileManagerView() {
       <TextField
         value={searchQuery}
         onChange={handleSearch}
-        placeholder="Rechercher..."
+        placeholder={t('search')}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -148,7 +145,7 @@ export function FileManagerView() {
 
   useEffect(() => {
     const token = localStorage.getItem('jwt_access_token');
-    axios.get('/api/companies', {
+    axios.get(`${import.meta.env.VITE_SERVER}/api/companies`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -159,7 +156,7 @@ export function FileManagerView() {
       const filesObj = {};
       await Promise.all(companiesArr.map(async (company) => {
         try {
-          const filesRes = await axios.get(`/api/companies/${company.id}/files`, {
+          const filesRes = await axios.get(`${import.meta.env.VITE_SERVER}/api/companies/${company.id}/files`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           filesObj[company.id] = filesRes.data.files.length;
@@ -179,7 +176,7 @@ export function FileManagerView() {
     <>
       <DashboardContent>
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 4 }}>
-          <Typography variant="h4">Companies</Typography>
+          <Typography variant="h4">{t('companies')}</Typography>
         </Stack>
         {renderFilters}
         <Stack spacing={2.5} sx={{ my: { xs: 3, md: 5 } }}>
@@ -196,7 +193,7 @@ export function FileManagerView() {
                       />
                       <Typography variant="h6" sx={{ fontWeight: 600 }}>{company.company_name}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {companyFiles[company.id] || 0} fichier(s)
+                        {t('fileCount', { count: companyFiles[company.id] || 0 })}
                       </Typography>
                     </Box>
                   </CardContent>
@@ -212,10 +209,10 @@ export function FileManagerView() {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title={t('delete')}
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            {t('areYouSureDelete', { count: table.selected.length })}
           </>
         }
         action={
@@ -227,7 +224,7 @@ export function FileManagerView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         }
       />

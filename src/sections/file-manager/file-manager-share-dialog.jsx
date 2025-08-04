@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -24,18 +26,19 @@ export function FileManagerShareDialog({
   sending,
   ...other
 }) {
+  const { t } = useTranslation();
   const hasShared = shared && !!shared.length;
 
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose} {...other}>
-      <DialogTitle> Send to Email </DialogTitle>
+      <DialogTitle> {t('sendToEmail')} </DialogTitle>
 
       <Box sx={{ px: 3 }}>
         {onChangeInvite && (
           <TextField
             fullWidth
             value={inviteEmail}
-            placeholder="Email"
+            placeholder={t('email')}
             onChange={onChangeInvite}
             InputProps={{
               endAdornment: (
@@ -47,7 +50,7 @@ export function FileManagerShareDialog({
                     sx={{ mr: -0.75 }}
                     onClick={() => onSendEmail && onSendEmail(inviteEmail)}
                   >
-                    {sending ? 'Sending...' : 'Send Email'}
+                    {sending ? t('sending') : t('sendEmail')}
                   </Button>
                 </InputAdornment>
               ),
@@ -70,13 +73,13 @@ export function FileManagerShareDialog({
       <DialogActions sx={{ justifyContent: 'space-between' }}>
         {onCopyLink && (
           <Button startIcon={<Iconify icon="eva:link-2-fill" />} onClick={onCopyLink}>
-            Copy link
+            {t('copyLink')}
           </Button>
         )}
 
         {onClose && (
           <Button variant="outlined" color="inherit" onClick={onClose}>
-            Close
+            {t('close')}
           </Button>
         )}
       </DialogActions>

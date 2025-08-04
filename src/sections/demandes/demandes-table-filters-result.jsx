@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Chip from '@mui/material/Chip';
 
@@ -11,6 +12,8 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 // ----------------------------------------------------------------------
 
 export function DemandesTableFiltersResult({ filters, totalResults, onResetPage, sx }) {
+  const { t } = useTranslation();
+  
   const handleRemoveKeyword = useCallback(() => {
     onResetPage();
     filters.setState({ name: '' });
@@ -38,13 +41,13 @@ export function DemandesTableFiltersResult({ filters, totalResults, onResetPage,
 
   return (
     <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
-      <FiltersBlock label="Service:" isShow={!!filters.state.service.length}>
+      <FiltersBlock label={`${t('service')}:`} isShow={!!filters.state.service.length}>
         {filters.state.service.map((item) => (
           <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveService(item)} />
         ))}
       </FiltersBlock>
 
-      <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
+      <FiltersBlock label={`${t('status')}:`} isShow={filters.state.status !== 'all'}>
         <Chip
           {...chipProps}
         //   label={
@@ -57,7 +60,7 @@ export function DemandesTableFiltersResult({ filters, totalResults, onResetPage,
       </FiltersBlock>
 
       <FiltersBlock
-        label="Date:"
+        label={`${t('date')}:`}
         isShow={Boolean(filters.state.startDate && filters.state.endDate)}
       >
         <Chip
@@ -67,7 +70,7 @@ export function DemandesTableFiltersResult({ filters, totalResults, onResetPage,
         />
       </FiltersBlock>
 
-      <FiltersBlock label="Keyword:" isShow={!!filters.state.name}>
+      <FiltersBlock label={`${t('keyword')}:`} isShow={!!filters.state.name}>
         <Chip {...chipProps} label={filters.state.name} onDelete={handleRemoveKeyword} />
       </FiltersBlock>
     </FiltersResult>

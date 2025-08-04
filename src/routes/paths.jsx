@@ -64,6 +64,10 @@ export const paths = {
       createEntreprise: `${ROOTS.DASHBOARD}/users/create`,
       aideComptable: `${ROOTS.DASHBOARD}/users/aide-comptable`,
       newAideComptable: `${ROOTS.DASHBOARD}/users/aide-comptable/new`,
+      employee: `${ROOTS.DASHBOARD}/users/employee`,
+      newEmployee: `${ROOTS.DASHBOARD}/users/employee/new`,
+      editEmployee: (id) => `${ROOTS.DASHBOARD}/users/employee/${id}/edit`,
+      showEmployee: (id) => `${ROOTS.DASHBOARD}/users/employee/${id}`,
     },
     banking: {
       root: `${ROOTS.DASHBOARD}/banking`,

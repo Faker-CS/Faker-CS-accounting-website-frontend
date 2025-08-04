@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useState, useCallback } from 'react';
 
 import { LoadingButton } from '@mui/lab';
@@ -34,6 +35,7 @@ import { STORAGE_KEY } from 'src/auth/context/jwt';
 import { DemandeListRow } from '../demande-list-row';
 
 export function DemandesViewPage({ form }) {
+  const { t } = useTranslation();
   const table = useTable({ defaultRowsPerPage: 10 });
   const [tableData, setTableData] = useState(form);
   const [statusValue, setStatusValue] = useState(tableData?.status);
@@ -52,13 +54,13 @@ export function DemandesViewPage({ form }) {
           setStatusValue(value);
         },
         {
-          loading: 'Mise à jour en cours...',
-          success: 'Formulaire mis à jour avec succès',
-          error: 'Erreur lors de la mise à jour du formulaire',
+          loading: t('updating'),
+          success: t('formUpdatedSuccessfully'),
+          error: t('formUpdateError'),
         }
       );
     },
-    [updateForm]
+    [updateForm, t]
   );
 
   const handleFilterName = useCallback(
@@ -98,19 +100,19 @@ export function DemandesViewPage({ form }) {
         const errorData = await response.text();
         try {
           const jsonData = JSON.parse(errorData);
-          throw new Error(jsonData?.message || 'Erreur lors de la suppression');
+          throw new Error(jsonData?.message || t('deletionError'));
         } catch {
-          throw new Error(errorData || 'Erreur lors de la suppression');
+          throw new Error(errorData || t('deletionError'));
         }
       }
 
-      return 'Suppression effectuée!';
+      return t('deletionCompleted');
     });
 
     toast.promise(deletePromise, {
-      loading: 'En cours de suppression...',
-      success: 'Suppression effectuée!',
-      error: 'Erreur lors de la suppression!',
+      loading: t('deletionInProgress'),
+      success: t('deletionCompleted'),
+      error: t('deletionError'),
     });
 
     return deletePromise;
@@ -119,9 +121,9 @@ export function DemandesViewPage({ form }) {
   const handleDownloadItem = async (id) => {
     const result = await downloadDocumentFile(id);
     if (!result.success) {
-      toast.error(result.message || 'Download failed');
+      toast.error(result.message || t('downloadFailed'));
     } else {
-      toast.success('File downloaded successfully');
+      toast.success(t('fileDownloadedSuccessfully'));
     }
   };
 
@@ -138,7 +140,7 @@ export function DemandesViewPage({ form }) {
       <TextField
         value={filters.state.name}
         onChange={handleFilterName}
-        placeholder="Rechercher..."
+        placeholder={t('search')}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -153,7 +155,7 @@ export function DemandesViewPage({ form }) {
 
   const renderResults = (
     <FiltersResult totalResults={dataFiltered.length} onReset={() => table.onResetPage()}>
-      <FiltersBlock label="Nom de dossier:" isShow={!!filters.state.name}>
+      <FiltersBlock label={t('fileName')} isShow={!!filters.state.name}>
         <Chip label={filters.state.name} onDelete={handleRemoveKeyword} />
       </FiltersBlock>
     </FiltersResult>
@@ -167,18 +169,18 @@ export function DemandesViewPage({ form }) {
           <Stack direction="row" gap={2}>
             <Typography variant="caption">{form.user.name}</Typography>
             {form.user.matricule && (
-              <Typography variant="caption">Matricule: {form.user.matricule}</Typography>
+              <Typography variant="caption">{t('matricule')}: {form.user.matricule}</Typography>
             )}
             {form.user.demenagement && (
               <Typography variant="caption">
-                Date démenagement: {fDate(form.user.demenagement)}
+                {t('movingDate')}: {fDate(form.user.demenagement)}
               </Typography>
             )}
             {form.user.adresse && (
-              <Typography variant="caption">Addresse: {form.user.adresse}</Typography>
+              <Typography variant="caption">{t('address')}: {form.user.adresse}</Typography>
             )}
             {form.user.situation && (
-              <Typography variant="caption">Situation: {form.user.situation}</Typography>
+              <Typography variant="caption">{t('situation')}: {form.user.situation}</Typography>
             )}
           </Stack>
         </Stack>

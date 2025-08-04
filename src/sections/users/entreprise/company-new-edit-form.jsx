@@ -1,10 +1,11 @@
 /* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -70,21 +71,73 @@ const CompanySchema = zod.object({
   adresseSiegeSocial: zod.string().min(1, { message: 'The adresse siege social field is required.' }),
   activiteEntreprise: zod.string().min(1, { message: 'The code company type field is required.' }),
   refCnss: zod.string().min(1, { message: 'The code company value field is required.' }),
-  zipCode: zod.string().min(1, { message: 'The code postale field is required.' }),
+  zipCode: zod.number().min(1, { message: 'The code postale field is required.' }),
   email: zod.string().min(1, { message: 'The email field is required.' }).email({ message: 'Email must be valid.' }),
   formeJuridique: zod.string().min(1, { message: 'The forme juridique field is required.' }),
   date: zod.string().min(1, { message: 'The founded field is required.' }),
   phoneNumber: zod.string().min(1, { message: 'The phone number field is required.' }),
   raisonSociale: zod.string().min(1, { message: 'The raison sociale field is required.' }),
   city: zod.string().min(1, { message: 'The ville field is required.' }),
-  siren: zod.string().min(1, { message: 'The SIREN field is required.' }),
+  siren: zod.number().min(1, { message: 'The matricule fiscale field is required.' }),
+  chiffreAffaire: zod
+  .number({
+    required_error: 'The chiffre affaire field is required.',
+    invalid_type_error: 'The chiffre affaire field must be a number.',
+  })
+  .min(0, { message: 'The chiffre affaire must be greater than or equal to 0.' }),
+  trancheA: zod
+    .number()
+    .min(1, { message: 'The tranche A field is required.' }),
+
+  trancheB: zod
+    .number()
+    .min(1, { message: 'The tranche B field is required.' }),
+  
+    nombreSalaries: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The number of employees is required.' })
+    ),
+  
+    moyenneAge: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The average age is required.' })
+    ),
+  
+    nombreSalariesCadres: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The number of executives is required.' })
+    ),
+  
+    moyenneAgeCadres: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The average age of executives is required.' })
+    ),
+  
+    nombreSalariesNonCadres: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The number of non-executives is required.' })
+    ),
+  
+    moyenneAgeNonCadres: zod.preprocess(
+      (val) => Number(val),
+      zod.number().min(0, { message: 'The average age of non-executives is required.' })
+    ),
+  
+    status: zod
+      .string()
+      .optional(),
+  
+    avatarUrl: zod
+      .any()
+      .optional(),
+
 });
 
 // ----------------------------------------------------------------------
 
 export function UserNewEditForm({ currentUser }) {
+  const { t } = useTranslation();
   const router = useRouter();
-  //  console.log(currentUser);
   const defaultValues = useMemo(
     () => ({
       status: currentUser?.status || 'Pending',
@@ -138,16 +191,16 @@ export function UserNewEditForm({ currentUser }) {
     try {
       if (currentUser && currentUser.id) {
         await updateEntreprise(currentUser.id, data);
-        toast.success('Update success!');
+        toast.success(t('updateSuccess'));
       } else {
         await addEntreprise(data);
-        toast.success('Company created!');
+        toast.success(t('companyCreated'));
       }
       reset();
       router.push('/dashboard/users');
     } catch (error) {
       console.error('Update failed:', error);
-      toast.error('Update failed!');
+      toast.error(t('updateFailed'));
     }
   });
 
@@ -184,8 +237,8 @@ export function UserNewEditForm({ currentUser }) {
                       color: 'text.disabled',
                     }}
                   >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
+                    {t('allowedFileTypes')}
+                    <br /> {t('maxFileSize', { size: fData(3145728) })}
                   </Typography>
                 }
               />
@@ -212,10 +265,10 @@ export function UserNewEditForm({ currentUser }) {
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Inactive
+                      {t('inactive')}
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
+                      {t('applyDisableAccount')}
                     </Typography>
                   </>
                 }
@@ -234,10 +287,10 @@ export function UserNewEditForm({ currentUser }) {
               label={
                 <>
                   <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email verified
+                    {t('emailVerified')}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
+                    {t('emailVerificationNote')}
                   </Typography>
                 </>
               }
@@ -247,7 +300,7 @@ export function UserNewEditForm({ currentUser }) {
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
-                  Delete user
+                  {t('deleteUser')}
                 </Button>
               </Stack>
             )}
@@ -257,7 +310,7 @@ export function UserNewEditForm({ currentUser }) {
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              General informations
+              {t('generalInformations')}
             </Typography>
             <Box
               rowGap={3}
@@ -270,34 +323,34 @@ export function UserNewEditForm({ currentUser }) {
             >
               <Field.Select
                 name="formeJuridique"
-                label="Forme juridique"
-                placeholder="Choisir Forme Juridique"
+                label={t('formeJuridique')}
+                placeholder={t('chooseLegalForm')}
                 error={!!errors.formeJuridique}
                 helperText={errors.formeJuridique?.message}
               >
                 {[
-                  { label: 'Société à responsabilité limitée', value: 'SARL' },
-                  { label: 'Société à responsabilité limitée', value: 'SARL-S' },
-                  { label: 'Société Unipersonnelle à Responsabilité Limitée', value: 'SUARL' },
-                  { label: 'Société anonyme', value: 'SA' },
-                  { label: 'Société en nom collectif', value: 'SNC' },
+                  { label: t('sarl'), value: 'SARL' },
+                  { label: t('sarls'), value: 'SARL-S' },
+                  { label: t('suarl'), value: 'SUARL' },
+                  { label: t('sa'), value: 'SA' },
+                  { label: t('snc'), value: 'SNC' },
                 ].map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text name="raisonSociale" label="Raison sociale" color="primary" error={!!errors.raisonSociale} helperText={errors.raisonSociale?.message} />
-              <Field.DatePicker name="date" label="Date" color="primary" error={!!errors.date} helperText={errors.date?.message} />
-              <Field.Text name="siren" type="number" label="SIREN" color="primary" error={!!errors.siren} helperText={errors.siren?.message} />
-              <Field.Text name="refCnss" label="Réf CNSS" color="primary" error={!!errors.refCnss} helperText={errors.refCnss?.message} />
-              <Field.Text name="adresseSiegeSocial" label="Adresse du siège social" color="primary" error={!!errors.adresseSiegeSocial} helperText={errors.adresseSiegeSocial?.message} />
-              <Field.Text name="zipCode" type="number" label="Code postale" color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
-              <Field.Text name="city" label="Ville" color="primary" error={!!errors.city} helperText={errors.city?.message} />
+              <Field.Text name="raisonSociale" label={t('raisonSociale')} color="primary" error={!!errors.raisonSociale} helperText={errors.raisonSociale?.message} />
+              <Field.DatePicker name="date" label={t('date')} color="primary" error={!!errors.date} helperText={errors.date?.message} />
+              <Field.Text name="siren" type="number" label={t('siren')} color="primary" error={!!errors.siren} helperText={errors.siren?.message} />
+              <Field.Text name="refCnss" label={t('refCnss')} color="primary" error={!!errors.refCnss} helperText={errors.refCnss?.message} />
+              <Field.Text name="adresseSiegeSocial" label={t('adresseSiegeSocial')} color="primary" error={!!errors.adresseSiegeSocial} helperText={errors.adresseSiegeSocial?.message} />
+              <Field.Text name="zipCode" type="number" label={t('codePostale')} color="primary" error={!!errors.zipCode} helperText={errors.zipCode?.message} />
+              <Field.Text name="city" label={t('ville')} color="primary" error={!!errors.city} helperText={errors.city?.message} />
               <Field.Select
                 name="activiteEntreprise"
-                label="Activité de l'entreprise / Code APE/NAF"
-                placeholder="Choisir Activité de l'entreprise"
+                label={t('activiteEntreprise')}
+                placeholder={t('chooseBusinessActivity')}
                 error={!!errors.activiteEntreprise}
                 helperText={errors.activiteEntreprise?.message}
               >
@@ -310,28 +363,29 @@ export function UserNewEditForm({ currentUser }) {
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Select name="Industrie" label="Industrie" placeholder="Choisir Industrie" error={!!errors.Industrie} helperText={errors.Industrie?.message}>
+              <Field.Select name="Industrie" label={t('industrie')} placeholder={t('chooseIndustry')} error={!!errors.Industrie} helperText={errors.Industrie?.message}>
                 {[
-                  { label: 'Services', value: 'Services' },
-                  { label: 'Commerce', value: 'Commerce' },
-                  { label: 'Artisanat', value: 'Artisanat' },
-                  { label: 'Agriculture', value: 'Agriculture' },
-                  { label: 'BTP', value: 'BTP' },
-                  { label: 'Transports', value: 'Transports' },
-                  { label: 'Hôtellerie', value: 'Hôtellerie' },
-                  { label: 'Restauration', value: 'Restauration' },
-                  { label: 'Santé', value: 'Santé' },
-                  { label: 'Éducation', value: 'Éducation' },
-                  { label: 'Culture', value: 'Culture' },
-                  { label: 'Loisirs', value: 'Loisirs' },
-                  { label: 'Autres', value: 'Autres' },
+                  { label: t('services'), value: 'Services' },
+                  { label: t('commerce'), value: 'Commerce' },
+                  { label: t('artisanat'), value: 'Artisanat' },
+                  { label: t('agriculture'), value: 'Agriculture' },
+                  { label: t('btp'), value: 'BTP' },
+                  { label: t('transports'), value: 'Transports' },
+                  { label: t('hotellerie'), value: 'Hôtellerie' },
+                  { label: t('restauration'), value: 'Restauration' },
+                  { label: t('sante'), value: 'Santé' },
+                  { label: t('industrie'), value: 'Industrie' },
+                  { label: t('education'), value: 'Éducation' },
+                  { label: t('culture'), value: 'Culture' },
+                  { label: t('loisirs'), value: 'Loisirs' },
+                  { label: t('autres'), value: 'Autres' },
                 ].map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text name="chiffreAffaire" type="number" label="Chiffre d'affaire" color="primary" />
+              <Field.Text name="chiffreAffaire" type="number" label={t('chiffreAffaire')} color="primary" />
             </Box>
           </Card>
         </Grid>
@@ -339,7 +393,7 @@ export function UserNewEditForm({ currentUser }) {
         <Grid xs={12} md={15}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Masse salariale annuelle
+              {t('masseSalarialeAnnuelle')}
             </Typography>
             <Box
               rowGap={3}
@@ -350,8 +404,8 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="trancheA" type="number" label="Masse salariale Tranche A" color="primary" />
-              <Field.Text name="trancheB" type="number" label="Masse salariale Tranche B" color="primary" />
+              <Field.Text name="trancheA" type="number" label={t('masseSalarialeTrancheA')} color="primary" />
+              <Field.Text name="trancheB" type="number" label={t('masseSalarialeTrancheB')} color="primary" />
             </Box>
           </Card>
         </Grid>
@@ -359,7 +413,7 @@ export function UserNewEditForm({ currentUser }) {
         <Grid xs={12} md={15}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Taille de votre entreprise
+              {t('tailleEntreprise')}
             </Typography>
             <Box
               rowGap={3}
@@ -370,25 +424,25 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="nombreSalaries" type="number" label="Nombre de salariés" color="primary" />
-              <Field.Text name="moyenneAge" type="number" label="Moyenne d'âge" color="primary" />
+              <Field.Text name="nombreSalaries" type="number" label={t('nombreSalaries')} color="primary" />
+              <Field.Text name="moyenneAge" type="number" label={t('moyenneAge')} color="primary" />
               <Field.Text
                 name="nombreSalariesCadres"
                 type="number"
-                label="Nombre de salariés cadres"
+                label={t('nombreSalariesCadres')}
                 color="primary"
               />
-              <Field.Text name="moyenneAgeCadres" type="number" label="Moyenne d'âge des salariés cadres" color="primary" />
+              <Field.Text name="moyenneAgeCadres" type="number" label={t('moyenneAgeCadres')} color="primary" />
               <Field.Text
                 name="nombreSalariesNonCadres"
                 type="number"
-                label="Nombre de salariés non cadres"
+                label={t('nombreSalariesNonCadres')}
                 color="primary"
               />
               <Field.Text
                 name="moyenneAgeNonCadres"
                 type="number"
-                label="Moyenne d'âge des salariés non cadres"
+                label={t('moyenneAgeNonCadres')}
                 color="primary"
               />
             </Box>
@@ -398,7 +452,7 @@ export function UserNewEditForm({ currentUser }) {
         <Grid xs={12} md={15}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Contact Information
+              {t('contactInformation')}
             </Typography>
             <Box
               rowGap={3}
@@ -409,12 +463,12 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="email" label="Email" color="primary" error={!!errors.email} helperText={errors.email?.message} />
-              <Field.Phone name="phoneNumber" label="Phone Number" color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
+              <Field.Text name="email" label={t('email')} color="primary" error={!!errors.email} helperText={errors.email?.message} />
+              <Field.Phone name="phoneNumber" label={t('phoneNumber')} color="primary" country="TN" error={!!errors.phoneNumber} helperText={errors.phoneNumber?.message} />
             </Box>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create Company' : 'Save changes'}
+                {!currentUser ? t('createCompany') : t('saveChanges')}
               </LoadingButton>
             </Stack>
           </Card>

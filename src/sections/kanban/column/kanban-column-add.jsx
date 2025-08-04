@@ -1,19 +1,12 @@
 /* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import { inputBaseClasses } from '@mui/material/InputBase';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { uuidv4 } from 'src/utils/uuidv4';
 
 import { createColumn } from 'src/actions/kanban';
 
-import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -9,14 +11,16 @@ import { UserShowForm } from '../company-show-form';
 // ----------------------------------------------------------------------
 
 export function EntrepriseShowView({ currentUser }) {
+  const { t } = useTranslation();
+  
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Company Details"
+        heading={t('companyDetails')}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Entreprise', href: paths.dashboard.users.newEntreprise },
-          { name: 'Company Details' },
+          { name: t('dashboard'), href: paths.dashboard.root },
+          { name: t('entreprise'), href: paths.dashboard.users.newEntreprise },
+          { name: t('companyDetails') },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

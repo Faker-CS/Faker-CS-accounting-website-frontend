@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -25,6 +26,7 @@ export function KanbanDetailsToolbar({
   taskStatus,
   onCloseDetails,
 }) {
+  const { t } = useTranslation();
   const smUp = useResponsive('up', 'sm');
 
   const confirm = useBoolean();
@@ -52,7 +54,7 @@ export function KanbanDetailsToolbar({
         }}
       >
         {!smUp && (
-          <Tooltip title="Back">
+          <Tooltip title={t('back')}>
             <IconButton onClick={onCloseDetails} sx={{ mr: 1 }}>
               <Iconify icon="eva:arrow-ios-back-fill" />
             </IconButton>
@@ -69,13 +71,13 @@ export function KanbanDetailsToolbar({
         </Button>
 
         <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
-          <Tooltip title="Like">
+          <Tooltip title={t('like')}>
             <IconButton color={liked ? 'default' : 'primary'} onClick={onLike}>
               <Iconify icon="ic:round-thumb-up" />
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Delete task">
+          <Tooltip title={t('deleteTask')}>
             <IconButton onClick={confirm.onTrue}>
               <Iconify icon="solar:trash-bin-trash-bold" />
             </IconButton>
@@ -94,15 +96,20 @@ export function KanbanDetailsToolbar({
         slotProps={{ arrow: { placement: 'top-right' } }}
       >
         <MenuList>
-          {['To do', 'In progress', 'Ready to check', 'Done'].map((option) => (
+          {[
+            { key: 'todo', value: t('taskStatus.todo') },
+            { key: 'inprogress', value: t('taskStatus.inprogress') },
+            { key: 'readytocheck', value: t('taskStatus.readytocheck') },
+            { key: 'done', value: t('taskStatus.done') },
+          ].map((option) => (
             <MenuItem
-              key={option}
-              selected={status === option}
+              key={option.value}
+              selected={status === option.value}
               onClick={() => {
-                handleChangeStatus(option);
+                handleChangeStatus(option.value);
               }}
             >
-              {option}
+              {option.value}
             </MenuItem>
           ))}
         </MenuList>
@@ -111,15 +118,15 @@ export function KanbanDetailsToolbar({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title={t('delete')}
         content={
           <>
-            Are you sure want to delete <strong> {taskName} </strong>?
+            {t('deleteConfirmation')} <strong> {taskName} </strong>?
           </>
         }
         action={
           <Button variant="contained" color="error" onClick={onDelete}>
-            Delete
+            {t('delete')}
           </Button>
         }
       />

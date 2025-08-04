@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -6,7 +7,6 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -36,6 +36,7 @@ export function FileManagerFileDetails({
   onCopyLink,
   ...other
 }) {
+  const { t } = useTranslation();
   const { name, size, url, type, shared, modifiedAt } = item;
 
   const hasShared = shared && !!shared.length;
@@ -69,7 +70,7 @@ export function FileManagerFileDetails({
         justifyContent="space-between"
         sx={{ typography: 'subtitle2' }}
       >
-        Tags
+        {t('tags')}
         <IconButton size="small" onClick={toggleTags.onToggle}>
           <Iconify
             icon={toggleTags.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
@@ -104,7 +105,7 @@ export function FileManagerFileDetails({
               />
             ))
           }
-          renderInput={(params) => <TextField {...params} placeholder="#Add a tags" />}
+          renderInput={(params) => <TextField {...params} placeholder={t('addTags')} />}
         />
       )}
     </Stack>
@@ -118,7 +119,7 @@ export function FileManagerFileDetails({
         justifyContent="space-between"
         sx={{ typography: 'subtitle2' }}
       >
-        Properties
+        {t('properties')}
         <IconButton size="small" onClick={properties.onToggle}>
           <Iconify
             icon={properties.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
@@ -130,21 +131,21 @@ export function FileManagerFileDetails({
         <>
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Size
+              {t('size')}
             </Box>
             {fData(size)}
           </Stack>
 
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Modified
+              {t('modified')}
             </Box>
             {fDateTime(modifiedAt)}
           </Stack>
 
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Type
+              {t('type')}
             </Box>
             {fileFormat(type)}
           </Stack>
@@ -156,7 +157,7 @@ export function FileManagerFileDetails({
   const renderShared = (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-        <Typography variant="subtitle2"> Share with </Typography>
+        <Typography variant="subtitle2"> {t('shareWith')} </Typography>
 
         <IconButton
           size="small"
@@ -196,7 +197,7 @@ export function FileManagerFileDetails({
       >
         <Scrollbar>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-            <Typography variant="h6"> Info </Typography>
+            <Typography variant="h6"> {t('info')} </Typography>
           </Stack>
 
           <Stack
@@ -242,7 +243,7 @@ export function FileManagerFileDetails({
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
             onClick={onDelete}
           >
-            Delete
+            {t('delete')}
           </Button>
         </Box>
       </Drawer>

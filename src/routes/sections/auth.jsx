@@ -1,11 +1,25 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { AuthSplitLayout } from 'src/layouts/auth-split';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
 import { GuestGuard } from 'src/auth/guard';
+
+// ----------------------------------------------------------------------
+
+// Auth layout wrapper with translation
+function AuthLayoutWithWelcome({ children }) {
+  const { t } = useTranslation();
+  
+  return (
+    <AuthSplitLayout section={{ title: t('hiWelcomeMoneyTeers') }}>
+      {children}
+    </AuthSplitLayout>
+  );
+}
 
 // ----------------------------------------------------------------------
 
@@ -24,9 +38,9 @@ const authJwt = {
       path: 'sign-in',
       element: (
         <GuestGuard>
-          <AuthSplitLayout section={{ title: 'Hi, Welcome in MoneyTeers' }}>
+          <AuthLayoutWithWelcome>
             <Jwt.SignInPage />
-          </AuthSplitLayout>
+          </AuthLayoutWithWelcome>
         </GuestGuard>
       ),
     },

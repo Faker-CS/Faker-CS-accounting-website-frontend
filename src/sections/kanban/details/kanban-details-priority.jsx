@@ -1,4 +1,6 @@
 /* eslint-disable import/no-unresolved */
+import { useTranslation } from 'react-i18next';
+
 import Stack from '@mui/material/Stack';
 import ButtonBase from '@mui/material/ButtonBase';
 
@@ -9,6 +11,8 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export function KanbanDetailsPriority({ priority, onChangePriority }) {
+  const { t } = useTranslation();
+  
   return (
     <Stack direction="row" flexWrap="wrap" spacing={1}>
       {['low', 'medium', 'high'].map((option) => (
@@ -46,7 +50,7 @@ export function KanbanDetailsPriority({ priority, onChangePriority }) {
               ...(option === 'high' && { color: 'error.main' }),
             }}
           />
-          {option}
+          {t(`priority.${option}`)}
         </ButtonBase>
       ))}
     </Stack>

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
@@ -11,12 +13,14 @@ export const chipProps = {
 };
 
 export function FiltersResult({ totalResults, onReset, sx, children }) {
+  const { t } = useTranslation();
+
   return (
     <Box sx={sx}>
       <Box sx={{ mb: 1.5, typography: 'body2' }}>
         <strong>{totalResults}</strong>
         <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
+          {t('resultsFound')}
         </Box>
       </Box>
 
@@ -28,7 +32,7 @@ export function FiltersResult({ totalResults, onReset, sx, children }) {
           onClick={onReset}
           startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
         >
-          Clear
+          {t('clear')}
         </Button>
       </Box>
     </Box>

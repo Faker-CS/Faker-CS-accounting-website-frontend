@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
@@ -17,6 +18,7 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export function DemandesTableToolbar({ filters, options, dateError, onResetPage }) {
+  const { t } = useTranslation();
 
   const handleFilterName = useCallback(
     (event) => {
@@ -61,13 +63,13 @@ export function DemandesTableToolbar({ filters, options, dateError, onResetPage 
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
         <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
-          <InputLabel htmlFor="invoice-filter-service-select-label">Service</InputLabel>
+          <InputLabel htmlFor="invoice-filter-service-select-label">{t('service')}</InputLabel>
 
           <Select
             multiple
             value={filters.state.service}
             onChange={handleFilterService}
-            input={<OutlinedInput label="Service" />}
+            input={<OutlinedInput label={t('service')} />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             inputProps={{ id: 'invoice-filter-service-select-label' }}
             sx={{ textTransform: 'capitalize' }}
@@ -86,7 +88,7 @@ export function DemandesTableToolbar({ filters, options, dateError, onResetPage 
         </FormControl>
 
         <DatePicker
-          label="Date début"
+          label={t('startDate')}
           value={filters.state.startDate}
           onChange={handleFilterStartDate}
           slotProps={{ textField: { fullWidth: true } }}
@@ -94,14 +96,14 @@ export function DemandesTableToolbar({ filters, options, dateError, onResetPage 
         />
 
         <DatePicker
-          label="Date fin"
+          label={t('endDate')}
           value={filters.state.endDate}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {
               fullWidth: true,
               error: dateError,
-              helperText: dateError ? 'La date de fin doit être postérieure à la date de début' : null,
+              helperText: dateError ? t('endDateMustBeAfterStartDate') : null,
             },
           }}
           sx={{
@@ -118,7 +120,7 @@ export function DemandesTableToolbar({ filters, options, dateError, onResetPage 
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Rechercher Client..."
+            placeholder={t('searchClient')}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

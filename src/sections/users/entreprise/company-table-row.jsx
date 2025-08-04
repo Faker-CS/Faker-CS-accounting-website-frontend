@@ -1,3 +1,6 @@
+/* eslint-disable import/no-unresolved */
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -10,6 +13,9 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { useAuth } from 'src/hooks/useAuth';
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -24,14 +30,20 @@ import { UserQuickEditForm } from './company-quick-edit-form';
 // ----------------------------------------------------------------------
 
 export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+  const { t } = useTranslation();
+  
+  const router = useRouter();
+  
   const confirm = useBoolean();
 
   const popover = usePopover();
 
   const quickEdit = useBoolean();
+  
 
   const { userData } = useAuth();
   const isAideComptable = userData?.roles?.includes('aide-comptable');
+  const isEntreprise = userData?.roles?.includes('entreprise');
 
   return (
     <>
@@ -77,7 +89,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         {!isAideComptable&&(<TableCell>
           <Stack direction="row" alignItems="center">
-            <Tooltip title="Quick Edit" placement="top" arrow>
+            <Tooltip title={t('quickEdit')} placement="top" arrow>
               <IconButton
                 color={quickEdit.value ? 'inherit' : 'default'}
                 onClick={quickEdit.onTrue}
@@ -104,23 +116,34 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         <MenuList>
           <MenuItem
             onClick={() => {
+              onEditRow();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:eye-bold" />
+            {t('see')}
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+
+              router.push(`${paths.dashboard.users.employee.root}?company_id=${row.id}`);
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:users-group-rounded-bold-duotone" />
+            {t('employee')}
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
               confirm.onTrue();
               popover.onClose();
             }}
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              onEditRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:pen-bold" />
-            Edit
+            {t('delete')}
           </MenuItem>
         </MenuList>
       </CustomPopover>
@@ -128,11 +151,11 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title={t('delete')}
+        content={t('areYouSureDelete', { count: 1 })}
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            {t('delete')}
           </Button>
         }
       />

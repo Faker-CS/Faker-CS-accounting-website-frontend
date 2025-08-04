@@ -33,8 +33,7 @@ export function useGetEntreprises() {
 
 export function useDeleteEntreprise() {
   const deleteEntreprise = async (id) => {
-    // const url = endpoints.company.delete(id);
-    // console.log('url', url);
+
     try {
       const url = `${import.meta.env.VITE_SERVER}/api/companies/${id}`; // adjust endpoint if needed
 
@@ -43,7 +42,6 @@ export function useDeleteEntreprise() {
           Authorization: `Bearer ${localStorage.getItem(STORAGE_KEY)}`,
         },
       });
-      console.log('res', localStorage.getItem(STORAGE_KEY));
       // Refresh users list after deletion
       mutate(endpoints.company.list);
 

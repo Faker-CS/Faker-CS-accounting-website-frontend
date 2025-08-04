@@ -1,6 +1,8 @@
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+/* eslint-disable perfectionist/sort-imports */
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -23,12 +25,15 @@ export function FileManagerNewFolderDialog({
   onUpdate,
   folderName,
   onChangeFolderName,
-  title = 'Upload files',
+  title,
   mutate,
   ...other
 }) {
+  const { t } = useTranslation();
   const { companyId } = useParams();
   const [files, setFiles] = useState([]);
+
+  const dialogTitle = title || t('uploadFiles');
 
   useEffect(() => {
     if (!open) {
@@ -45,7 +50,7 @@ export function FileManagerNewFolderDialog({
 
   const handleUpload = async () => {
     if (files.length === 0) {
-      toast.error('Please select files to upload');
+      toast.error(t('pleaseSelectFiles'));
       return;
     }
 
@@ -56,7 +61,7 @@ export function FileManagerNewFolderDialog({
         // Ensure we're sending the actual file object
         formData.append('file', file);
 
-        const response = await axios.post(`/api/companies/${companyId}/files`, formData, {
+        const response = await axios.post(`${import.meta.env.VITE_SERVER}/api/companies/${companyId}/files`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('jwt_access_token')}`,
@@ -68,16 +73,15 @@ export function FileManagerNewFolderDialog({
 
       // Wait for all uploads to complete
       const results = await Promise.all(uploadPromises);
-      console.log('Upload results:', results);
 
-      toast.success('Files uploaded successfully');
+      toast.success(t('filesUploadedSuccessfully'));
       if (mutate) {
         mutate();
       }
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload files');
+      toast.error(t('failedToUploadFiles'));
     }
   };
 
@@ -92,13 +96,13 @@ export function FileManagerNewFolderDialog({
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>
-      <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}> {title} </DialogTitle>
+      <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}> {dialogTitle} </DialogTitle>
 
       <DialogContent dividers sx={{ pt: 1, pb: 0, border: 'none' }}>
         {(onCreate || onUpdate) && (
           <TextField
             fullWidth
-            label="Folder name"
+            label={t('folderName')}
             value={folderName}
             onChange={onChangeFolderName}
             sx={{ mb: 3 }}
@@ -114,19 +118,19 @@ export function FileManagerNewFolderDialog({
           startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           onClick={handleUpload}
         >
-          Upload
+          {t('upload')}
         </Button>
 
         {!!files.length && (
           <Button variant="outlined" color="inherit" onClick={handleRemoveAllFiles}>
-            Remove all
+            {t('removeAll')}
           </Button>
         )}
 
         {(onCreate || onUpdate) && (
           <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
             <Button variant="soft" onClick={onCreate || onUpdate}>
-              {onUpdate ? 'Save' : 'Create'}
+              {onUpdate ? t('save') : t('create')}
             </Button>
           </Stack>
         )}

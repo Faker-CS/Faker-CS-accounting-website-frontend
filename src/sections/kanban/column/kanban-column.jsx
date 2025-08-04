@@ -1,6 +1,8 @@
 /* eslint-disable import/no-unresolved */
+/* eslint-disable import/order */
 import { useCallback } from 'react';
 import { CSS } from '@dnd-kit/utilities';
+import { useTranslation } from 'react-i18next';
 import { useSortable, defaultAnimateLayoutChanges } from '@dnd-kit/sortable';
 
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -16,6 +18,7 @@ import { KanbanColumnToolBar } from './kanban-column-toolbar';
 // ----------------------------------------------------------------------
 
 export function KanbanColumn({ children, column, tasks, disabled, sx }) {
+  const { t } = useTranslation();
   const openAddTask = useBoolean();
 
   const { attributes, isDragging, listeners, setNodeRef, transition, active, over, transform } =
@@ -38,13 +41,13 @@ export function KanbanColumn({ children, column, tasks, disabled, sx }) {
         if (column.name !== columnName) {
           updateColumn(column.id, columnName);
 
-          toast.success('Update success!', { position: 'top-center' });
+          toast.success(t('updateSuccess'), { position: 'top-center' });
         }
       } catch (error) {
         console.error(error);
       }
     },
-    [column.id, column.name]
+    [column.id, column.name, t]
   );
 
   const handleClearColumn = useCallback(async () => {
@@ -59,11 +62,11 @@ export function KanbanColumn({ children, column, tasks, disabled, sx }) {
     try {
       deleteColumn(column.id);
 
-      toast.success('Delete success!', { position: 'top-center' });
+      toast.success(t('deleteSuccess'), { position: 'top-center' });
     } catch (error) {
       console.error(error);
     }
-  }, [column.id]);
+  }, [column.id, t]);
 
   const handleAddTask = useCallback(
     async (taskData) => {

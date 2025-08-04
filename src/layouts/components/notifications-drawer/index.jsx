@@ -107,7 +107,6 @@ export function NotificationsDrawer({ sx, ...other }) {
     if (notification.serviceLink && allowedRoles.includes(userRole)) {
       const mappedLink = mapServiceLinkToFrontend(notification.serviceLink);
       navigate(mappedLink);
-      console.log(mappedLink);
     }
     
     setTimeout(() => {
