@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
@@ -8,6 +9,8 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { Label } from 'src/components/label';
+
+import CompanyServicesDisplayCard from './company-services-display-card';
 
 // ----------------------------------------------------------------------
 
@@ -212,6 +215,11 @@ export function UserShowForm({ currentUser }) {
             </Stack>
           </Box>
         </Card>
+      </Grid>
+
+      {/* Services Card */}
+      <Grid xs={12}>
+        <CompanyServicesDisplayCard companyId={currentUser?.id} />
       </Grid>
     </Grid>
   );

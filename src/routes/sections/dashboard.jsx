@@ -66,6 +66,7 @@ const Sa = lazy(() => import('src/pages/dashboard/CompanyMenu/sa'));
 const UserProfilePage = lazy(() => import('src/auth/view/user-profile-view'));
 
 const FilesPage = lazy(() => import('src/pages/dashboard/files'));
+const ServicesPage = lazy(() => import('src/pages/dashboard/services'));
 
 const layoutContent = (
   <DashboardLayout>
@@ -96,6 +97,12 @@ export const dashboardRoutes = [
         children: [
           { element: <FilesPage />, index: true },
           { path: 'company/:companyId', element: <FileManagerPageDetails /> },
+        ],
+      },
+      {
+        path: 'services',
+        children: [
+          { element: <ServicesPage />, index: true },
         ],
       },
       {

@@ -147,7 +147,18 @@ export const endpoints = {
   // services endpoints
   services: {
     all: '/api/services',
+    details: (id) => `/api/services/${id}`,
+    create: '/api/services',
+    update: (id) => `/api/services/${id}`,
+    delete: (id) => `/api/services/${id}`,
     status: (id) => `/api/status/${id}`,
+    // Company-specific service endpoints
+    companyServices: (companyId) => `/api/companies/${companyId}/services`,
+    companyServicesWithStatus: (companyId) => `/api/companies/${companyId}/services-with-status`,
+    assignToCompany: (companyId) => `/api/companies/${companyId}/services`,
+    updateCompanyService: (companyId, serviceId) => `/api/companies/${companyId}/services/${serviceId}`,
+    removeFromCompany: (companyId, serviceId) => `/api/companies/${companyId}/services/${serviceId}`,
+    assignDefaultServices: (companyId) => `/api/companies/${companyId}/assign-default-services`,
   },
   // forms endpoints
   forms: {

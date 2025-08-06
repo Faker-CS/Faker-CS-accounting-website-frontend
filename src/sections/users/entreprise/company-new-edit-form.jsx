@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { z as zod } from 'zod';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +27,8 @@ import { useAddEntreprise, useUpdateEntreprise } from 'src/actions/entreprise';
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+
+import CompanyServicesSelectionCard from './company-services-selection-card';
 
 // ----------------------------------------------------------------------
 
@@ -138,6 +140,10 @@ const CompanySchema = zod.object({
 export function UserNewEditForm({ currentUser }) {
   const { t } = useTranslation();
   const router = useRouter();
+  
+  // State for selected services
+  const [selectedServices, setSelectedServices] = useState([]);
+  
   const defaultValues = useMemo(
     () => ({
       status: currentUser?.status || 'Pending',
@@ -189,17 +195,23 @@ export function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      // Include selected services in the data
+      const submitData = {
+        ...data,
+        selectedServices, // Add selected services to form data
+      };
+      
       if (currentUser && currentUser.id) {
-        await updateEntreprise(currentUser.id, data);
+        await updateEntreprise(currentUser.id, submitData);
         toast.success(t('updateSuccess'));
       } else {
-        await addEntreprise(data);
+        await addEntreprise(submitData);
         toast.success(t('companyCreated'));
       }
       reset();
       router.push('/dashboard/users');
     } catch (error) {
-      console.error('Update failed:', error);
+      console.error('Submit failed:', error);
       toast.error(t('updateFailed'));
     }
   });
@@ -448,6 +460,16 @@ export function UserNewEditForm({ currentUser }) {
             </Box>
           </Card>
         </Grid>
+
+        {/* Services Selection Card - Only show for new companies or comptable role */}
+        {(!currentUser || currentUser?.role === 'comptable') && (
+          <Grid xs={12}>
+            <CompanyServicesSelectionCard
+              selectedServices={selectedServices}
+              onServicesChange={setSelectedServices}
+            />
+          </Grid>
+        )}
 
         <Grid xs={12} md={15}>
           <Card sx={{ p: 3 }}>

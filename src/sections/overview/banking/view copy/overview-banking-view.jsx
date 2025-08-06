@@ -1,11 +1,8 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 
-import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { _bankingContacts, _bankingCreditCard, _bankingRecentTransitions } from 'src/_mock';
-
-import { Iconify } from 'src/components/iconify/iconify';
 
 import { BankingContacts } from '../banking-contacts';
 import { BankingOverview } from '../banking-overview';
